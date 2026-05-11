@@ -961,7 +961,7 @@ export function AdminDashboard({
             </p>
           </div>
           <div className="flex gap-3">
-            <Button variant="outline" className="border-[var(--line)]">
+            <Button variant="gold" className="border-[var(--line)]">
               <CalendarIcon className="mr-2 size-4" />
               Agenda hoy
             </Button>
