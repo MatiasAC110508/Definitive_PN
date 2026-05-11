@@ -3,9 +3,13 @@ import { getUserRepository, getAppointmentRepository, getScheduleRepository } fr
 import { getCurrentSession } from "@/lib/auth";
 import { apiError, ok } from "@/presentation/http/api-response";
 
-/**
- * Controller for administrative user management.
- */
+// En admin.controller.ts
+export const adminMetricsController = async () => {
+  return new Response(JSON.stringify({ message: "Próximamente" }), {
+    status: 200,
+  });
+};
+
 export async function updateUserRoleController(request: NextRequest, id: string) {
   const session = await getCurrentSession();
 
