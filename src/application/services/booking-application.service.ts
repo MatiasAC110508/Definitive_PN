@@ -29,7 +29,7 @@ export class BookingApplicationService {
     startAt: string;
     notes?: string;
   }): Promise<Appointment> {
-    return this.createAppointmentUseCase.execute(input);
+    return this.createAppointmentUseCase.execute(input.userId, input);
   }
 
   async getUserAppointments(userId: string): Promise<Appointment[]> {
