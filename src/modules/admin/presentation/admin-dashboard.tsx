@@ -922,7 +922,7 @@ export function AdminDashboard({
                   </div>
                 </Button>
                 <Button 
-                  variant="outline" 
+                  variant="ghost" 
                   className="h-28 flex flex-col gap-2 border-[var(--line)] hover:border-[var(--gold)] hover:bg-[var(--gold-soft)]/10 transition-all group rounded-2xl"
                   onClick={downloadCSV}
                 >
