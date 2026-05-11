@@ -1,4 +1,4 @@
-export type ProductCategorySlug = "ropa-femenina" | "cosmeticos" | "belleza";
+export type ProductCategorySlug = "ropa-femenina" | "cosmeticos" | "belleza" | "accesorios";
 
 export interface Product {
   id: string;
