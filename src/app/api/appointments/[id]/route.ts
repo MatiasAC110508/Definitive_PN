@@ -1,7 +1,5 @@
-import { 
-  updateAppointmentController, 
-  deleteAppointmentController 
-} from "@/presentation/controllers/appointment.controller";
+import { NextRequest } from "next/server";
+import { updateAppointmentController, deleteAppointmentController } from "@/presentation/controllers/appointment.controller";
 
 export async function PATCH(
   request: NextRequest,
