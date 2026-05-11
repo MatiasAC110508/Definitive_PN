@@ -6,7 +6,8 @@ export type ServiceCategorySlug =
   | "spa-de-unas"
   | "depilacion-laser"
   | "unas-premium"
-  | "masajes";
+  | "masajes"
+  | "accesorios";
 
 export interface BeautyService {
   id: string;
