@@ -909,7 +909,7 @@ export function AdminDashboard({
               {/* Download Options (STRICTLY HIDDEN IN PRINT) */}
               <div className="grid grid-cols-2 gap-4 no-print pt-6 border-t border-[var(--line)]">
                 <Button 
-                  variant="outline" 
+                  variant="ghost" 
                   className="h-28 flex flex-col gap-2 border-[var(--line)] hover:border-[var(--gold)] hover:bg-[var(--gold-soft)]/10 transition-all group rounded-2xl"
                   onClick={downloadPDF}
                 >
