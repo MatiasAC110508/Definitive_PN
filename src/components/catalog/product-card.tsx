@@ -35,7 +35,7 @@ export function ProductCard({ product }: { product: Product }) {
           </Badge>
         ) : null}
         {isOutOfStock && (
-          <Badge variant="secondary" className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-white/90 text-red-500 border-red-100 shadow-xl py-2 px-6 text-sm">
+          <Badge variant="dark" className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-white/90 text-red-500 border-red-100 shadow-xl py-2 px-6 text-sm">
             Agotado
           </Badge>
         )}
