@@ -3,7 +3,8 @@ export type ServiceCategorySlug =
   | "manicure"
   | "pedicure"
   | "nail-art"
-  | "spa-de-unas";
+  | "spa-de-unas"
+  | "depilacion-laser";
 
 export interface BeautyService {
   id: string;
