@@ -990,7 +990,7 @@ export function AdminDashboard({
                       <div className="rounded-xl bg-[var(--quartz-soft)] p-3">
                         <card.icon aria-hidden="true" className="size-6" style={{ color: card.color }} />
                       </div>
-                      <Badge variant="outline" className="border-[var(--line)] text-[var(--ink-soft)] font-bold">
+                      <Badge variant="default" className="border-[var(--line)] text-[var(--ink-soft)] font-bold">
                         {card.trend}
                       </Badge>
                     </div>
