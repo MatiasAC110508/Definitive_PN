@@ -1,18 +1,18 @@
 "use client";
 
-import { 
-  BarChart3, 
-  Boxes, 
-  CalendarDays, 
-  Clock, 
-  UsersRound, 
-  TrendingUp, 
-  Heart, 
-  Sparkles, 
-  Search, 
-  MoreVertical, 
-  Trash2, 
-  UserPlus, 
+import {
+  BarChart3,
+  Boxes,
+  CalendarDays,
+  Clock,
+  UsersRound,
+  TrendingUp,
+  Heart,
+  Sparkles,
+  Search,
+  MoreVertical,
+  Trash2,
+  UserPlus,
   Calendar as CalendarIcon,
   ShieldCheck,
   Briefcase,
@@ -32,22 +32,22 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { 
-  DropdownMenu, 
-  DropdownMenuContent, 
-  DropdownMenuItem, 
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
   DropdownMenuTrigger,
   DropdownMenuSeparator
 } from "@/components/ui/dropdown-menu";
-import { 
-  Dialog, 
-  DialogContent, 
-  DialogHeader, 
-  DialogTitle, 
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
   DialogFooter,
   DialogDescription
 } from "@/components/ui/dialog";
-import { 
+import {
   AlertDialog,
   AlertDialogAction,
   AlertDialogCancel,
@@ -58,7 +58,7 @@ import {
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
 import { Label } from "@/components/ui/label";
-import { 
+import {
   Select,
   SelectContent,
   SelectItem,
@@ -103,17 +103,17 @@ export function AdminDashboard({
   const [activeTab, setActiveTab] = useState("overview");
   const [userQuery, setUserQuery] = useState("");
   const [aptQuery, setAptQuery] = useState("");
-  
+
   const [appointments, setAppointments] = useState(initialAppointments);
   const [users, setUsers] = useState(initialUsers);
   const [schedules, setSchedules] = useState(initialSchedules);
-  
+
   // CRUD State
   const [userToDelete, setUserToDelete] = useState<string | null>(null);
   const [aptToDelete, setAptToDelete] = useState<string | null>(null);
   const [isDeleting, setIsDeleting] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
-  
+
   // User Form State
   const [isUserModalOpen, setIsUserModalOpen] = useState(false);
   const [editingUser, setEditingUser] = useState<User | null>(null);
@@ -141,7 +141,7 @@ export function AdminDashboard({
   const reportMetrics = useMemo(() => {
     const totalApts = appointments.length || 1;
     const averageTicket = metrics.monthlyRevenue / totalApts;
-    
+
     // Revenue by service breakdown
     const revenueByService = services.map(svc => {
       const apts = appointments.filter(a => a.serviceId === svc.id);
@@ -179,7 +179,7 @@ export function AdminDashboard({
       a.startAt,
       a.status
     ]);
-    
+
     const csvContent = [headers, ...rows].map(e => e.join(",")).join("\n");
     const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
     const link = document.createElement("a");
@@ -300,8 +300,8 @@ export function AdminDashboard({
     return appointments.filter(a => {
       const userName = users.find(u => u.id === a.userId)?.name || "";
       const svcName = services.find(s => s.id === a.serviceId)?.name || "";
-      return userName.toLowerCase().includes(aptQuery.toLowerCase()) || 
-             svcName.toLowerCase().includes(aptQuery.toLowerCase());
+      return userName.toLowerCase().includes(aptQuery.toLowerCase()) ||
+        svcName.toLowerCase().includes(aptQuery.toLowerCase());
     }).sort((a, b) => new Date(b.startAt).getTime() - new Date(a.startAt).getTime());
   }, [appointments, aptQuery, users, services]);
 
@@ -351,7 +351,7 @@ export function AdminDashboard({
     try {
       const url = editingApt ? `/api/admin/appointments/${editingApt.id}` : "/api/admin/appointments";
       const method = editingApt ? "PATCH" : "POST";
-      
+
       const duration = services.find(s => s.id === aptFormData.serviceId)?.durationMinutes || 60;
       const endAt = new Date(new Date(aptFormData.startAt).getTime() + duration * 60000).toISOString();
 
@@ -416,11 +416,11 @@ export function AdminDashboard({
 
   function openEditModal(user: User) {
     setEditingUser(user);
-    setFormData({ 
-      name: user.name || "", 
-      email: user.email || "", 
-      phone: user.phone || "", 
-      role: user.role 
+    setFormData({
+      name: user.name || "",
+      email: user.email || "",
+      phone: user.phone || "",
+      role: user.role
     });
     setIsUserModalOpen(true);
   }
@@ -431,7 +431,7 @@ export function AdminDashboard({
     try {
       const url = editingUser ? `/api/admin/users/${editingUser.id}` : "/api/admin/users";
       const method = editingUser ? "PATCH" : "POST";
-      
+
       const res = await fetch(url, {
         method,
         headers: { "Content-Type": "application/json" },
@@ -461,7 +461,7 @@ export function AdminDashboard({
 
   async function deleteUser() {
     if (!userToDelete) return;
-    
+
     setIsDeleting(true);
     try {
       const res = await fetch(`/api/admin/users/${userToDelete}`, { method: "DELETE" });
@@ -502,9 +502,9 @@ export function AdminDashboard({
   }
 
   const filteredUsers = useMemo(() => {
-    return users.filter(u => 
+    return users.filter(u =>
       u && (
-        u.name?.toLowerCase().includes(userQuery.toLowerCase()) || 
+        u.name?.toLowerCase().includes(userQuery.toLowerCase()) ||
         u.email?.toLowerCase().includes(userQuery.toLowerCase())
       )
     );
@@ -551,46 +551,46 @@ export function AdminDashboard({
               {editingUser ? "Editar Usuario" : "Nuevo Usuario"}
             </DialogTitle>
             <DialogDescription>
-              {editingUser 
-                ? "Modifica los datos del usuario seleccionado." 
+              {editingUser
+                ? "Modifica los datos del usuario seleccionado."
                 : "Registra un nuevo miembro del staff o clienta."}
             </DialogDescription>
           </DialogHeader>
           <form onSubmit={handleUserSubmit} className="space-y-6 py-4">
             <div className="space-y-2">
               <Label htmlFor="name">Nombre Completo</Label>
-              <Input 
-                id="name" 
-                value={formData.name} 
-                onChange={(e) => setFormData({ ...formData, name: e.target.value })} 
+              <Input
+                id="name"
+                value={formData.name}
+                onChange={(e) => setFormData({ ...formData, name: e.target.value })}
                 placeholder="Ej. Maria Lopez"
                 required
               />
             </div>
             <div className="space-y-2">
               <Label htmlFor="email">Correo Electrónico</Label>
-              <Input 
-                id="email" 
+              <Input
+                id="email"
                 type="email"
-                value={formData.email} 
-                onChange={(e) => setFormData({ ...formData, email: e.target.value })} 
+                value={formData.email}
+                onChange={(e) => setFormData({ ...formData, email: e.target.value })}
                 placeholder="maria@example.com"
                 required
               />
             </div>
             <div className="space-y-2">
               <Label htmlFor="phone">Teléfono</Label>
-              <Input 
-                id="phone" 
-                value={formData.phone} 
-                onChange={(e) => setFormData({ ...formData, phone: e.target.value })} 
+              <Input
+                id="phone"
+                value={formData.phone}
+                onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
                 placeholder="+57 300 0000000"
               />
             </div>
             <div className="space-y-2">
               <Label htmlFor="role">Rol en el Sistema</Label>
-              <Select 
-                value={formData.role} 
+              <Select
+                value={formData.role}
                 onValueChange={(val) => setFormData({ ...formData, role: val as any })}
               >
                 <SelectTrigger>
@@ -626,7 +626,7 @@ export function AdminDashboard({
           </AlertDialogHeader>
           <AlertDialogFooter>
             <AlertDialogCancel disabled={isDeleting}>Cancelar</AlertDialogCancel>
-            <AlertDialogAction 
+            <AlertDialogAction
               onClick={(e) => {
                 e.preventDefault();
                 void deleteUser();
@@ -665,8 +665,8 @@ export function AdminDashboard({
             <div className="grid grid-cols-2 gap-6">
               <div className="space-y-2">
                 <Label className="text-xs font-bold uppercase tracking-widest text-[var(--ink-soft)]">Clienta</Label>
-                <Select 
-                  value={aptFormData.userId} 
+                <Select
+                  value={aptFormData.userId}
                   onValueChange={(val) => setAptFormData({ ...aptFormData, userId: val })}
                 >
                   <SelectTrigger className="h-12 border-[var(--line)] rounded-xl">
@@ -686,8 +686,8 @@ export function AdminDashboard({
               </div>
               <div className="space-y-2">
                 <Label className="text-xs font-bold uppercase tracking-widest text-[var(--ink-soft)]">Servicio</Label>
-                <Select 
-                  value={aptFormData.serviceId} 
+                <Select
+                  value={aptFormData.serviceId}
                   onValueChange={(val) => setAptFormData({ ...aptFormData, serviceId: val })}
                 >
                   <SelectTrigger className="h-12 border-[var(--line)] rounded-xl">
@@ -706,11 +706,11 @@ export function AdminDashboard({
                 </Select>
               </div>
             </div>
-            
+
             <div className="space-y-2">
               <Label className="text-xs font-bold uppercase tracking-widest text-[var(--ink-soft)]">Fecha y Hora de Inicio</Label>
               <div className="relative">
-                <Input 
+                <Input
                   type="datetime-local"
                   value={aptFormData.startAt}
                   onChange={(e) => setAptFormData({ ...aptFormData, startAt: e.target.value })}
@@ -754,7 +754,7 @@ export function AdminDashboard({
 
             <div className="space-y-2">
               <Label className="text-xs font-bold uppercase tracking-widest text-[var(--ink-soft)]">Notas del Staff</Label>
-              <textarea 
+              <textarea
                 className="w-full h-20 p-3 rounded-xl border border-[var(--line)] bg-white text-sm focus:ring-2 focus:ring-[var(--gold)] outline-none transition-all"
                 placeholder="Preferencias especiales, alergias o detalles de la reserva..."
                 value={aptFormData.notes}
@@ -785,7 +785,7 @@ export function AdminDashboard({
           </AlertDialogHeader>
           <AlertDialogFooter>
             <AlertDialogCancel disabled={isDeleting}>Volver</AlertDialogCancel>
-            <AlertDialogAction 
+            <AlertDialogAction
               onClick={(e) => {
                 e.preventDefault();
                 void deleteApt();
@@ -805,7 +805,7 @@ export function AdminDashboard({
           <div id="report-content" className="p-8 sm:p-12 bg-white relative">
             {/* Elegant Background Pattern (Visible in UI, subtle in PDF) */}
             <div className="absolute top-0 left-0 w-full h-32 bg-gradient-to-b from-[var(--gold-soft)]/10 to-transparent pointer-events-none no-print" />
-            
+
             <DialogHeader className="mb-10 relative z-10">
               <div className="flex items-center justify-between mb-6 no-print">
                 <div className="space-y-1">
@@ -817,7 +817,7 @@ export function AdminDashboard({
                   <p className="text-xs font-bold text-[var(--ink)]">{formatDate(new Date().toISOString())}</p>
                 </div>
               </div>
-              
+
               {/* PDF Header (Only visible in print) */}
               <div className="hidden print:flex items-center justify-between border-b-4 border-[var(--gold)] pb-8 mb-12">
                 <div>
@@ -835,7 +835,7 @@ export function AdminDashboard({
                 Informe ejecutivo consolidado con indicadores de rendimiento, facturación y métricas de fidelización de clientas.
               </DialogDescription>
             </DialogHeader>
-            
+
             <div className="space-y-12 relative z-10">
               {/* Stats Summary - More spaced out */}
               <div className="grid grid-cols-3 gap-6">
@@ -879,9 +879,9 @@ export function AdminDashboard({
                         <span className="font-display text-xl font-bold text-[var(--gold)]">{formatCurrency(svc.total)}</span>
                       </div>
                       <div className="h-3 w-full bg-white rounded-full overflow-hidden border border-[var(--line)] shadow-inner">
-                        <div 
-                          className="h-full bg-gradient-to-r from-[var(--gold-soft)] to-[var(--gold)] rounded-full transition-all duration-1000 ease-out" 
-                          style={{ width: `${(svc.total / (metrics.monthlyRevenue || 1)) * 100}%` }} 
+                        <div
+                          className="h-full bg-gradient-to-r from-[var(--gold-soft)] to-[var(--gold)] rounded-full transition-all duration-1000 ease-out"
+                          style={{ width: `${(svc.total / (metrics.monthlyRevenue || 1)) * 100}%` }}
                         />
                       </div>
                     </div>
@@ -908,8 +908,8 @@ export function AdminDashboard({
 
               {/* Download Options (STRICTLY HIDDEN IN PRINT) */}
               <div className="grid grid-cols-2 gap-4 no-print pt-6 border-t border-[var(--line)]">
-                <Button 
-                  variant="ghost" 
+                <Button
+                  variant="ghost"
                   className="h-28 flex flex-col gap-2 border-[var(--line)] hover:border-[var(--gold)] hover:bg-[var(--gold-soft)]/10 transition-all group rounded-2xl"
                   onClick={downloadPDF}
                 >
@@ -921,8 +921,8 @@ export function AdminDashboard({
                     <span className="text-[10px] text-[var(--ink-soft)] uppercase font-bold tracking-tighter">Documento de Impresión</span>
                   </div>
                 </Button>
-                <Button 
-                  variant="ghost" 
+                <Button
+                  variant="ghost"
                   className="h-28 flex flex-col gap-2 border-[var(--line)] hover:border-[var(--gold)] hover:bg-[var(--gold-soft)]/10 transition-all group rounded-2xl"
                   onClick={downloadCSV}
                 >
@@ -1061,7 +1061,7 @@ export function AdminDashboard({
                       <p className="text-[10px] font-bold uppercase tracking-widest text-white/40 mb-2">Total Productos</p>
                       <p className="text-3xl font-display font-bold">{products.length}</p>
                     </div>
-                    <Button 
+                    <Button
                       className="w-full bg-[var(--gold)] hover:bg-[var(--gold-soft)] text-[var(--ink)] font-bold"
                       onClick={() => setIsReportModalOpen(true)}
                     >
@@ -1084,8 +1084,8 @@ export function AdminDashboard({
                   <div className="flex gap-3 w-full md:w-auto">
                     <div className="relative w-full md:w-72">
                       <Search className="absolute left-3 top-1/2 -translate-y-1/2 size-4 text-[var(--ink-soft)]" />
-                      <Input 
-                        placeholder="Buscar clienta o servicio..." 
+                      <Input
+                        placeholder="Buscar clienta o servicio..."
                         className="pl-9 bg-white"
                         value={aptQuery}
                         onChange={(e) => setAptQuery(e.target.value)}
@@ -1122,7 +1122,7 @@ export function AdminDashboard({
                             </div>
                           </td>
                           <td className="px-6 py-4">
-                            <Badge variant="luxury" className="bg-[var(--quartz-soft)] border-none">
+                            <Badge variant="default" className="bg-[var(--quartz-soft)] border-none">
                               {services.find(s => s.id === apt.serviceId)?.name}
                             </Badge>
                           </td>
@@ -1151,7 +1151,7 @@ export function AdminDashboard({
                                 <DropdownMenuItem onClick={() => openEditAptModal(apt)}>Ver / Editar Detalles</DropdownMenuItem>
                                 <DropdownMenuItem onClick={() => openEditAptModal(apt)}>Reagendar</DropdownMenuItem>
                                 <DropdownMenuSeparator />
-                                <DropdownMenuItem 
+                                <DropdownMenuItem
                                   className="text-rose-600"
                                   onClick={() => setAptToDelete(apt.id)}
                                 >
@@ -1180,8 +1180,8 @@ export function AdminDashboard({
                   <div className="flex gap-3">
                     <div className="relative w-full md:w-64">
                       <Search className="absolute left-3 top-1/2 -translate-y-1/2 size-4 text-[var(--ink-soft)]" />
-                      <Input 
-                        placeholder="Buscar por nombre o email..." 
+                      <Input
+                        placeholder="Buscar por nombre o email..."
                         className="pl-9 bg-white"
                         value={userQuery}
                         onChange={(e) => setUserQuery(e.target.value)}
@@ -1219,12 +1219,12 @@ export function AdminDashboard({
                           <td className="px-6 py-4">
                             <Badge className={cn(
                               "font-bold",
-                              u.role === "ADMIN" ? "bg-indigo-50 text-indigo-700 border-indigo-100" : 
-                              u.role === "STAFF" ? "bg-emerald-50 text-emerald-700 border-emerald-100" : 
-                              "bg-zinc-50 text-zinc-600 border-zinc-100"
+                              u.role === "ADMIN" ? "bg-indigo-50 text-indigo-700 border-indigo-100" :
+                                u.role === "STAFF" ? "bg-emerald-50 text-emerald-700 border-emerald-100" :
+                                  "bg-zinc-50 text-zinc-600 border-zinc-100"
                             )}>
-                              {u.role === "ADMIN" ? <ShieldCheck className="mr-1 size-3" /> : 
-                               u.role === "STAFF" ? <Briefcase className="mr-1 size-3" /> : null}
+                              {u.role === "ADMIN" ? <ShieldCheck className="mr-1 size-3" /> :
+                                u.role === "STAFF" ? <Briefcase className="mr-1 size-3" /> : null}
                               {u.role}
                             </Badge>
                           </td>
@@ -1251,9 +1251,9 @@ export function AdminDashboard({
                                   <DropdownMenuItem onClick={() => updateRole(u.id, "USER")}>Hacer Usuario</DropdownMenuItem>
                                 </DropdownMenuContent>
                               </DropdownMenu>
-                              <Button 
-                                variant="ghost" 
-                                size="icon" 
+                              <Button
+                                variant="ghost"
+                                size="icon"
                                 className="size-8 text-rose-500 hover:bg-rose-50"
                                 onClick={() => setUserToDelete(u.id)}
                               >
@@ -1295,30 +1295,30 @@ export function AdminDashboard({
                           {schedule.isActive ? "Activo" : "Cerrado"}
                         </Badge>
                       </div>
-                      
+
                       <div className="flex items-center gap-4">
                         <div className="flex items-center gap-2">
                           <Clock className="size-4 text-[var(--ink-soft)]" />
-                          <Input 
-                            className="w-24 h-9 bg-white" 
+                          <Input
+                            className="w-24 h-9 bg-white"
                             type="time"
-                            value={schedule.startTime} 
+                            value={schedule.startTime}
                             onChange={(e) => handleScheduleTimeChange(schedule.id, "startTime", e.target.value)}
                           />
                         </div>
                         <span className="text-[var(--ink-soft)] font-medium">a</span>
                         <div className="flex items-center gap-2">
                           <Clock className="size-4 text-[var(--ink-soft)]" />
-                          <Input 
-                            className="w-24 h-9 bg-white" 
+                          <Input
+                            className="w-24 h-9 bg-white"
                             type="time"
-                            value={schedule.endTime} 
+                            value={schedule.endTime}
                             onChange={(e) => handleScheduleTimeChange(schedule.id, "endTime", e.target.value)}
                           />
                         </div>
-                        <Button 
-                          variant="ghost" 
-                          size="sm" 
+                        <Button
+                          variant="ghost"
+                          size="sm"
                           className={cn(
                             "ml-2 font-bold",
                             schedule.isActive ? "text-rose-600 hover:bg-rose-50" : "text-emerald-600 hover:bg-emerald-50"
