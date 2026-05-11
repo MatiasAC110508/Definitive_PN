@@ -604,7 +604,7 @@ export function AdminDashboard({
               </Select>
             </div>
             <DialogFooter>
-              <Button type="button" variant="outline" onClick={() => setIsUserModalOpen(false)}>
+              <Button type="button" variant="ghost" onClick={() => setIsUserModalOpen(false)}>
                 Cancelar
               </Button>
               <Button type="submit" variant="gold" disabled={isSubmitting}>
