@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { Cormorant_Garamond, Inter } from "next/font/google";
 import { SiteFooter } from "@/components/site-footer";
 import { SiteHeader } from "@/components/site-header";
-import { Toaster } from "@/components/ui/sonner";
+import { Toaster } from "sonner";
 import { AppProviders } from "@/presentation/providers/app-providers";
 import "./globals.css";
 
