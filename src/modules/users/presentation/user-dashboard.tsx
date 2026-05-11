@@ -419,7 +419,7 @@ export function UserDashboard({ appointments: initialAppointments, services, use
                               "mb-2 font-bold rounded-full",
                               appointment.status === "RESERVED" ? "bg-emerald-50 text-emerald-700 border-emerald-100" : "bg-amber-50 text-amber-700 border-amber-100"
                             )}
-                            variant="outline"
+                            variant="default"
                           >
                             {appointment.status === "RESERVED" ? <CheckCircle2 className="mr-1 size-3" /> : null}
                             {statusLabels[appointment.status as keyof typeof statusLabels]}
