@@ -1025,7 +1025,7 @@ export function AdminDashboard({
                         <Badge className={cn(
                           "text-[10px] font-bold",
                           apt.status === "RESERVED" ? "bg-emerald-50 text-emerald-700 border-emerald-100" : "bg-amber-50 text-amber-700 border-amber-100"
-                        )} variant="outline">
+                        )} variant="default">
                           {statusLabels[apt.status as keyof typeof statusLabels]}
                         </Badge>
                       </div>
@@ -1291,7 +1291,7 @@ export function AdminDashboard({
                         <div className="w-24 font-semibold text-[var(--ink)]">
                           {dayNames[schedule.dayOfWeek % 7]}
                         </div>
-                        <Badge variant={schedule.isActive ? "gold" : "outline"} className="w-20 justify-center">
+                        <Badge variant={schedule.isActive ? "gold" : "dark"} className="w-20 justify-center">
                           {schedule.isActive ? "Activo" : "Cerrado"}
                         </Badge>
                       </div>
