@@ -1,0 +1,130 @@
+@import "tailwindcss";
+
+:root {
+  --quartz: #fff8fb;
+  --quartz-soft: #f8edf2;
+  --rose: #f5c7d8;
+  --rose-deep: #be6d8d;
+  --gold: #c6a15b;
+  --gold-soft: #f1dfb3;
+  --ink: #121014;
+  --ink-soft: #4f4650;
+  --line: rgba(198, 161, 91, 0.28);
+  --glass: rgba(255, 255, 255, 0.68);
+  --shadow-soft: 0 24px 80px rgba(18, 16, 20, 0.1);
+  --shadow-gold: 0 18px 60px rgba(198, 161, 91, 0.18);
+  --font-body: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
+  --font-elegant: var(--font-cormorant), Georgia, serif;
+}
+
+@theme inline {
+  --color-background: var(--quartz);
+  --color-foreground: var(--ink);
+  --font-sans: var(--font-body);
+  --font-serif: var(--font-elegant);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  min-width: 320px;
+  font-family: var(--font-body);
+  background:
+    radial-gradient(circle at top left, rgba(245, 199, 216, 0.42), transparent 34rem),
+    linear-gradient(135deg, rgba(255, 255, 255, 0.94), rgba(248, 237, 242, 0.82)),
+    var(--quartz);
+}
+
+body::before {
+  pointer-events: none;
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  content: "";
+  opacity: 0.5;
+  background-image:
+    linear-gradient(115deg, transparent 0 44%, rgba(198, 161, 91, 0.1) 45%, transparent 47%),
+    linear-gradient(55deg, transparent 0 62%, rgba(190, 109, 141, 0.12) 63%, transparent 65%);
+  background-size: 360px 360px, 520px 520px;
+}
+
+a {
+  text-decoration-thickness: 0.08em;
+  text-underline-offset: 0.2em;
+}
+
+::selection {
+  background: rgba(198, 161, 91, 0.28);
+  color: var(--ink);
+}
+
+.font-display {
+  font-family: var(--font-elegant);
+}
+
+.marble-surface {
+  background:
+    linear-gradient(145deg, rgba(255, 255, 255, 0.94), rgba(248, 237, 242, 0.88)),
+    radial-gradient(circle at 12% 20%, rgba(245, 199, 216, 0.38), transparent 22rem),
+    radial-gradient(circle at 88% 4%, rgba(198, 161, 91, 0.22), transparent 20rem);
+  background-attachment: fixed;
+}
+
+.glass-card {
+  border: 1px solid rgba(255, 255, 255, 0.62);
+  background: rgba(255, 255, 255, 0.48);
+  box-shadow: var(--shadow-soft);
+  backdrop-filter: blur(14px);
+  transition: all 0.4s cubic-bezier(0.23, 1, 0.32, 1);
+}
+
+.glass-card:hover {
+  background: rgba(255, 255, 255, 0.68);
+  transform: translateY(-4px);
+  box-shadow: var(--shadow-gold);
+}
+
+.gold-glow {
+  filter: drop-shadow(0 0 12px rgba(198, 161, 91, 0.32));
+}
+
+.premium-border {
+  position: relative;
+  border: 1px solid var(--line);
+}
+
+.premium-border::after {
+  content: "";
+  position: absolute;
+  inset: -1px;
+  border: 1px solid transparent;
+  background: linear-gradient(135deg, var(--gold), transparent, var(--rose)) border-box;
+  mask: linear-gradient(#fff 0 0) padding-box, linear-gradient(#fff 0 0);
+  mask-composite: exclude;
+  opacity: 0.3;
+}
+
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+/* Animations */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.animate-fade-in {
+  animation: fadeIn 0.6s ease-out forwards;
+}
