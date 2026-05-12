@@ -12,6 +12,7 @@ export const authOptions: NextAuthOptions = {
   adapter: hasDatabaseConnectionString() ? PrismaAdapter(getPrismaClient()) : undefined,
   session: {
     strategy: "jwt",
+    maxAge: 30 * 24 * 60 * 60,
   },
   pages: {
     signIn: "/login",
