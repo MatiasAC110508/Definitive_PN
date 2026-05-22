@@ -1,5 +1,6 @@
 import type { Appointment, AppointmentSlot } from "@/domain/entities/appointment.entity";
 import type { Schedule } from "@/domain/entities/schedule.entity";
+import { zonedDateTimeToUtc } from "@/lib/business-time";
 
 /**
  * Domain Service responsible for calculating appointment availability.
@@ -33,7 +34,7 @@ export class AvailabilityService {
     // We generate potential starting slots every hour
     for (let hour = startHour; hour < endHour; hour++) {
       const timeLabel = `${hour.toString().padStart(2, "0")}:00`;
-      const startAt = new Date(`${date}T${timeLabel}:00.000`);
+      const startAt = zonedDateTimeToUtc(date, timeLabel);
       const endAt = new Date(startAt.getTime() + serviceDurationMinutes * 60000);
 
       // Rule: Cannot book slots in the past

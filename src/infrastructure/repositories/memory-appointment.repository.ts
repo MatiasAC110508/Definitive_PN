@@ -2,6 +2,7 @@ import type { Appointment, AppointmentSlot } from "@/domain/entities/appointment
 import type { AppointmentRepository } from "@/domain/repositories/appointment.repository";
 import { AvailabilityService } from "@/domain/services/availability.service";
 import { appointments, schedules, services } from "@/infrastructure/mock/perfect-nails-data";
+import { getDayOfWeekFromDateString } from "@/lib/business-time";
 
 const appointmentState = [...appointments];
 const availability = new AvailabilityService();
@@ -20,9 +21,8 @@ export class MemoryAppointmentRepository implements AppointmentRepository {
   }
 
   async getAvailability(date: string, serviceId?: string): Promise<AppointmentSlot[]> {
-    const dayOfWeek = new Date(date).getDay();
-    const normalizedDay = dayOfWeek === 0 ? 7 : dayOfWeek;
-    const schedule = schedules.find((s) => s.dayOfWeek === normalizedDay);
+    const dayOfWeek = getDayOfWeekFromDateString(date);
+    const schedule = schedules.find((s) => s.dayOfWeek === dayOfWeek);
     const service = services.find((s) => s.id === serviceId);
 
     if (!schedule) return [];

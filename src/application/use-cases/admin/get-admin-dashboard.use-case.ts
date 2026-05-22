@@ -63,8 +63,7 @@ export class GetAdminDashboardUseCase {
         satisfactionRate: 98,
       },
       recentAppointments: appointments
-        .sort((a, b) => new Date(b.startAt).getTime() - new Date(a.startAt).getTime())
-        .slice(0, 10),
+        .sort((a, b) => new Date(b.startAt).getTime() - new Date(a.startAt).getTime()),
       counts: {
         services: services.length,
         products: products.length,

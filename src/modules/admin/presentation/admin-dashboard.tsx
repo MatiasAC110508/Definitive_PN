@@ -67,6 +67,10 @@ import {
 } from "@/components/ui/select";
 import { formatCurrency, formatDate, formatTime } from "@/lib/formatters";
 import { cn } from "@/lib/utils";
+import {
+  businessDateTimeInputToIso,
+  formatDateTimeInputInBusinessTime,
+} from "@/lib/business-time";
 
 type Metrics = {
   monthlyRevenue: number;
@@ -309,7 +313,7 @@ export function AdminDashboard({
   const hasOverlap = useMemo(() => {
     if (!aptFormData.startAt || !aptFormData.serviceId) return false;
     const duration = services.find(s => s.id === aptFormData.serviceId)?.durationMinutes || 60;
-    const start = new Date(aptFormData.startAt).getTime();
+    const start = new Date(businessDateTimeInputToIso(aptFormData.startAt)).getTime();
     const end = start + duration * 60000;
 
     return appointments.some(a => {
@@ -326,7 +330,7 @@ export function AdminDashboard({
     setAptFormData({
       userId: users[0]?.id || "",
       serviceId: services[0]?.id || "",
-      startAt: new Date().toISOString().slice(0, 16),
+      startAt: formatDateTimeInputInBusinessTime(new Date()),
       notes: "",
       status: "RESERVED",
     });
@@ -338,7 +342,7 @@ export function AdminDashboard({
     setAptFormData({
       userId: apt.userId,
       serviceId: apt.serviceId,
-      startAt: apt.startAt.slice(0, 16),
+      startAt: formatDateTimeInputInBusinessTime(apt.startAt),
       notes: apt.notes || "",
       status: apt.status,
     });
@@ -353,10 +357,12 @@ export function AdminDashboard({
       const method = editingApt ? "PATCH" : "POST";
 
       const duration = services.find(s => s.id === aptFormData.serviceId)?.durationMinutes || 60;
-      const endAt = new Date(new Date(aptFormData.startAt).getTime() + duration * 60000).toISOString();
+      const startAt = businessDateTimeInputToIso(aptFormData.startAt);
+      const endAt = new Date(new Date(startAt).getTime() + duration * 60000).toISOString();
 
       const payload = {
         ...aptFormData,
+        startAt,
         endAt,
         durationMinutes: duration,
       };
@@ -746,7 +752,7 @@ export function AdminDashboard({
                     {formatCurrency(services.find(s => s.id === aptFormData.serviceId)?.price || 0)}
                   </p>
                   <p className="text-[10px] text-[var(--ink-soft)]">
-                    Finaliza: {aptFormData.startAt ? formatTime(new Date(new Date(aptFormData.startAt).getTime() + (services.find(s => s.id === aptFormData.serviceId)?.durationMinutes || 60) * 60000).toISOString()) : "--:--"}
+                    Finaliza: {aptFormData.startAt ? formatTime(new Date(new Date(businessDateTimeInputToIso(aptFormData.startAt)).getTime() + (services.find(s => s.id === aptFormData.serviceId)?.durationMinutes || 60) * 60000).toISOString()) : "--:--"}
                   </p>
                 </div>
               </div>

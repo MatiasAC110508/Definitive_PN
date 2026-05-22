@@ -2,6 +2,11 @@ import type { Appointment, AppointmentSlot } from "@/domain/entities/appointment
 import type { AppointmentRepository } from "@/domain/repositories/appointment.repository";
 import { AvailabilityService } from "@/domain/services/availability.service";
 import { getPrismaClient } from "@/infrastructure/database/prisma";
+import {
+  addDaysToDateString,
+  getDayOfWeekFromDateString,
+  zonedDateTimeToUtc,
+} from "@/lib/business-time";
 
 const availability = new AvailabilityService();
 
@@ -56,25 +61,21 @@ export class PrismaAppointmentRepository implements AppointmentRepository {
 
   async getAvailability(date: string, serviceId?: string): Promise<AppointmentSlot[]> {
     const prisma = getPrismaClient();
-    const dayStart = new Date(`${date}T00:00:00.000`);
-    const dayEnd = new Date(`${date}T23:59:59.999`);
-    
-    const dayOfWeek = new Date(date).getDay();
-    // Normalize JS dayOfWeek (0-6, Sun-Sat) to 1-7 (Mon-Sun) if necessary, 
-    // but the mock data uses 1-6 (Mon-Sat).
-    const normalizedDay = dayOfWeek === 0 ? 7 : dayOfWeek;
+    const dayStart = zonedDateTimeToUtc(date, "00:00");
+    const dayEnd = zonedDateTimeToUtc(addDaysToDateString(date, 1), "00:00");
+    const dayOfWeek = getDayOfWeekFromDateString(date);
 
     const [appointments, schedule, service] = await Promise.all([
       prisma.appointment.findMany({
         where: {
           startAt: {
             gte: dayStart,
-            lte: dayEnd,
+            lt: dayEnd,
           },
         },
       }),
       prisma.schedule.findFirst({
-        where: { dayOfWeek: normalizedDay, isActive: true },
+        where: { dayOfWeek, isActive: true },
       }),
       serviceId ? prisma.service.findUnique({ where: { id: serviceId } }) : null,
     ]);
