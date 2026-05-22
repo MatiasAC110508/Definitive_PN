@@ -10,7 +10,7 @@ import {
   services,
 } from "../src/infrastructure/mock/perfect-nails-data";
 
-const connectionString = process.env.DATABASE_URL;
+const connectionString = process.env.DIRECT_URL || process.env.DATABASE_URL;
 
 if (!connectionString) {
   throw new Error("DATABASE_URL is required to seed the database.");
