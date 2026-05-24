@@ -5,6 +5,7 @@ export type ServiceCategorySlug =
   | "nail-art"
   | "spa-de-unas"
   | "depilacion-laser"
+  | "hollywood-peeling"
   | "unas-premium"
   | "masajes";
 
@@ -18,4 +19,5 @@ export interface BeautyService {
   durationMinutes: number;
   imageUrl: string;
   isFeatured: boolean;
+  sessionPackages?: { sessions: number; price: number }[];
 }

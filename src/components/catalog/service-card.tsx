@@ -1,7 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import type { Route } from "next";
-import { Clock, Sparkles } from "lucide-react";
+import { Clock, Package, Sparkles } from "lucide-react";
 import type { BeautyService } from "@/domain/entities/service.entity";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -38,6 +38,29 @@ export function ServiceCard({ service }: { service: BeautyService }) {
           </div>
           <p className="mt-3 text-sm leading-6 text-[var(--ink-soft)]">{service.description}</p>
         </div>
+
+        {service.sessionPackages && service.sessionPackages.length > 0 ? (
+          <div className="rounded-lg border border-[var(--gold)]/20 bg-[var(--quartz-soft)] p-3">
+            <div className="mb-2 flex items-center gap-2 text-xs font-semibold uppercase tracking-wider text-[var(--gold)]">
+              <Package aria-hidden="true" className="size-3.5" />
+              Paquetes de sesiones
+            </div>
+            <div className="space-y-1">
+              {service.sessionPackages.map((pkg) => (
+                <div
+                  key={pkg.sessions}
+                  className="flex items-center justify-between text-xs text-[var(--ink-soft)]"
+                >
+                  <span>{pkg.sessions} sesiones</span>
+                  <span className="font-semibold text-[var(--ink)]">
+                    {formatCurrency(pkg.price)}
+                  </span>
+                </div>
+              ))}
+            </div>
+          </div>
+        ) : null}
+
         <div className="flex flex-wrap items-center gap-3 text-xs font-semibold text-[var(--ink-soft)]">
           <span className="inline-flex items-center gap-2 rounded-full bg-[var(--quartz-soft)] px-3 py-2">
             <Clock aria-hidden="true" className="size-4 text-[var(--gold)]" />
