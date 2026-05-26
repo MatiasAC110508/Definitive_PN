@@ -133,7 +133,7 @@ export function ServiceCatalogClient({ services }: ServiceCatalogClientProps) {
                 key={service.id}
                 className="w-full sm:w-[calc(50%-1rem)] lg:w-[calc(33.333%-1.7rem)] xl:w-[calc(25%-1.9rem)] max-w-[340px]"
               >
-                <Reveal delay={index * 0.05}>
+                <Reveal delay={index * 0.05} className="h-full">
                   <ServiceCard service={service} />
                 </Reveal>
               </div>
