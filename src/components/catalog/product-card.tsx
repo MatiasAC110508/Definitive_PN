@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import { ChevronDown, ChevronUp, ShoppingBag, Sparkles } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { toast } from "sonner";
 import type { Product } from "@/domain/entities/product.entity";
 import { Badge } from "@/components/ui/badge";
@@ -19,9 +19,18 @@ export function ProductCard({ product }: { product: Product }) {
   const isOutOfStock = product.stock <= 0;
   const isAtLimit = currentItem && currentItem.quantity >= product.stock;
   const [expanded, setExpanded] = useState(false);
+  const [isClamped, setIsClamped] = useState(false);
+  const descRef = useRef<HTMLParagraphElement>(null);
+
+  useEffect(() => {
+    const el = descRef.current;
+    if (el) {
+      setIsClamped(el.scrollHeight > el.clientHeight + 2);
+    }
+  }, [product.description]);
 
   return (
-    <Card className="group overflow-hidden">
+    <Card className="group flex h-full w-full flex-col overflow-hidden">
       <div className="relative aspect-[4/5] overflow-hidden">
         <Image
           src={product.imageUrl}
@@ -42,40 +51,45 @@ export function ProductCard({ product }: { product: Product }) {
           </Badge>
         )}
       </div>
-      <CardContent className="space-y-4 p-5">
-        <div>
+      <CardContent className="flex flex-1 flex-col space-y-4 p-5">
+        <div className="flex-1">
           <div className="flex items-start justify-between gap-3">
             <h3 className="font-display text-2xl font-semibold leading-7 text-[var(--ink)]">
               {product.name}
             </h3>
-            <span className="text-sm font-bold text-[var(--gold)]">
+            <span className="shrink-0 text-sm font-bold text-[var(--gold)]">
               {formatCurrency(product.price)}
             </span>
           </div>
           <div className="mt-3">
-            <p className={cn("text-sm leading-6 text-[var(--ink-soft)]", !expanded && "line-clamp-2")}>
+            <p
+              ref={descRef}
+              className={cn("text-sm leading-6 text-[var(--ink-soft)]", !expanded && "line-clamp-2")}
+            >
               {product.description}
             </p>
-            <button
-              type="button"
-              onClick={() => setExpanded((prev) => !prev)}
-              className="mt-1 inline-flex items-center gap-1 text-xs font-semibold text-[var(--gold)] transition hover:opacity-75"
-            >
-              {expanded ? (
-                <>
-                  <ChevronUp className="size-3.5" aria-hidden="true" />
-                  Ver menos
-                </>
-              ) : (
-                <>
-                  <ChevronDown className="size-3.5" aria-hidden="true" />
-                  Ver más
-                </>
-              )}
-            </button>
+            {isClamped && (
+              <button
+                type="button"
+                onClick={() => setExpanded((prev) => !prev)}
+                className="mt-1 inline-flex items-center gap-1 text-xs font-semibold text-[var(--gold)] transition hover:opacity-75"
+              >
+                {expanded ? (
+                  <>
+                    <ChevronUp className="size-3.5" aria-hidden="true" />
+                    Ver menos
+                  </>
+                ) : (
+                  <>
+                    <ChevronDown className="size-3.5" aria-hidden="true" />
+                    Ver más
+                  </>
+                )}
+              </button>
+            )}
           </div>
         </div>
-        <div className="flex items-center justify-between gap-3">
+        <div className="mt-auto flex items-center justify-between gap-3">
           <span className={cn(
             "inline-flex items-center gap-2 rounded-full px-3 py-2 text-xs font-semibold",
             isOutOfStock ? "bg-red-50 text-red-400" : "bg-[var(--quartz-soft)] text-[var(--ink-soft)]"

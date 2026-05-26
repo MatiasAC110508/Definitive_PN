@@ -62,6 +62,7 @@ export async function createAppointmentController(request: NextRequest) {
     const appointment = await useCase.execute(session.user.id, {
       serviceId: parsed.data.serviceId,
       startAt: parsed.data.startAt,
+      packageSessions: parsed.data.packageSessions,
       notes: parsed.data.notes ? sanitizeText(parsed.data.notes) : undefined,
     });
 

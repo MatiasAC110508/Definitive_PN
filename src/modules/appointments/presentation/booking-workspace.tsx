@@ -68,6 +68,7 @@ export function BookingWorkspace({ services, initialSlots, initialDate }: Bookin
   const [notes, setNotes] = useState("");
   const [loadingSlots, setLoadingSlots] = useState(false);
   const [submitting, setSubmitting] = useState(false);
+  const [selectedPackage, setSelectedPackage] = useState<number>(1);
 
   const selectedService = services.find((service) => service.id === selectedServiceId);
 
@@ -119,6 +120,11 @@ export function BookingWorkspace({ services, initialSlots, initialDate }: Bookin
     };
   }, [selectedDate, selectedServiceId]);
 
+  useEffect(() => {
+    // Reset package selection when changing service
+    setSelectedPackage(1);
+  }, [selectedServiceId]);
+
   function selectCategory(category: ServiceCategorySlug) {
     setSelectedCategory(category);
     setSelectedServiceId(services.find((service) => service.categorySlug === category)?.id ?? "");
@@ -143,6 +149,7 @@ export function BookingWorkspace({ services, initialSlots, initialDate }: Bookin
         serviceId: selectedService.id,
         startAt: selectedSlot.startAt,
         notes,
+        packageSessions: selectedPackage > 1 ? selectedPackage : undefined,
       }),
     });
 
@@ -230,6 +237,46 @@ export function BookingWorkspace({ services, initialSlots, initialDate }: Bookin
                 </div>
               </div>
             ) : null}
+
+            {selectedService?.categorySlug === "depilacion-laser" && selectedService.sessionPackages && selectedService.sessionPackages.length > 0 && (
+              <div className="space-y-3 pt-2">
+                <Label>Tipo de reserva</Label>
+                <div className="grid gap-3">
+                  <button
+                    type="button"
+                    onClick={() => setSelectedPackage(1)}
+                    className={cn(
+                      "premium-focus flex items-center justify-between rounded-lg border p-4 text-left transition",
+                      selectedPackage === 1
+                        ? "border-[var(--gold)] bg-[#fff7df]"
+                        : "border-[var(--line)] bg-white"
+                    )}
+                  >
+                    <span className="font-semibold text-sm">Sesión única</span>
+                    <span className="font-bold text-sm text-[var(--gold)]">{formatCurrency(selectedService.price)}</span>
+                  </button>
+                  {selectedService.sessionPackages.map((pkg) => (
+                    <button
+                      key={pkg.sessions}
+                      type="button"
+                      onClick={() => setSelectedPackage(pkg.sessions)}
+                      className={cn(
+                        "premium-focus flex items-center justify-between rounded-lg border p-4 text-left transition",
+                        selectedPackage === pkg.sessions
+                          ? "border-[var(--gold)] bg-[#fff7df]"
+                          : "border-[var(--line)] bg-white"
+                      )}
+                    >
+                      <div>
+                        <span className="font-semibold text-sm block">Paquete {pkg.sessions} sesiones</span>
+                        <span className="text-xs text-[var(--ink-soft)]">Incluye esta primera reserva</span>
+                      </div>
+                      <span className="font-bold text-sm text-[var(--gold)]">{formatCurrency(pkg.price)}</span>
+                    </button>
+                  ))}
+                </div>
+              </div>
+            )}
 
             <div className="space-y-2">
               <Label htmlFor="booking-notes">Notas para la especialista</Label>
@@ -342,7 +389,12 @@ export function BookingWorkspace({ services, initialSlots, initialDate }: Bookin
               <dl className="mt-4 grid gap-3 text-sm">
                 <div className="flex justify-between gap-4">
                   <dt className="text-[var(--ink-soft)]">Servicio</dt>
-                  <dd className="text-right font-semibold">{selectedService?.name ?? "Pendiente"}</dd>
+                  <dd className="text-right font-semibold">
+                    <span className="block">{selectedService?.name ?? "Pendiente"}</span>
+                    {selectedPackage > 1 && (
+                      <span className="block text-xs text-[var(--gold)] mt-0.5">Paquete de {selectedPackage} sesiones</span>
+                    )}
+                  </dd>
                 </div>
                 <div className="flex justify-between gap-4">
                   <dt className="text-[var(--ink-soft)]">Fecha</dt>

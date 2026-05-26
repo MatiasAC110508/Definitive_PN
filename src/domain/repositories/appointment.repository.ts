@@ -6,7 +6,7 @@ export interface AppointmentRepository {
   findAll(): Promise<Appointment[]>;
   getAvailability(date: string, serviceId?: string): Promise<AppointmentSlot[]>;
   findConflicts(startAt: string, endAt: string): Promise<Appointment[]>;
-  create(appointment: Omit<Appointment, "id" | "createdAt">): Promise<Appointment>;
+  create(appointment: Omit<Appointment, "id" | "createdAt"> & { packageSessions?: number }): Promise<Appointment>;
   updateStatus(id: string, status: Appointment["status"]): Promise<Appointment | null>;
   update(id: string, appointment: Partial<Omit<Appointment, "id" | "createdAt">>): Promise<Appointment | null>;
   delete(id: string): Promise<void>;

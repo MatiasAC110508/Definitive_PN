@@ -1,14 +1,29 @@
+"use client";
+
 import Image from "next/image";
 import Link from "next/link";
 import type { Route } from "next";
-import { Clock, Package, Sparkles } from "lucide-react";
+import { ChevronDown, ChevronUp, Clock, Package, Sparkles } from "lucide-react";
+import { useEffect, useRef, useState } from "react";
 import type { BeautyService } from "@/domain/entities/service.entity";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { formatCurrency } from "@/lib/formatters";
+import { cn } from "@/lib/utils";
 
 export function ServiceCard({ service }: { service: BeautyService }) {
+  const [expanded, setExpanded] = useState(false);
+  const [isClamped, setIsClamped] = useState(false);
+  const descRef = useRef<HTMLParagraphElement>(null);
+
+  useEffect(() => {
+    const el = descRef.current;
+    if (el) {
+      setIsClamped(el.scrollHeight > el.clientHeight + 2);
+    }
+  }, [service.description]);
+
   return (
     <Card className="group flex h-full w-full flex-col overflow-hidden">
       <div className="relative aspect-[4/3] overflow-hidden">
@@ -36,9 +51,36 @@ export function ServiceCard({ service }: { service: BeautyService }) {
               {formatCurrency(service.price)}
             </span>
           </div>
-          <p className="mt-3 text-sm leading-6 text-[var(--ink-soft)]">
-            {service.description}
-          </p>
+          <div className="mt-3">
+            <p
+              ref={descRef}
+              className={cn(
+                "text-sm leading-6 text-[var(--ink-soft)]",
+                !expanded && "line-clamp-2",
+              )}
+            >
+              {service.description}
+            </p>
+            {isClamped && (
+              <button
+                type="button"
+                onClick={() => setExpanded((prev) => !prev)}
+                className="mt-1 inline-flex items-center gap-1 text-xs font-semibold text-[var(--gold)] transition hover:opacity-75"
+              >
+                {expanded ? (
+                  <>
+                    <ChevronUp className="size-3.5" aria-hidden="true" />
+                    Ver menos
+                  </>
+                ) : (
+                  <>
+                    <ChevronDown className="size-3.5" aria-hidden="true" />
+                    Ver más
+                  </>
+                )}
+              </button>
+            )}
+          </div>
         </div>
 
         {service.sessionPackages && service.sessionPackages.length > 0 ? (

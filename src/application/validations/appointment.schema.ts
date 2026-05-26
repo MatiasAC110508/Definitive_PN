@@ -3,6 +3,7 @@ import { z } from "zod";
 export const createAppointmentSchema = z.object({
   serviceId: z.string().min(1, "Selecciona un servicio."),
   startAt: z.string().datetime("Selecciona un horario válido."),
+  packageSessions: z.number().int().min(1).max(24).optional(),
   notes: z.string().max(400, "Las notas no pueden superar 400 caracteres.").optional(),
 });
 

@@ -10,6 +10,7 @@ export interface Appointment {
   endAt: ISODateString;
   durationMinutes: number;
   status: Exclude<AppointmentStatus, "AVAILABLE">;
+  sessionPackageId?: string | null;
   notes?: string | null;
   createdAt: ISODateString;
 }

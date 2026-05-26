@@ -19,6 +19,7 @@ function toAppointment(record: {
   durationMinutes: number;
   status: string;
   notes: string | null;
+  sessionPackageId?: string | null;
   createdAt: Date;
 }): Appointment {
   return {
@@ -29,6 +30,7 @@ function toAppointment(record: {
     endAt: record.endAt.toISOString(),
     durationMinutes: record.durationMinutes,
     status: record.status as Appointment["status"],
+    sessionPackageId: record.sessionPackageId,
     notes: record.notes,
     createdAt: record.createdAt.toISOString(),
   };
@@ -113,8 +115,47 @@ export class PrismaAppointmentRepository implements AppointmentRepository {
     return records.map(toAppointment);
   }
 
-  async create(input: Omit<Appointment, "id" | "createdAt">): Promise<Appointment> {
+  async create(input: Omit<Appointment, "id" | "createdAt"> & { packageSessions?: number }): Promise<Appointment> {
     const prisma = getPrismaClient();
+    
+    // If it's a multi-session package, do a transaction
+    if (input.packageSessions && input.packageSessions > 1) {
+      // We need the service price to set pricePerPackage. 
+      // In a real app we'd determine exactly how much the package costs natively.
+      // Here we find the service to read the package price.
+      const service = await prisma.service.findUnique({ where: { id: input.serviceId } });
+      const pkgPrice = service?.price ?? 0;
+      
+      const result = await prisma.$transaction(async (tx) => {
+        const sessionPackage = await tx.sessionPackage.create({
+          data: {
+            userId: input.userId,
+            serviceId: input.serviceId,
+            totalSessions: input.packageSessions!,
+            usedSessions: 1,
+            pricePerPackage: pkgPrice, // Simplification
+          }
+        });
+
+        const record = await tx.appointment.create({
+          data: {
+            userId: input.userId,
+            serviceId: input.serviceId,
+            sessionPackageId: sessionPackage.id,
+            startAt: new Date(input.startAt),
+            endAt: new Date(input.endAt),
+            durationMinutes: input.durationMinutes,
+            status: input.status,
+            notes: input.notes,
+          },
+        });
+
+        return record;
+      });
+      return toAppointment(result);
+    }
+
+    // Standard creation
     const record = await prisma.appointment.create({
       data: {
         userId: input.userId,
