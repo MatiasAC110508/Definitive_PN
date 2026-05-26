@@ -51,68 +51,50 @@ export async function ServiceCatalogPage() {
         </div>
       </section>
 
-      <section className="bg-[var(--ink)] px-4 py-16 text-white sm:px-6 lg:px-8">
+      <section className="bg-[var(--quartz-soft)] px-4 py-16 sm:px-6 lg:px-8">
         <div className="mx-auto max-w-7xl">
           <Reveal>
             <div className="mx-auto max-w-3xl text-center">
               <p className="text-xs font-bold uppercase tracking-[0.32em] text-[var(--rose)]">
                 Precio lanzamiento
               </p>
-              <h2 className="mt-3 font-display text-4xl font-semibold leading-tight sm:text-5xl">
+              <h2 className="mt-3 font-display text-4xl font-semibold leading-tight text-[var(--ink)] sm:text-5xl">
                 Depilación láser luz diodo
               </h2>
-              <p className="mt-4 text-base leading-8 text-white/72">
+              <p className="mt-4 text-base leading-8 text-[var(--ink-soft)]">
                 Piel suave, sin vello y sin irritaciones con paquetes por zona para 5, 7 o 10 sesiones.
               </p>
             </div>
           </Reveal>
 
-          <div className="mt-10 grid gap-4 md:grid-cols-2 xl:grid-cols-3">
+          <div className="mt-10 flex flex-wrap justify-center gap-6">
             {laserLaunchServices.map((service, index) => (
-              <Reveal key={service.id} delay={index * 0.04}>
-                <div className="h-full rounded-lg border border-[var(--rose)]/45 bg-white/[0.06] p-5">
-                  <div className="flex items-start justify-between gap-4">
-                    <h3 className="font-display text-2xl font-semibold text-[var(--rose)]">
-                      {getLaserDisplayName(service.name)}
-                    </h3>
-                    <span className="shrink-0 rounded-full bg-[var(--rose)] px-3 py-1 text-sm font-bold text-[var(--ink)]">
-                      {formatCurrency(service.price)}
-                    </span>
-                  </div>
-                  <p className="mt-2 text-sm text-white/68">Sesión individual</p>
-
-                  {service.sessionPackages ? (
-                    <div className="mt-5 space-y-2 border-t border-dashed border-white/28 pt-4">
-                      {service.sessionPackages.map((pkg) => (
-                        <div key={pkg.sessions} className="flex items-center justify-between gap-4 text-sm">
-                          <span className="text-white/78">{pkg.sessions} sesiones</span>
-                          <span className="font-semibold text-[var(--rose)]">
-                            {formatCurrency(pkg.price)}
-                          </span>
-                        </div>
-                      ))}
-                    </div>
-                  ) : null}
-                </div>
+              <Reveal key={service.id} delay={index * 0.04} className="w-full max-w-[380px] md:w-[calc(50%-0.75rem)] xl:w-[calc(33.333%-1rem)]">
+                <ServiceCard
+                  service={{
+                    ...service,
+                    name: getLaserDisplayName(service.name),
+                  }}
+                />
               </Reveal>
             ))}
           </div>
 
           <Reveal delay={0.12}>
-            <div className="mt-8 rounded-lg border border-[var(--rose)]/50 bg-white/[0.06] p-5 sm:p-6">
+            <div className="mt-8 rounded-lg border border-[var(--gold)]/20 bg-white p-5 shadow-[var(--shadow-soft)] sm:p-6">
               <div className="grid gap-5 lg:grid-cols-[0.9fr_1.1fr] lg:items-center">
                 <div>
                   <p className="text-xs font-bold uppercase tracking-[0.28em] text-[var(--rose)]">
                     Tratamiento facial
                   </p>
-                  <h3 className="mt-2 font-display text-3xl font-semibold text-white">
+                  <h3 className="mt-2 font-display text-3xl font-semibold text-[var(--ink)]">
                     Hollywood Peeling
                   </h3>
                 </div>
                 <div className="grid gap-3 sm:grid-cols-2">
                   {hollywoodPeelingServices.map((service) => (
-                    <div key={service.id} className="rounded-lg bg-white/[0.08] p-4">
-                      <p className="text-sm font-medium text-white/78">{service.name}</p>
+                    <div key={service.id} className="rounded-lg border border-[var(--line)] bg-[var(--quartz-soft)] p-4">
+                      <p className="text-sm font-medium text-[var(--ink-soft)]">{service.name}</p>
                       <p className="mt-2 font-display text-3xl font-semibold text-[var(--rose)]">
                         {formatCurrency(service.price)}
                       </p>
@@ -126,9 +108,9 @@ export async function ServiceCatalogPage() {
           <div className="mt-8 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
             {laserBenefits.map((benefit, index) => (
               <Reveal key={benefit.label} delay={index * 0.04}>
-                <div className="flex h-full items-center gap-3 rounded-lg border border-white/12 bg-white/[0.06] px-4 py-3">
+                <div className="flex h-full items-center gap-3 rounded-lg border border-[var(--line)] bg-white px-4 py-3">
                   <benefit.icon aria-hidden="true" className="size-5 shrink-0 text-[var(--rose)]" />
-                  <span className="text-sm font-semibold text-white/82">{benefit.label}</span>
+                  <span className="text-sm font-semibold text-[var(--ink)]">{benefit.label}</span>
                 </div>
               </Reveal>
             ))}
@@ -147,9 +129,9 @@ export async function ServiceCatalogPage() {
         </div>
       </section>
 
-      <section className="mx-auto grid max-w-7xl gap-6 px-4 py-14 sm:px-6 md:grid-cols-2 lg:grid-cols-3 lg:px-8">
+      <section className="mx-auto flex max-w-7xl flex-wrap justify-center gap-6 px-4 py-14 sm:px-6 lg:px-8">
         {services.map((service, index) => (
-          <Reveal key={service.id} delay={index * 0.04}>
+          <Reveal key={service.id} delay={index * 0.04} className="w-full max-w-[380px] md:w-[calc(50%-0.75rem)] lg:w-[calc(33.333%-1rem)]">
             <ServiceCard service={service} />
           </Reveal>
         ))}

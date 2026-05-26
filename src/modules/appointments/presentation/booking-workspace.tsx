@@ -7,7 +7,7 @@ import { CalendarDays, CheckCircle2, Clock, Loader2, Sparkles } from "lucide-rea
 import { useEffect, useMemo, useState } from "react";
 import { toast } from "sonner";
 import type { AppointmentSlot, AppointmentStatus } from "@/domain/entities/appointment.entity";
-import type { BeautyService } from "@/domain/entities/service.entity";
+import type { BeautyService, ServiceCategorySlug } from "@/domain/entities/service.entity";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -39,12 +39,28 @@ const statusStyles: Record<AppointmentStatus, string> = {
   CANCELLED: "border-zinc-200 bg-zinc-50 text-zinc-500",
 };
 
+const categoryLabels: Record<ServiceCategorySlug, string> = {
+  "unas-acrilicas": "Uñas",
+  manicure: "Uñas",
+  pedicure: "Uñas",
+  "nail-art": "Uñas",
+  "spa-de-unas": "Uñas",
+  "unas-premium": "Uñas",
+  masajes: "Masajes",
+  "depilacion-laser": "Depilación",
+  "hollywood-peeling": "Hollywood Peeling",
+};
+
 export function BookingWorkspace({ services, initialSlots, initialDate }: BookingWorkspaceProps) {
   const searchParams = useSearchParams();
   const router = useRouter();
   const { data: session } = useSession();
   const defaultServiceId = searchParams.get("serviceId") ?? services[0]?.id ?? "";
-  const [selectedServiceId, setSelectedServiceId] = useState(defaultServiceId);
+  const defaultService = services.find((service) => service.id === defaultServiceId) ?? services[0];
+  const [selectedServiceId, setSelectedServiceId] = useState(defaultService?.id ?? "");
+  const [selectedCategory, setSelectedCategory] = useState<ServiceCategorySlug | "">(
+    defaultService?.categorySlug ?? "",
+  );
   const [selectedDate, setSelectedDate] = useState(initialDate);
   const [selectedSlot, setSelectedSlot] = useState<AppointmentSlot | null>(null);
   const [slots, setSlots] = useState(initialSlots);
@@ -54,6 +70,19 @@ export function BookingWorkspace({ services, initialSlots, initialDate }: Bookin
   const [submitting, setSubmitting] = useState(false);
 
   const selectedService = services.find((service) => service.id === selectedServiceId);
+
+  const serviceCategories = useMemo(() => {
+    return Array.from(new Set(services.map((service) => service.categorySlug))).map((slug) => ({
+      slug,
+      label: categoryLabels[slug],
+    }));
+  }, [services]);
+
+  const subservices = useMemo(() => {
+    return selectedCategory
+      ? services.filter((service) => service.categorySlug === selectedCategory)
+      : services;
+  }, [selectedCategory, services]);
 
   const weekDays = useMemo(() => {
     const start = new Date(`${selectedDate}T00:00:00`);
@@ -89,6 +118,11 @@ export function BookingWorkspace({ services, initialSlots, initialDate }: Bookin
       active = false;
     };
   }, [selectedDate, selectedServiceId]);
+
+  function selectCategory(category: ServiceCategorySlug) {
+    setSelectedCategory(category);
+    setSelectedServiceId(services.find((service) => service.categorySlug === category)?.id ?? "");
+  }
 
   async function confirmBooking() {
     if (!selectedService || !selectedSlot) {
@@ -147,13 +181,29 @@ export function BookingWorkspace({ services, initialSlots, initialDate }: Bookin
           </CardHeader>
           <CardContent className="space-y-5">
             <div className="space-y-2">
-              <Label>Selecciona un servicio</Label>
-              <Select value={selectedServiceId} onValueChange={setSelectedServiceId}>
+              <Label>Tipo de servicio</Label>
+              <Select value={selectedCategory} onValueChange={(value) => selectCategory(value as ServiceCategorySlug)}>
                 <SelectTrigger>
-                  <SelectValue placeholder="Elige servicio" />
+                  <SelectValue placeholder="Elige una categoría" />
                 </SelectTrigger>
                 <SelectContent>
-                  {services.map((service) => (
+                  {serviceCategories.map((category) => (
+                    <SelectItem key={category.slug} value={category.slug}>
+                      {category.label}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+
+            <div className="space-y-2">
+              <Label>Opción</Label>
+              <Select value={selectedServiceId} onValueChange={setSelectedServiceId}>
+                <SelectTrigger>
+                  <SelectValue placeholder="Elige una opción" />
+                </SelectTrigger>
+                <SelectContent>
+                  {subservices.map((service) => (
                     <SelectItem key={service.id} value={service.id}>
                       {service.name}
                     </SelectItem>

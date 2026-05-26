@@ -11,7 +11,6 @@ import { Separator } from "@/components/ui/separator";
 import { CatalogApplicationService } from "@/application/services/catalog-application.service";
 import { businessMetrics, reviews } from "@/infrastructure/mock/perfect-nails-data";
 import { getProductRepository, getServiceRepository } from "@/infrastructure/repositories/repository-factory";
-import { formatCurrency } from "@/lib/formatters";
 import { Reveal } from "@/presentation/components/motion/reveal";
 
 const benefits = [
@@ -119,9 +118,13 @@ export async function LandingPage() {
             description="Cada servicio combina técnica, higiene, diseño y una sensación de cuidado privado."
           />
         </Reveal>
-        <div className="mx-auto mt-10 grid max-w-7xl gap-6 md:grid-cols-2 lg:grid-cols-4">
+        <div className="mx-auto mt-10 flex max-w-7xl flex-wrap justify-center gap-6">
           {featuredServices.slice(0, 4).map((service, index) => (
-            <Reveal key={service.id} delay={index * 0.06}>
+            <Reveal
+              key={service.id}
+              delay={index * 0.06}
+              className="w-full max-w-[320px] md:w-[calc(50%-0.75rem)] lg:w-[calc(25%-1.125rem)]"
+            >
               <ServiceCard service={service} />
             </Reveal>
           ))}
@@ -169,9 +172,13 @@ export async function LandingPage() {
             description="Productos pensados para completar tu ritual: ropa femenina, cosméticos y cuidado diario."
           />
         </Reveal>
-        <div className="mx-auto mt-10 grid max-w-7xl gap-6 md:grid-cols-2 lg:grid-cols-4">
+        <div className="mx-auto mt-10 flex max-w-7xl flex-wrap justify-center gap-6">
           {featuredProducts.slice(0, 4).map((product, index) => (
-            <Reveal key={product.id} delay={index * 0.06}>
+            <Reveal
+              key={product.id}
+              delay={index * 0.06}
+              className="w-full max-w-[320px] md:w-[calc(50%-0.75rem)] lg:w-[calc(25%-1.125rem)]"
+            >
               <ProductCard product={product} />
             </Reveal>
           ))}
