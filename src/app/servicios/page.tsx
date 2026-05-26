@@ -2,9 +2,9 @@ import type { Metadata } from "next";
 import { ServiceCatalogPage } from "@/modules/services/presentation/service-catalog-page";
 
 export const metadata: Metadata = {
-  title: "Servicios de uñas",
+  title: "Servicios de belleza",
   description:
-    "Explora uñas acrílicas, manicure, pedicure, nail art y spa de uñas con reserva online.",
+    "Explora depilación láser diodo, Hollywood Peeling, uñas premium y masajes con reserva online.",
 };
 
 export default function ServicesPage() {

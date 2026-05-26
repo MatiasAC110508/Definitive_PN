@@ -1,6 +1,7 @@
 import type { BeautyService, ServiceCategorySlug } from "@/domain/entities/service.entity";
 import type { ServiceRepository } from "@/domain/repositories/service.repository";
 import { getPrismaClient } from "@/infrastructure/database/prisma";
+import { services as serviceCatalog } from "@/infrastructure/mock/perfect-nails-data";
 
 function toService(record: {
   id: string;
@@ -13,6 +14,8 @@ function toService(record: {
   imageUrl: string;
   isFeatured: boolean;
 }): BeautyService {
+  const catalogService = serviceCatalog.find((service) => service.slug === record.slug);
+
   return {
     id: record.id,
     name: record.name,
@@ -23,6 +26,7 @@ function toService(record: {
     durationMinutes: record.durationMinutes,
     imageUrl: record.imageUrl,
     isFeatured: record.isFeatured,
+    sessionPackages: catalogService?.sessionPackages,
   };
 }
 
