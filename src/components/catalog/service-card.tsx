@@ -3,7 +3,8 @@
 import Image from "next/image";
 import Link from "next/link";
 import type { Route } from "next";
-import { Clock, Package, Sparkles } from "lucide-react";
+import { ChevronDown, ChevronUp, Clock, Package, Sparkles } from "lucide-react";
+import { useState } from "react";
 import type { BeautyService } from "@/domain/entities/service.entity";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -12,8 +13,7 @@ import { formatCurrency } from "@/lib/formatters";
 import { cn } from "@/lib/utils";
 
 export function ServiceCard({ service }: { service: BeautyService }) {
-  // Removed expand logic to prevent cards from changing sizes
-
+  const [showPackages, setShowPackages] = useState(false);
 
   return (
     <Card className="group flex h-full w-full flex-col overflow-hidden">
@@ -50,24 +50,45 @@ export function ServiceCard({ service }: { service: BeautyService }) {
         </div>
 
         {service.sessionPackages && service.sessionPackages.length > 0 ? (
-          <div className="rounded-lg border border-[var(--gold)]/20 bg-[var(--quartz-soft)] p-3">
-            <div className="mb-2 flex items-center gap-2 text-xs font-semibold uppercase tracking-wider text-[var(--gold)]">
-              <Package aria-hidden="true" className="size-3.5" />
-              Paquetes de sesiones
-            </div>
-            <div className="space-y-1">
-              {service.sessionPackages.map((pkg) => (
-                <div
-                  key={pkg.sessions}
-                  className="flex items-center justify-between text-xs text-[var(--ink-soft)]"
-                >
-                  <span>{pkg.sessions} sesiones</span>
-                  <span className="font-semibold text-[var(--ink)]">
-                    {formatCurrency(pkg.price)}
-                  </span>
-                </div>
-              ))}
-            </div>
+          <div className="rounded-lg border border-[var(--gold)]/20 bg-[var(--quartz-soft)] p-3 pointer-events-auto">
+            <button
+              onClick={(e) => {
+                e.preventDefault();
+                setShowPackages(!showPackages);
+              }}
+              className="flex w-full items-center justify-between text-xs font-semibold uppercase tracking-wider text-[var(--gold)] hover:opacity-80 transition-opacity"
+            >
+              <div className="flex items-center gap-2">
+                <Package aria-hidden="true" className="size-3.5" />
+                {service.sessionPackages[service.sessionPackages.length - 1].sessions} sesiones
+              </div>
+              <div className="flex items-center gap-1 text-[10px]">
+                {showPackages ? (
+                  <>
+                    Ver menos <ChevronUp className="size-3" />
+                  </>
+                ) : (
+                  <>
+                    Ver más <ChevronDown className="size-3" />
+                  </>
+                )}
+              </div>
+            </button>
+            {showPackages && (
+              <div className="space-y-1 mt-3 pt-3 border-t border-[var(--gold)]/10">
+                {service.sessionPackages.map((pkg) => (
+                  <div
+                    key={pkg.sessions}
+                    className="flex items-center justify-between text-xs text-[var(--ink-soft)]"
+                  >
+                    <span>{pkg.sessions} sesiones</span>
+                    <span className="font-semibold text-[var(--ink)]">
+                      {formatCurrency(pkg.price)}
+                    </span>
+                  </div>
+                ))}
+              </div>
+            )}
           </div>
         ) : null}
 
