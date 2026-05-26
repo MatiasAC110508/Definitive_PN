@@ -45,9 +45,9 @@ const categoryLabels: Record<ServiceCategorySlug, string> = {
   pedicure: "Uñas",
   "nail-art": "Uñas",
   "spa-de-unas": "Uñas",
-  "unas-premium": "Uñas",
-  masajes: "Masajes",
-  "depilacion-laser": "Depilación",
+  "unas-premium": "Uñas Premium",
+  masajes: "Masajes y Relajación",
+  "depilacion-laser": "Depilación Láser",
   "hollywood-peeling": "Hollywood Peeling",
 };
 
