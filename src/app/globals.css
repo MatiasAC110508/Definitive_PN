@@ -119,6 +119,31 @@ a {
   scrollbar-width: none;
 }
 
+.catalog-scrollbar {
+  scrollbar-color: rgba(198, 161, 91, 0.7) rgba(255, 255, 255, 0.72);
+  scrollbar-width: thin;
+}
+
+.catalog-scrollbar::-webkit-scrollbar {
+  width: 0.65rem;
+  height: 0.65rem;
+}
+
+.catalog-scrollbar::-webkit-scrollbar-track {
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.72);
+}
+
+.catalog-scrollbar::-webkit-scrollbar-thumb {
+  border: 2px solid rgba(255, 255, 255, 0.72);
+  border-radius: 999px;
+  background: rgba(198, 161, 91, 0.82);
+}
+
+.catalog-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: var(--gold);
+}
+
 /* Animations */
 @keyframes fadeIn {
   from { opacity: 0; transform: translateY(10px); }

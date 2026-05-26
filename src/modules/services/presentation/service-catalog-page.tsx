@@ -67,9 +67,13 @@ export async function ServiceCatalogPage() {
             </div>
           </Reveal>
 
-          <div className="mt-10 flex flex-wrap justify-center gap-6">
+          <div className="catalog-scrollbar -mx-4 mt-10 flex snap-x gap-6 overflow-x-auto px-4 pb-5">
             {laserLaunchServices.map((service, index) => (
-              <Reveal key={service.id} delay={index * 0.04} className="w-full max-w-[380px] md:w-[calc(50%-0.75rem)] xl:w-[calc(33.333%-1rem)]">
+              <Reveal
+                key={service.id}
+                delay={index * 0.04}
+                className="w-[min(84vw,380px)] shrink-0 snap-start"
+              >
                 <ServiceCard
                   service={{
                     ...service,
@@ -95,7 +99,7 @@ export async function ServiceCatalogPage() {
                   {hollywoodPeelingServices.map((service) => (
                     <div key={service.id} className="rounded-lg border border-[var(--line)] bg-[var(--quartz-soft)] p-4">
                       <p className="text-sm font-medium text-[var(--ink-soft)]">{service.name}</p>
-                      <p className="mt-2 font-display text-3xl font-semibold text-[var(--rose)]">
+                      <p className="mt-2 font-display text-3xl font-semibold text-[var(--rose-deep)]">
                         {formatCurrency(service.price)}
                       </p>
                     </div>
@@ -129,12 +133,18 @@ export async function ServiceCatalogPage() {
         </div>
       </section>
 
-      <section className="mx-auto flex max-w-7xl flex-wrap justify-center gap-6 px-4 py-14 sm:px-6 lg:px-8">
-        {services.map((service, index) => (
-          <Reveal key={service.id} delay={index * 0.04} className="w-full max-w-[380px] md:w-[calc(50%-0.75rem)] lg:w-[calc(33.333%-1rem)]">
-            <ServiceCard service={service} />
-          </Reveal>
-        ))}
+      <section className="px-4 py-14 sm:px-6 lg:px-8">
+        <div className="catalog-scrollbar mx-auto flex max-w-7xl snap-x gap-6 overflow-x-auto pb-5">
+          {services.map((service, index) => (
+            <Reveal
+              key={service.id}
+              delay={index * 0.04}
+              className="w-[min(84vw,380px)] shrink-0 snap-start"
+            >
+              <ServiceCard service={service} />
+            </Reveal>
+          ))}
+        </div>
       </section>
     </div>
   );
