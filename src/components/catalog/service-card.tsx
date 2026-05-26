@@ -1,10 +1,7 @@
-"use client";
-
 import Image from "next/image";
 import Link from "next/link";
 import type { Route } from "next";
-import { ChevronDown, ChevronUp, Clock, Package, Sparkles } from "lucide-react";
-import { useState } from "react";
+import { Clock, Package, Sparkles } from "lucide-react";
 import type { BeautyService } from "@/domain/entities/service.entity";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -12,8 +9,6 @@ import { Card, CardContent } from "@/components/ui/card";
 import { formatCurrency } from "@/lib/formatters";
 
 export function ServiceCard({ service }: { service: BeautyService }) {
-  const [expanded, setExpanded] = useState(false);
-
   return (
     <Card className="group flex h-full w-full flex-col overflow-hidden">
       <div className="relative aspect-[4/3] overflow-hidden">
@@ -33,40 +28,17 @@ export function ServiceCard({ service }: { service: BeautyService }) {
       </div>
       <CardContent className="flex flex-1 flex-col space-y-5 p-5">
         <div>
-          <div className="flex items-center justify-between gap-3">
-            <h3 className="font-display text-2xl font-semibold text-[var(--ink)]">
+          <div className="flex items-start justify-between gap-3">
+            <h3 className="font-display text-xl font-semibold leading-snug text-[var(--ink)]">
               {service.name}
             </h3>
-            <span className="text-sm font-bold text-[var(--gold)]">
+            <span className="shrink-0 text-sm font-bold text-[var(--gold)]">
               {formatCurrency(service.price)}
             </span>
           </div>
-
-          {/* Description with expand/collapse */}
-          <div className="mt-3">
-            <p
-              className={`text-sm leading-6 text-[var(--ink-soft)] ${expanded ? "" : "line-clamp-3"}`}
-            >
-              {service.description}
-            </p>
-            <button
-              type="button"
-              onClick={() => setExpanded((prev) => !prev)}
-              className="mt-1 inline-flex items-center gap-1 text-xs font-semibold text-[var(--gold)] transition hover:opacity-75"
-            >
-              {expanded ? (
-                <>
-                  <ChevronUp className="size-3.5" aria-hidden="true" />
-                  Ver menos
-                </>
-              ) : (
-                <>
-                  <ChevronDown className="size-3.5" aria-hidden="true" />
-                  Ver más
-                </>
-              )}
-            </button>
-          </div>
+          <p className="mt-3 text-sm leading-6 text-[var(--ink-soft)]">
+            {service.description}
+          </p>
         </div>
 
         {service.sessionPackages && service.sessionPackages.length > 0 ? (

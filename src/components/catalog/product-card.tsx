@@ -1,7 +1,8 @@
 "use client";
 
 import Image from "next/image";
-import { ShoppingBag, Sparkles } from "lucide-react";
+import { ChevronDown, ChevronUp, ShoppingBag, Sparkles } from "lucide-react";
+import { useState } from "react";
 import { toast } from "sonner";
 import type { Product } from "@/domain/entities/product.entity";
 import { Badge } from "@/components/ui/badge";
@@ -17,6 +18,7 @@ export function ProductCard({ product }: { product: Product }) {
   const currentItem = cartItems.find((item) => item.id === product.id);
   const isOutOfStock = product.stock <= 0;
   const isAtLimit = currentItem && currentItem.quantity >= product.stock;
+  const [expanded, setExpanded] = useState(false);
 
   return (
     <Card className="group overflow-hidden">
@@ -50,7 +52,28 @@ export function ProductCard({ product }: { product: Product }) {
               {formatCurrency(product.price)}
             </span>
           </div>
-          <p className="mt-3 text-sm leading-6 text-[var(--ink-soft)] line-clamp-2">{product.description}</p>
+          <div className="mt-3">
+            <p className={cn("text-sm leading-6 text-[var(--ink-soft)]", !expanded && "line-clamp-2")}>
+              {product.description}
+            </p>
+            <button
+              type="button"
+              onClick={() => setExpanded((prev) => !prev)}
+              className="mt-1 inline-flex items-center gap-1 text-xs font-semibold text-[var(--gold)] transition hover:opacity-75"
+            >
+              {expanded ? (
+                <>
+                  <ChevronUp className="size-3.5" aria-hidden="true" />
+                  Ver menos
+                </>
+              ) : (
+                <>
+                  <ChevronDown className="size-3.5" aria-hidden="true" />
+                  Ver más
+                </>
+              )}
+            </button>
+          </div>
         </div>
         <div className="flex items-center justify-between gap-3">
           <span className={cn(
@@ -63,7 +86,7 @@ export function ProductCard({ product }: { product: Product }) {
           <Button
             type="button"
             size="sm"
-            disabled={isOutOfStock || isAtLimit}
+            disabled={isOutOfStock || !!isAtLimit}
             onClick={() => {
               if (isAtLimit) {
                 toast.error(`No hay más unidades de ${product.name} disponibles.`);

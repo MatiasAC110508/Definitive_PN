@@ -70,6 +70,12 @@ async function main() {
     });
   }
 
+  // Remove services from DB that are no longer in the mock data
+  const validSlugs = services.map((s) => s.slug);
+  await prisma.service.deleteMany({
+    where: { slug: { notIn: validSlugs } },
+  });
+
   for (const service of services) {
     const category = await prisma.category.findUniqueOrThrow({
       where: { slug: service.categorySlug },
