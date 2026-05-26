@@ -55,7 +55,7 @@ export async function ServiceCatalogPage() {
         <div className="mx-auto max-w-7xl">
           <Reveal>
             <div className="mx-auto max-w-3xl text-center">
-              <p className="text-xs font-bold uppercase tracking-[0.32em] text-[var(--rose)]">
+              <p className="text-xs font-bold uppercase tracking-[0.32em] text-[var(--rose-deep)]">
                 Precio lanzamiento
               </p>
               <h2 className="mt-3 font-display text-4xl font-semibold leading-tight text-[var(--ink)] sm:text-5xl">
@@ -67,12 +67,12 @@ export async function ServiceCatalogPage() {
             </div>
           </Reveal>
 
-          <div className="catalog-scrollbar -mx-4 mt-10 flex snap-x gap-6 overflow-x-auto px-4 pb-5">
+          <div className="catalog-scrollbar -mx-4 mt-10 flex snap-x gap-6 overflow-x-auto px-4 pb-5 items-stretch">
             {laserLaunchServices.map((service, index) => (
               <Reveal
                 key={service.id}
                 delay={index * 0.04}
-                className="w-[min(84vw,380px)] shrink-0 snap-start"
+                className="w-[min(84vw,380px)] shrink-0 snap-start flex"
               >
                 <ServiceCard
                   service={{
@@ -88,7 +88,7 @@ export async function ServiceCatalogPage() {
             <div className="mt-8 rounded-lg border border-[var(--gold)]/20 bg-white p-5 shadow-[var(--shadow-soft)] sm:p-6">
               <div className="grid gap-5 lg:grid-cols-[0.9fr_1.1fr] lg:items-center">
                 <div>
-                  <p className="text-xs font-bold uppercase tracking-[0.28em] text-[var(--rose)]">
+                  <p className="text-xs font-bold uppercase tracking-[0.28em] text-[var(--rose-deep)]">
                     Tratamiento facial
                   </p>
                   <h3 className="mt-2 font-display text-3xl font-semibold text-[var(--ink)]">
@@ -113,7 +113,7 @@ export async function ServiceCatalogPage() {
             {laserBenefits.map((benefit, index) => (
               <Reveal key={benefit.label} delay={index * 0.04}>
                 <div className="flex h-full items-center gap-3 rounded-lg border border-[var(--line)] bg-white px-4 py-3">
-                  <benefit.icon aria-hidden="true" className="size-5 shrink-0 text-[var(--rose)]" />
+                  <benefit.icon aria-hidden="true" className="size-5 shrink-0 text-[var(--rose-deep)]" />
                   <span className="text-sm font-semibold text-[var(--ink)]">{benefit.label}</span>
                 </div>
               </Reveal>
@@ -134,12 +134,12 @@ export async function ServiceCatalogPage() {
       </section>
 
       <section className="px-4 py-14 sm:px-6 lg:px-8">
-        <div className="catalog-scrollbar mx-auto flex max-w-7xl snap-x gap-6 overflow-x-auto pb-5">
+        <div className="catalog-scrollbar mx-auto flex max-w-7xl snap-x gap-6 overflow-x-auto pb-5 items-stretch">
           {services.map((service, index) => (
             <Reveal
               key={service.id}
               delay={index * 0.04}
-              className="w-[min(84vw,380px)] shrink-0 snap-start"
+              className="w-[min(84vw,380px)] shrink-0 snap-start flex"
             >
               <ServiceCard service={service} />
             </Reveal>

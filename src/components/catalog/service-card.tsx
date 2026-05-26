@@ -10,7 +10,7 @@ import { formatCurrency } from "@/lib/formatters";
 
 export function ServiceCard({ service }: { service: BeautyService }) {
   return (
-    <Card className="group overflow-hidden">
+    <Card className="group flex h-full w-full flex-col overflow-hidden">
       <div className="relative aspect-[4/3] overflow-hidden">
         <Image
           src={service.imageUrl}
@@ -26,7 +26,7 @@ export function ServiceCard({ service }: { service: BeautyService }) {
           </Badge>
         ) : null}
       </div>
-      <CardContent className="space-y-5 p-5">
+      <CardContent className="flex flex-1 flex-col space-y-5 p-5">
         <div>
           <div className="flex items-center justify-between gap-3">
             <h3 className="font-display text-2xl font-semibold text-[var(--ink)]">
@@ -36,7 +36,9 @@ export function ServiceCard({ service }: { service: BeautyService }) {
               {formatCurrency(service.price)}
             </span>
           </div>
-          <p className="mt-3 text-sm leading-6 text-[var(--ink-soft)]">{service.description}</p>
+          <p className="mt-3 line-clamp-3 text-sm leading-6 text-[var(--ink-soft)]" title={service.description}>
+            {service.description}
+          </p>
         </div>
 
         {service.sessionPackages && service.sessionPackages.length > 0 ? (
@@ -61,7 +63,7 @@ export function ServiceCard({ service }: { service: BeautyService }) {
           </div>
         ) : null}
 
-        <div className="flex flex-wrap items-center gap-3 text-xs font-semibold text-[var(--ink-soft)]">
+        <div className="mt-auto flex flex-wrap items-center gap-3 text-xs font-semibold text-[var(--ink-soft)]">
           <span className="inline-flex items-center gap-2 rounded-full bg-[var(--quartz-soft)] px-3 py-2">
             <Clock aria-hidden="true" className="size-4 text-[var(--gold)]" />
             {service.durationMinutes} min
