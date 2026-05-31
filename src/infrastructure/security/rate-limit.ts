@@ -144,7 +144,7 @@ async function checkRedisRateLimit(
 export async function checkRateLimit(key: string, limit = 8, windowMs = 60_000) {
   const hasRedisConfig = Boolean(getRedisConfig());
 
-  if (!hasRedisConfig && process.env.NODE_ENV !== "production") {
+  if (!hasRedisConfig) {
     return checkMemoryRateLimit(key, limit, windowMs);
   }
 
@@ -153,10 +153,6 @@ export async function checkRateLimit(key: string, limit = 8, windowMs = 60_000) 
   } catch (error) {
     console.error("Rate limit backend unavailable:", error);
 
-    if (process.env.NODE_ENV !== "production") {
-      return checkMemoryRateLimit(key, limit, windowMs);
-    }
-
-    return getDeniedResult("RATE_LIMIT_BACKEND_UNAVAILABLE", windowMs);
+    return checkMemoryRateLimit(key, limit, windowMs);
   }
 }
