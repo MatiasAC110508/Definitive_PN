@@ -1,9 +1,10 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 import { usePathname } from "next/navigation";
 import { signOut, useSession } from "next-auth/react";
-import { CalendarDays, Gem, Menu, ShoppingBag, UserRound, X } from "lucide-react";
+import { CalendarDays, Menu, ShoppingBag, UserRound, X } from "lucide-react";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
@@ -11,6 +12,7 @@ import { useCartStore } from "@/shared/store/cart.store";
 import { CartSheet } from "./cart-sheet";
 
 const navigation = [
+  { label: "Inicio", href: "/" },
   { label: "Servicios", href: "/servicios" },
   { label: "Catálogo", href: "/catalogo" },
   { label: "Reservar", href: "/reservar" },
@@ -21,30 +23,48 @@ export function SiteHeader() {
   const pathname = usePathname();
   const [open, setOpen] = useState(false);
   const { data: session } = useSession();
-  const { totalItems: countItems, isOpen: cartOpen, setIsOpen: setCartOpen } = useCartStore();
+  const {
+    totalItems: countItems,
+    isOpen: cartOpen,
+    setIsOpen: setCartOpen,
+  } = useCartStore();
   const totalItems = countItems();
 
   return (
     <>
       <header className="fixed inset-x-0 top-0 z-40 border-b border-white/40 bg-white/[0.72] backdrop-blur-2xl">
         <div className="mx-auto flex h-[4.5rem] max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
-          <Link href="/" className="premium-focus flex items-center gap-3 rounded-full">
-            <span className="flex size-10 items-center justify-center rounded-full border border-[var(--line)] bg-white shadow-sm">
-              <Gem aria-hidden="true" className="size-5 text-[var(--gold)]" />
+          <Link
+            href="/"
+            className="premium-focus flex items-center gap-3 rounded-full"
+          >
+            <span className="flex size-10 items-center justify-center rounded-full border border-[var(--line)] bg-white shadow-sm overflow-hidden">
+              <Image
+                src="/logo.jpg"
+                alt="Perfect Nails Logo"
+                width={40}
+                height={40}
+                className="size-10 rounded-full object-cover"
+                priority
+              />
             </span>
             <span className="font-display text-2xl font-semibold tracking-wide text-[var(--ink)]">
               Perfect Nails
             </span>
           </Link>
 
-          <nav className="hidden items-center gap-1 lg:flex" aria-label="Principal">
+          <nav
+            className="hidden items-center gap-1 lg:flex"
+            aria-label="Principal"
+          >
             {navigation.map((item) => (
               <Link
                 key={item.href}
                 href={item.href}
                 className={cn(
                   "premium-focus rounded-full px-4 py-2 text-sm font-semibold text-[var(--ink-soft)] transition hover:bg-white hover:text-[var(--ink)]",
-                  pathname === item.href && "bg-white text-[var(--ink)] shadow-sm",
+                  pathname === item.href &&
+                    "bg-white text-[var(--ink)] shadow-sm",
                 )}
               >
                 {item.label}
@@ -55,7 +75,8 @@ export function SiteHeader() {
                 href="/admin"
                 className={cn(
                   "premium-focus rounded-full px-4 py-2 text-sm font-semibold text-[var(--ink-soft)] transition hover:bg-white hover:text-[var(--ink)]",
-                  pathname === "/admin" && "bg-white text-[var(--ink)] shadow-sm",
+                  pathname === "/admin" &&
+                    "bg-white text-[var(--ink)] shadow-sm",
                 )}
               >
                 Administración
@@ -80,7 +101,11 @@ export function SiteHeader() {
 
             <div className="hidden items-center gap-2 lg:flex">
               {session?.user ? (
-                <Button variant="luxury" size="sm" onClick={() => void signOut()}>
+                <Button
+                  variant="luxury"
+                  size="sm"
+                  onClick={() => void signOut()}
+                >
                   <UserRound aria-hidden="true" />
                   Salir
                 </Button>
@@ -103,7 +128,11 @@ export function SiteHeader() {
               onClick={() => setOpen((value) => !value)}
               aria-label={open ? "Cerrar menú" : "Abrir menú"}
             >
-              {open ? <X aria-hidden="true" className="size-5" /> : <Menu aria-hidden="true" className="size-5" />}
+              {open ? (
+                <X aria-hidden="true" className="size-5" />
+              ) : (
+                <Menu aria-hidden="true" className="size-5" />
+              )}
             </button>
           </div>
         </div>
@@ -132,7 +161,10 @@ export function SiteHeader() {
               ) : null}
               <div className="mt-2 grid grid-cols-2 gap-2">
                 <Button asChild variant="luxury">
-                  <Link href={session?.user ? "/panel" : "/login"} onClick={() => setOpen(false)}>
+                  <Link
+                    href={session?.user ? "/panel" : "/login"}
+                    onClick={() => setOpen(false)}
+                  >
                     {session?.user ? "Mi cuenta" : "Ingresar"}
                   </Link>
                 </Button>

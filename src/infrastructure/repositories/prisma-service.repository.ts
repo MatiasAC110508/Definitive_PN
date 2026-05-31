@@ -1,7 +1,6 @@
 import type { BeautyService, ServiceCategorySlug } from "@/domain/entities/service.entity";
 import type { ServiceRepository } from "@/domain/repositories/service.repository";
 import { getPrismaClient } from "@/infrastructure/database/prisma";
-import { services as serviceCatalog } from "@/infrastructure/mock/perfect-nails-data";
 
 function toService(record: {
   id: string;
@@ -13,8 +12,12 @@ function toService(record: {
   durationMinutes: number;
   imageUrl: string;
   isFeatured: boolean;
+  sessionPackages?: unknown;
 }): BeautyService {
-  const catalogService = serviceCatalog.find((service) => service.slug === record.slug);
+  let sessionPackages: { sessions: number; price: number }[] | undefined;
+  if (Array.isArray(record.sessionPackages)) {
+    sessionPackages = record.sessionPackages as { sessions: number; price: number }[];
+  }
 
   return {
     id: record.id,
@@ -26,7 +29,7 @@ function toService(record: {
     durationMinutes: record.durationMinutes,
     imageUrl: record.imageUrl,
     isFeatured: record.isFeatured,
-    sessionPackages: catalogService?.sessionPackages,
+    sessionPackages,
   };
 }
 
@@ -37,7 +40,6 @@ export class PrismaServiceRepository implements ServiceRepository {
       include: { category: true },
       orderBy: { name: "asc" },
     });
-
     return records.map(toService);
   }
 
@@ -48,7 +50,6 @@ export class PrismaServiceRepository implements ServiceRepository {
       include: { category: true },
       take: 4,
     });
-
     return records.map(toService);
   }
 
@@ -58,7 +59,6 @@ export class PrismaServiceRepository implements ServiceRepository {
       where: { id },
       include: { category: true },
     });
-
     return record ? toService(record) : null;
   }
 
@@ -68,7 +68,62 @@ export class PrismaServiceRepository implements ServiceRepository {
       where: { category: { slug: categorySlug } },
       include: { category: true },
     });
-
     return records.map(toService);
+  }
+
+  async create(data: Omit<BeautyService, "id">): Promise<BeautyService> {
+    const prisma = getPrismaClient();
+    const category = await prisma.serviceCategory.findUniqueOrThrow({
+      where: { slug: data.categorySlug },
+    });
+    const record = await prisma.service.create({
+      data: {
+        name: data.name,
+        slug: data.slug,
+        description: data.description,
+        price: data.price,
+        durationMinutes: data.durationMinutes,
+        imageUrl: data.imageUrl,
+        isFeatured: data.isFeatured ?? false,
+        sessionPackages: data.sessionPackages ? JSON.stringify(data.sessionPackages) : undefined,
+        categoryId: category.id,
+      },
+      include: { category: true },
+    });
+    return toService(record as unknown as Parameters<typeof toService>[0]);
+  }
+
+  async update(id: string, data: Partial<BeautyService>): Promise<BeautyService> {
+    const prisma = getPrismaClient();
+    let categoryId: string | undefined;
+    if (data.categorySlug) {
+      const category = await prisma.serviceCategory.findUniqueOrThrow({
+        where: { slug: data.categorySlug },
+      });
+      categoryId = category.id;
+    }
+    const record = await prisma.service.update({
+      where: { id },
+      data: {
+        ...(data.name ? { name: data.name } : {}),
+        ...(data.slug ? { slug: data.slug } : {}),
+        ...(data.description ? { description: data.description } : {}),
+        ...(data.price !== undefined ? { price: data.price } : {}),
+        ...(data.durationMinutes !== undefined ? { durationMinutes: data.durationMinutes } : {}),
+        ...(data.imageUrl ? { imageUrl: data.imageUrl } : {}),
+        ...(data.isFeatured !== undefined ? { isFeatured: data.isFeatured } : {}),
+        ...(data.sessionPackages !== undefined
+          ? { sessionPackages: JSON.stringify(data.sessionPackages) }
+          : {}),
+        ...(categoryId ? { categoryId } : {}),
+      },
+      include: { category: true },
+    });
+    return toService(record as unknown as Parameters<typeof toService>[0]);
+  }
+
+  async delete(id: string): Promise<void> {
+    const prisma = getPrismaClient();
+    await prisma.service.delete({ where: { id } });
   }
 }

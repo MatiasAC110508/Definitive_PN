@@ -8,6 +8,31 @@ import { sanitizeText } from "@/infrastructure/security/sanitize";
 import { getCurrentSession } from "@/lib/auth";
 import { apiError, created, ok, validationError } from "@/presentation/http/api-response";
 
+function getErrorMessage(error: unknown, fallback: string) {
+  return error instanceof Error && error.message ? error.message : fallback;
+}
+
+function getCreateAppointmentErrorResponse(error: unknown) {
+  if (!(error instanceof Error)) return null;
+
+  switch (error.message) {
+    case "SERVICE_NOT_FOUND":
+      return { message: "El servicio seleccionado no existe.", status: 404 };
+    case "PAST_DATE_NOT_ALLOWED":
+      return { message: "No puedes reservar una fecha pasada.", status: 400 };
+    case "INVALID_APPOINTMENT_DATE":
+      return { message: "Selecciona un horario válido.", status: 400 };
+    case "BUSINESS_CLOSED":
+      return { message: "El negocio no está abierto en ese día.", status: 400 };
+    case "APPOINTMENT_OUTSIDE_BUSINESS_HOURS":
+      return { message: "La reserva debe estar dentro del horario de atención.", status: 400 };
+    case "SLOT_ALREADY_BOOKED":
+      return { message: "Ese horario ya no está disponible.", status: 409 };
+    default:
+      return null;
+  }
+}
+
 export async function listAppointmentsController() {
   const session = await getCurrentSession();
 
@@ -40,7 +65,11 @@ export async function createAppointmentController(request: NextRequest) {
   }
 
   const ip = request.headers.get("x-forwarded-for") ?? session.user.id;
-  const limit = checkRateLimit(`appointment:${ip}`, 10, 60_000);
+  const limit = await checkRateLimit(`appointment:${ip}`, 10, 60_000);
+
+  if (limit.error) {
+    return apiError("No pudimos validar el límite de reservas. Inténtalo de nuevo.", 503);
+  }
 
   if (!limit.allowed) {
     return apiError("Demasiadas reservas en poco tiempo. Inténtalo de nuevo.", 429);
@@ -68,10 +97,13 @@ export async function createAppointmentController(request: NextRequest) {
 
     return created({ appointment });
   } catch (error) {
-    if (error instanceof Error && error.message === "SERVICE_NOT_FOUND") {
-      return apiError("El servicio seleccionado no existe.", 404);
+    const expectedError = getCreateAppointmentErrorResponse(error);
+
+    if (expectedError) {
+      return apiError(expectedError.message, expectedError.status);
     }
 
+    console.error("Error creating appointment:", error);
     return apiError("No pudimos crear la reserva.", 500);
   }
 }
@@ -121,9 +153,9 @@ export async function updateAppointmentController(request: NextRequest, id: stri
     }
 
     return apiError("No se proporcionaron cambios.", 400);
-  } catch (error: any) {
+  } catch (error) {
     console.error("Error updating appointment:", error);
-    return apiError(error.message || "Error interno al actualizar cita.", 500);
+    return apiError(getErrorMessage(error, "Error interno al actualizar cita."), 500);
   }
 }
 
@@ -153,8 +185,8 @@ export async function deleteAppointmentController(request: NextRequest, id: stri
 
     await repository.delete(id);
     return ok({ message: "Registro eliminado." });
-  } catch (error: any) {
+  } catch (error) {
     console.error("Error deleting appointment:", error);
-    return apiError(error.message || "Error interno al eliminar registro.", 500);
+    return apiError(getErrorMessage(error, "Error interno al eliminar registro."), 500);
   }
 }

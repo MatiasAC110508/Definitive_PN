@@ -1,10 +1,11 @@
-export const dynamic = 'force-dynamic';
+export const dynamic = "force-dynamic";
 import type { Metadata } from "next";
 import { Cormorant_Garamond, Inter } from "next/font/google";
 import { SiteFooter } from "@/components/site-footer";
 import { SiteHeader } from "@/components/site-header";
 import { Toaster } from "sonner";
 import { AppProviders } from "@/presentation/providers/app-providers";
+import { CookieBanner } from "@/components/cookie-banner";
 import "./globals.css";
 
 const inter = Inter({
@@ -72,13 +73,26 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="es" className={`${inter.variable} ${cormorant.variable}`}>
-      <body className="min-h-screen bg-[var(--quartz)] text-[var(--ink)] antialiased">
+    <html
+      lang="es"
+      className={`${inter.variable} ${cormorant.variable}`}
+      suppressHydrationWarning
+    >
+      <body
+        className="min-h-screen bg-[var(--quartz)] text-[var(--ink)] antialiased"
+        suppressHydrationWarning
+      >
         <AppProviders>
           <SiteHeader />
           <main className="min-h-screen">{children}</main>
           <SiteFooter />
-          <Toaster position="bottom-right" richColors closeButton duration={3000} />
+          <CookieBanner />
+          <Toaster
+            position="bottom-right"
+            richColors
+            closeButton
+            duration={3000}
+          />
         </AppProviders>
       </body>
     </html>

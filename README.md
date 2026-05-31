@@ -9,8 +9,9 @@ A high-end, luxury web application for **Perfect Nails**, a beauty and wellness 
 The project is built following **Clean Architecture** and **Domain-Driven Design (DDD)** principles. This separation of concerns ensures that business logic remains independent of the UI and database implementation.
 
 ### Folder Structure
-- **`src/domain`**: The core of the application. Contains business entities (e.g., `Appointment`, `User`) and Repository Interfaces that define how data should be handled without specifying the implementation.
-- **`src/application`**: Implements the Use Case pattern. Each business action (e.g., `CreateAppointment`, `RegisterUser`) has its own use case class. This layer orchestrates the domain entities.
+
+- **`src/domain`**: The core of the application. Contains business entities (e.g., `Appointment`, `User`, `Sale`) and Repository Interfaces that define how data should be handled without specifying the implementation.
+- **`src/application`**: Implements the Use Case pattern. Each business action (e.g., `CreateAppointment`, `RegisterSale`) has its own use case class. This layer orchestrates the domain entities.
 - **`src/infrastructure`**: External world implementations.
   - `database/prisma`: PostgreSQL persistence.
   - `repositories`: Concrete implementations of domain interfaces using Prisma or Memory (for testing).
@@ -18,6 +19,15 @@ The project is built following **Clean Architecture** and **Domain-Driven Design
 - **`src/modules`**: Feature-sliced UI components (e.g., `landing`, `appointments`, `admin`).
 - **`src/presentation`**: Shared controllers and HTTP helpers (API route logic).
 - **`src/app`**: Next.js 15+ App Router file-system routing.
+
+---
+
+## ✨ Features
+
+- **Advanced Booking System**: Clean interface for users to book laser and beauty appointments.
+- **Product & Service Catalogs**: Dynamic, responsive catalogs with robust filtering.
+- **Complete Admin Dashboard**: Comprehensive suite to manage Products, Services, Appointments, Schedules, Users, and an exclusive **Sales Tracker** feature to easily register external or WhatsApp sales manually.
+- **Legal Compliance**: Fully integrated Privacy Policy, Terms of Service, Legal Notice, and dynamic Cookie Consent Banner.
 
 ---
 
@@ -35,23 +45,28 @@ The project is built following **Clean Architecture** and **Domain-Driven Design
 ## 🚀 Installation & Setup
 
 ### Prerequisites
+
 - Node.js 20+
 - PostgreSQL database
 - `.env` file with `DATABASE_URL` and `NEXTAUTH_SECRET`
 
 ### Steps
+
 1. **Clone the repository**:
+
    ```bash
    git clone <repository-url>
    cd perfectNails
    ```
 
 2. **Install dependencies**:
+
    ```bash
    npm install
    ```
 
 3. **Database Setup**:
+
    ```bash
    npx prisma generate
    npx prisma db push
@@ -67,19 +82,21 @@ The project is built following **Clean Architecture** and **Domain-Driven Design
 
 ## 👤 Admin Access
 
-To review the administrative dashboard and metrics (including revenue), use the following credentials:
+The seed script no longer ships with default admin credentials. To create the initial administrator, set these variables locally or in your deployment secrets before running `npm run db:seed`:
 
-- **Email**: `admin@perfectnails.co`
-- **Password**: `Perfect123!`
+```bash
+SEED_ADMIN_EMAIL="owner@example.com"
+SEED_ADMIN_PASSWORD="" # set locally, minimum 12 characters
+SEED_ADMIN_NAME="Perfect Nails Admin"
+SEED_ADMIN_PHONE=""
+```
 
-*Note: The monthly revenue metric is strictly restricted to the Admin role and is not visible to regular users or staff.*
+Do not commit real credentials. The monthly revenue metric is strictly restricted to the Admin role and is not visible to regular users or staff.
 
 ---
 
 ## 🎨 Aesthetics
+
 - **Marble & Gold**: Custom CSS tokens in `globals.css` for a premium look.
 - **Glassmorphism**: Backdrop blur effects for cards and overlays.
 - **Smooth Motion**: Powered by **Framer Motion** for an editorial feel.
-# Perfect-Nails
-# Definitive_PN
-# Definitive_PN

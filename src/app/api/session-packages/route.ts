@@ -1,9 +1,8 @@
-import { NextRequest } from "next/server";
 import { getPrismaClient } from "@/infrastructure/database/prisma";
 import { getCurrentSession } from "@/lib/auth";
 import { apiError, ok } from "@/presentation/http/api-response";
 
-export async function GET(request: NextRequest) {
+export async function GET() {
   try {
     const session = await getCurrentSession();
 
@@ -21,7 +20,7 @@ export async function GET(request: NextRequest) {
     });
 
     return ok({ packages });
-  } catch (error: any) {
+  } catch (error) {
     console.error("Error fetching session packages:", error);
     return apiError("Error interno al obtener los paquetes.", 500);
   }

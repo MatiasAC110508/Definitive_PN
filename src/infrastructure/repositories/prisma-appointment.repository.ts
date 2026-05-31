@@ -1,14 +1,40 @@
+import { Prisma } from "@prisma/client";
 import type { Appointment, AppointmentSlot } from "@/domain/entities/appointment.entity";
 import type { AppointmentRepository } from "@/domain/repositories/appointment.repository";
 import { AvailabilityService } from "@/domain/services/availability.service";
 import { getPrismaClient } from "@/infrastructure/database/prisma";
 import {
   addDaysToDateString,
+  formatDateTimeInputInBusinessTime,
   getDayOfWeekFromDateString,
   zonedDateTimeToUtc,
 } from "@/lib/business-time";
 
 const availability = new AvailabilityService();
+const APPOINTMENT_WRITE_CONFLICT_CODE = "P2034";
+
+function parseAppointmentDate(value: string) {
+  const date = new Date(value);
+
+  if (Number.isNaN(date.getTime())) {
+    throw new Error("INVALID_APPOINTMENT_DATE");
+  }
+
+  return date;
+}
+
+function getBusinessDate(value: Date) {
+  return formatDateTimeInputInBusinessTime(value).split("T")[0];
+}
+
+function isPrismaWriteConflict(error: unknown) {
+  return (
+    typeof error === "object" &&
+    error !== null &&
+    "code" in error &&
+    (error as { code?: unknown }).code === APPOINTMENT_WRITE_CONFLICT_CODE
+  );
+}
 
 function toAppointment(record: {
   id: string;
@@ -33,6 +59,22 @@ function toAppointment(record: {
     sessionPackageId: record.sessionPackageId,
     notes: record.notes,
     createdAt: record.createdAt.toISOString(),
+  };
+}
+
+function toSchedule(record: {
+  id: string;
+  dayOfWeek: number;
+  startTime: string;
+  endTime: string;
+  isActive: boolean;
+}) {
+  return {
+    id: record.id,
+    dayOfWeek: record.dayOfWeek,
+    startTime: record.startTime,
+    endTime: record.endTime,
+    isActive: record.isActive,
   };
 }
 
@@ -87,13 +129,7 @@ export class PrismaAppointmentRepository implements AppointmentRepository {
     return availability.buildDailySlots(
       date,
       appointments.map(toAppointment),
-      {
-        id: schedule.id,
-        dayOfWeek: schedule.dayOfWeek,
-        startTime: schedule.startTime,
-        endTime: schedule.endTime,
-        isActive: schedule.isActive,
-      },
+      toSchedule(schedule),
       service?.durationMinutes ?? 60
     );
   }
@@ -103,12 +139,8 @@ export class PrismaAppointmentRepository implements AppointmentRepository {
     const records = await prisma.appointment.findMany({
       where: {
         status: { not: "CANCELLED" },
-        OR: [
-          {
-            startAt: { lt: new Date(endAt) },
-            endAt: { gt: new Date(startAt) },
-          },
-        ],
+        startAt: { lt: new Date(endAt) },
+        endAt: { gt: new Date(startAt) },
       },
     });
 
@@ -117,58 +149,89 @@ export class PrismaAppointmentRepository implements AppointmentRepository {
 
   async create(input: Omit<Appointment, "id" | "createdAt"> & { packageSessions?: number }): Promise<Appointment> {
     const prisma = getPrismaClient();
-    
-    // If it's a multi-session package, do a transaction
-    if (input.packageSessions && input.packageSessions > 1) {
-      // We need the service price to set pricePerPackage. 
-      // In a real app we'd determine exactly how much the package costs natively.
-      // Here we find the service to read the package price.
-      const service = await prisma.service.findUnique({ where: { id: input.serviceId } });
-      const pkgPrice = service?.price ?? 0;
-      
-      const result = await prisma.$transaction(async (tx) => {
-        const sessionPackage = await tx.sessionPackage.create({
-          data: {
-            userId: input.userId,
-            serviceId: input.serviceId,
-            totalSessions: input.packageSessions!,
-            usedSessions: 1,
-            pricePerPackage: pkgPrice, // Simplification
+    const startAt = parseAppointmentDate(input.startAt);
+    const endAt = parseAppointmentDate(input.endAt);
+    const businessDate = getBusinessDate(startAt);
+    const dayOfWeek = getDayOfWeekFromDateString(businessDate);
+    const lockKey = `appointments:${businessDate}`;
+
+    try {
+      const result = await prisma.$transaction(
+        async (tx) => {
+          await tx.$executeRaw`SELECT pg_advisory_xact_lock(hashtext(${lockKey})::bigint)`;
+
+          const [service, schedule, conflict] = await Promise.all([
+            tx.service.findUnique({ where: { id: input.serviceId } }),
+            tx.schedule.findFirst({ where: { dayOfWeek, isActive: true } }),
+            tx.appointment.findFirst({
+              where: {
+                status: { not: "CANCELLED" },
+                startAt: { lt: endAt },
+                endAt: { gt: startAt },
+              },
+            }),
+          ]);
+
+          if (!service) {
+            throw new Error("SERVICE_NOT_FOUND");
           }
-        });
 
-        const record = await tx.appointment.create({
-          data: {
-            userId: input.userId,
-            serviceId: input.serviceId,
-            sessionPackageId: sessionPackage.id,
-            startAt: new Date(input.startAt),
-            endAt: new Date(input.endAt),
-            durationMinutes: input.durationMinutes,
-            status: input.status,
-            notes: input.notes,
-          },
-        });
+          availability.assertWithinBusinessHours(startAt, endAt, schedule ? toSchedule(schedule) : null);
 
-        return record;
-      });
+          if (conflict) {
+            throw new Error("SLOT_ALREADY_BOOKED");
+          }
+
+          const packageSessions = input.packageSessions;
+
+          if (packageSessions && packageSessions > 1) {
+            const sessionPackage = await tx.sessionPackage.create({
+              data: {
+                userId: input.userId,
+                serviceId: input.serviceId,
+                totalSessions: packageSessions,
+                usedSessions: 1,
+                pricePerPackage: service.price,
+              },
+            });
+
+            return tx.appointment.create({
+              data: {
+                userId: input.userId,
+                serviceId: input.serviceId,
+                sessionPackageId: sessionPackage.id,
+                startAt,
+                endAt,
+                durationMinutes: input.durationMinutes,
+                status: input.status,
+                notes: input.notes,
+              },
+            });
+          }
+
+          return tx.appointment.create({
+            data: {
+              userId: input.userId,
+              serviceId: input.serviceId,
+              startAt,
+              endAt,
+              durationMinutes: input.durationMinutes,
+              status: input.status,
+              notes: input.notes,
+            },
+          });
+        },
+        { isolationLevel: Prisma.TransactionIsolationLevel.Serializable },
+      );
+
       return toAppointment(result);
+    } catch (error) {
+      if (isPrismaWriteConflict(error)) {
+        throw new Error("SLOT_ALREADY_BOOKED");
+      }
+
+      throw error;
     }
-
-    // Standard creation
-    const record = await prisma.appointment.create({
-      data: {
-        userId: input.userId,
-        serviceId: input.serviceId,
-        startAt: new Date(input.startAt),
-        endAt: new Date(input.endAt),
-        durationMinutes: input.durationMinutes,
-        status: input.status,
-        notes: input.notes,
-      },
-    });
-
-    return toAppointment(record);
   }
 
   async updateStatus(id: string, status: Appointment["status"]): Promise<Appointment | null> {

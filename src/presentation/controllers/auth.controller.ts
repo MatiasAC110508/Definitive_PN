@@ -6,12 +6,16 @@ import { getUserRepository } from "@/infrastructure/repositories/repository-fact
 import { bcryptPasswordHasher } from "@/infrastructure/security/password";
 import { checkRateLimit } from "@/infrastructure/security/rate-limit";
 import { sanitizeText } from "@/infrastructure/security/sanitize";
-import { mockEmailService } from "@/infrastructure/notifications/mock-email.service";
+import { getEmailService } from "@/infrastructure/notifications/email-factory";
 import { apiError, created, ok, validationError } from "@/presentation/http/api-response";
 
 export async function registerController(request: NextRequest) {
   const ip = request.headers.get("x-forwarded-for") ?? "local";
-  const limit = checkRateLimit(`register:${ip}`, 5, 60_000);
+  const limit = await checkRateLimit(`register:${ip}`, 5, 60_000);
+
+  if (limit.error) {
+    return apiError("No pudimos validar el límite de intentos. Inténtalo de nuevo.", 503);
+  }
 
   if (!limit.allowed) {
     return apiError("Demasiados intentos. Inténtalo de nuevo en un minuto.", 429);
@@ -33,8 +37,8 @@ export async function registerController(request: NextRequest) {
       password: parsed.data.password,
     });
     const token = randomUUID();
-
-    await mockEmailService.sendVerificationEmail(user, token);
+    const emailService = getEmailService();
+    await emailService.sendVerificationEmail(user, token);
 
     return created({
       id: user.id,

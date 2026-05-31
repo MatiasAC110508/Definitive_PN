@@ -1,6 +1,13 @@
 import Image from "next/image";
 import Link from "next/link";
-import { ArrowRight, CalendarDays, Heart, ShieldCheck, Sparkles, Star } from "lucide-react";
+import {
+  ArrowRight,
+  CalendarDays,
+  Heart,
+  ShieldCheck,
+  Sparkles,
+  Star,
+} from "lucide-react";
 import { ProductCard } from "@/components/catalog/product-card";
 import { ServiceCard } from "@/components/catalog/service-card";
 import { SectionHeading } from "@/components/section-heading";
@@ -9,8 +16,14 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 import { CatalogApplicationService } from "@/application/services/catalog-application.service";
-import { businessMetrics, reviews } from "@/infrastructure/mock/perfect-nails-data";
-import { getProductRepository, getServiceRepository } from "@/infrastructure/repositories/repository-factory";
+import {
+  businessMetrics,
+  reviews,
+} from "@/infrastructure/mock/perfect-nails-data";
+import {
+  getProductRepository,
+  getServiceRepository,
+} from "@/infrastructure/repositories/repository-factory";
 import { Reveal } from "@/presentation/components/motion/reveal";
 
 const benefits = [
@@ -68,8 +81,9 @@ export async function LandingPage() {
               Perfect Nails
             </h1>
             <p className="mt-6 max-w-2xl text-lg leading-8 text-white/82 sm:text-xl">
-              Un espacio creado para consentirte.
-              Descubre la excelencia en depilación láser, uñas impecables y masajes relajantes en Bello, Antioquia.
+              Un espacio creado para consentirte. Descubre la excelencia en
+              depilación láser, uñas impecables y masajes relajantes en Bello,
+              Antioquia.
             </p>
             <div className="mt-9 flex flex-col gap-3 sm:flex-row">
               <Button asChild size="lg" variant="gold">
@@ -78,7 +92,12 @@ export async function LandingPage() {
                   Reservar cita
                 </Link>
               </Button>
-              <Button asChild size="lg" variant="luxury" className="bg-white/[0.88]">
+              <Button
+                asChild
+                size="lg"
+                variant="luxury"
+                className="bg-white/[0.88]"
+              >
                 <Link href="/catalogo">
                   Ver catálogo
                   <ArrowRight aria-hidden="true" />
@@ -142,10 +161,17 @@ export async function LandingPage() {
             />
             <div className="mt-8 grid gap-4 sm:grid-cols-3">
               {benefits.map((benefit) => (
-                <div key={benefit.title} className="rounded-lg border border-white/70 bg-white/70 p-4">
-                  <benefit.icon aria-hidden="true" className="size-5 text-[var(--gold)]" />
-                  <h3 className="mt-3 font-semibold text-[var(--ink)]">{benefit.title}</h3>
-                  <p className="mt-2 text-sm leading-6 text-[var(--ink-soft)]">{benefit.text}</p>
+                <div key={benefit.title} className="glass-card p-4">
+                  <benefit.icon
+                    aria-hidden="true"
+                    className="size-5 text-[var(--gold)]"
+                  />
+                  <h3 className="mt-3 font-semibold text-[var(--ink)]">
+                    {benefit.title}
+                  </h3>
+                  <p className="mt-2 text-sm leading-6 text-[var(--ink-soft)]">
+                    {benefit.text}
+                  </p>
                 </div>
               ))}
             </div>
@@ -172,16 +198,18 @@ export async function LandingPage() {
             description="Productos pensados para completar tu ritual: ropa femenina, cosméticos y cuidado diario."
           />
         </Reveal>
-        <div className="mx-auto mt-10 flex max-w-7xl flex-wrap justify-center gap-6">
-          {featuredProducts.slice(0, 4).map((product, index) => (
-            <Reveal
-              key={product.id}
-              delay={index * 0.06}
-              className="w-full max-w-[320px] md:w-[calc(50%-0.75rem)] lg:w-[calc(25%-1.125rem)]"
-            >
-              <ProductCard product={product} />
-            </Reveal>
-          ))}
+        <div className="mx-auto mt-10 max-w-7xl">
+          <div className="flex gap-6 overflow-x-auto pb-4 snap-x snap-mandatory scroll-smooth [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+            {featuredProducts.map((product, index) => (
+              <Reveal
+                key={product.id}
+                delay={index * 0.06}
+                className="w-[280px] shrink-0 snap-start md:w-[300px]"
+              >
+                <ProductCard product={product} />
+              </Reveal>
+            ))}
+          </div>
         </div>
       </section>
 
@@ -195,8 +223,8 @@ export async function LandingPage() {
               Reserva por hora, confirma visualmente y gestiona tu historial
             </h2>
             <p className="mt-5 text-base leading-8 text-white/70">
-              El calendario muestra estados de disponibilidad, servicios con duración automática
-              y flujo de cuenta para proteger cada reserva.
+              El calendario muestra estados de disponibilidad, servicios con
+              duración automática y flujo de cuenta para proteger cada reserva.
             </p>
             <Button asChild className="mt-8" variant="gold">
               <Link href="/reservar">
@@ -207,17 +235,23 @@ export async function LandingPage() {
           </Reveal>
           <Reveal delay={0.1}>
             <div className="grid gap-3 rounded-lg border border-white/10 bg-white/[0.08] p-4 backdrop-blur">
-              {["09:00", "10:00", "11:00", "12:00", "14:00", "15:00"].map((hour, index) => (
-                <div
-                  key={hour}
-                  className="flex items-center justify-between rounded-lg border border-white/10 bg-white/[0.08] px-4 py-3"
-                >
-                  <span className="font-semibold">{hour}</span>
-                  <span className="rounded-full bg-white px-3 py-1 text-xs font-bold text-[var(--ink)]">
-                    {index === 1 ? "Reservado" : index === 4 ? "Pendiente" : "Disponible"}
-                  </span>
-                </div>
-              ))}
+              {["09:00", "10:00", "11:00", "12:00", "14:00", "15:00"].map(
+                (hour, index) => (
+                  <div
+                    key={hour}
+                    className="flex items-center justify-between rounded-lg border border-white/10 bg-white/[0.08] px-4 py-3"
+                  >
+                    <span className="font-semibold">{hour}</span>
+                    <span className="rounded-full bg-white px-3 py-1 text-xs font-bold text-[var(--ink)]">
+                      {index === 1
+                        ? "Reservado"
+                        : index === 4
+                          ? "Pendiente"
+                          : "Disponible"}
+                    </span>
+                  </div>
+                ),
+              )}
             </div>
           </Reveal>
         </div>
@@ -261,9 +295,15 @@ export async function LandingPage() {
               <Card>
                 <CardContent className="p-6">
                   <div className="flex gap-1 text-[var(--gold)]">
-                    {Array.from({ length: review.rating }).map((_, starIndex) => (
-                      <Star key={starIndex} aria-hidden="true" className="size-4 fill-current" />
-                    ))}
+                    {Array.from({ length: review.rating }).map(
+                      (_, starIndex) => (
+                        <Star
+                          key={starIndex}
+                          aria-hidden="true"
+                          className="size-4 fill-current"
+                        />
+                      ),
+                    )}
                   </div>
                   <p className="mt-5 text-sm leading-7 text-[var(--ink-soft)]">
                     “{review.comment}”
@@ -278,8 +318,12 @@ export async function LandingPage() {
                       className="rounded-full object-cover"
                     />
                     <div>
-                      <p className="font-semibold text-[var(--ink)]">{review.authorName}</p>
-                      <p className="text-xs text-[var(--ink-soft)]">Clienta verificada</p>
+                      <p className="font-semibold text-[var(--ink)]">
+                        {review.authorName}
+                      </p>
+                      <p className="text-xs text-[var(--ink-soft)]">
+                        Clienta verificada
+                      </p>
                     </div>
                   </div>
                 </CardContent>

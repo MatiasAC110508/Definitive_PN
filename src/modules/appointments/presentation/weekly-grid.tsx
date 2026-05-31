@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import { Loader2, Lock } from "lucide-react";
 import type { AppointmentSlot } from "@/domain/entities/appointment.entity";
-import { formatCurrency, formatDate } from "@/lib/formatters";
+import { formatDate } from "@/lib/formatters";
 import { cn } from "@/lib/utils";
 
 type WeeklyGridProps = {

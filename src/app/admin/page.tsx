@@ -8,6 +8,7 @@ import {
   getScheduleRepository,
   getServiceRepository,
   getUserRepository,
+  getSaleRepository,
 } from "@/infrastructure/repositories/repository-factory";
 import { getCurrentSession } from "@/lib/auth";
 
@@ -37,10 +38,11 @@ export default async function AdminPage() {
     ).execute(),
   ]);
 
-  const [allServices, allProducts, allUsers] = await Promise.all([
+  const [allServices, allProducts, allUsers, allSales] = await Promise.all([
     getServiceRepository().findAll(),
     getProductRepository().findAll(),
     getUserRepository().findAll(),
+    getSaleRepository().findAll(),
   ]);
 
   return (
@@ -51,6 +53,7 @@ export default async function AdminPage() {
       schedules={schedules}
       services={allServices}
       users={allUsers}
+      sales={allSales}
     />
   );
 }

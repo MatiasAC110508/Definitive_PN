@@ -10,7 +10,6 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { formatCurrency } from "@/lib/formatters";
-import { cn } from "@/lib/utils";
 
 export function ServiceCard({ service }: { service: BeautyService }) {
   const [showPackages, setShowPackages] = useState(false);

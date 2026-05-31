@@ -24,4 +24,28 @@ export class MemoryProductRepository implements ProductRepository {
   async findById(id: string): Promise<Product | null> {
     return products.find((product) => product.id === id) ?? null;
   }
+
+  async create(data: Omit<Product, "id">): Promise<Product> {
+    const newProduct: Product = {
+      ...data,
+      id: `prd-${Math.random().toString(36).substring(2, 9)}`,
+    };
+    products.push(newProduct);
+    return newProduct;
+  }
+
+  async update(id: string, data: Partial<Product>): Promise<Product> {
+    const index = products.findIndex((p) => p.id === id);
+    if (index === -1) throw new Error("Product not found");
+    const updated = { ...products[index], ...data };
+    products[index] = updated;
+    return updated;
+  }
+
+  async delete(id: string): Promise<void> {
+    const index = products.findIndex((p) => p.id === id);
+    if (index !== -1) {
+      products.splice(index, 1);
+    }
+  }
 }

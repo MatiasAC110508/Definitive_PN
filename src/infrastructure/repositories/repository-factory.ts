@@ -37,3 +37,9 @@ export function getUserRepository() {
 export function getScheduleRepository() {
   return hasDatabase ? new PrismaScheduleRepository() : memorySchedules;
 }
+
+import { PrismaSaleRepository } from "@/infrastructure/repositories/prisma-sale.repository";
+
+export function getSaleRepository() {
+  return new PrismaSaleRepository();
+}

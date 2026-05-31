@@ -36,8 +36,16 @@ body {
   min-width: 320px;
   font-family: var(--font-body);
   background:
-    radial-gradient(circle at top left, rgba(245, 199, 216, 0.42), transparent 34rem),
-    linear-gradient(135deg, rgba(255, 255, 255, 0.94), rgba(248, 237, 242, 0.82)),
+    radial-gradient(
+      circle at top left,
+      rgba(245, 199, 216, 0.42),
+      transparent 34rem
+    ),
+    linear-gradient(
+      135deg,
+      rgba(255, 255, 255, 0.94),
+      rgba(248, 237, 242, 0.82)
+    ),
     var(--quartz);
 }
 
@@ -49,9 +57,21 @@ body::before {
   content: "";
   opacity: 0.5;
   background-image:
-    linear-gradient(115deg, transparent 0 44%, rgba(198, 161, 91, 0.1) 45%, transparent 47%),
-    linear-gradient(55deg, transparent 0 62%, rgba(190, 109, 141, 0.12) 63%, transparent 65%);
-  background-size: 360px 360px, 520px 520px;
+    linear-gradient(
+      115deg,
+      transparent 0 44%,
+      rgba(198, 161, 91, 0.1) 45%,
+      transparent 47%
+    ),
+    linear-gradient(
+      55deg,
+      transparent 0 62%,
+      rgba(190, 109, 141, 0.12) 63%,
+      transparent 65%
+    );
+  background-size:
+    360px 360px,
+    520px 520px;
 }
 
 a {
@@ -70,22 +90,43 @@ a {
 
 .marble-surface {
   background:
-    linear-gradient(145deg, rgba(255, 255, 255, 0.94), rgba(248, 237, 242, 0.88)),
-    radial-gradient(circle at 12% 20%, rgba(245, 199, 216, 0.38), transparent 22rem),
-    radial-gradient(circle at 88% 4%, rgba(198, 161, 91, 0.22), transparent 20rem);
+    linear-gradient(
+      145deg,
+      rgba(255, 255, 255, 0.94),
+      rgba(248, 237, 242, 0.88)
+    ),
+    radial-gradient(
+      circle at 12% 20%,
+      rgba(245, 199, 216, 0.38),
+      transparent 22rem
+    ),
+    radial-gradient(
+      circle at 88% 4%,
+      rgba(198, 161, 91, 0.22),
+      transparent 20rem
+    );
   background-attachment: fixed;
+}
+
+.glass-panel {
+  border: 1px solid rgba(255, 255, 255, 0.75);
+  background: rgba(255, 255, 255, 0.85);
+  box-shadow: var(--shadow-soft);
+  backdrop-filter: blur(24px);
+  border-radius: 1.5rem;
 }
 
 .glass-card {
   border: 1px solid rgba(255, 255, 255, 0.62);
-  background: rgba(255, 255, 255, 0.48);
+  background: rgba(255, 255, 255, 0.58);
   box-shadow: var(--shadow-soft);
   backdrop-filter: blur(14px);
   transition: all 0.4s cubic-bezier(0.23, 1, 0.32, 1);
+  border-radius: 1.25rem;
 }
 
 .glass-card:hover {
-  background: rgba(255, 255, 255, 0.68);
+  background: rgba(255, 255, 255, 0.78);
   transform: translateY(-4px);
   box-shadow: var(--shadow-gold);
 }
@@ -104,8 +145,11 @@ a {
   position: absolute;
   inset: -1px;
   border: 1px solid transparent;
-  background: linear-gradient(135deg, var(--gold), transparent, var(--rose)) border-box;
-  mask: linear-gradient(#fff 0 0) padding-box, linear-gradient(#fff 0 0);
+  background: linear-gradient(135deg, var(--gold), transparent, var(--rose))
+    border-box;
+  mask:
+    linear-gradient(#fff 0 0) padding-box,
+    linear-gradient(#fff 0 0);
   mask-composite: exclude;
   opacity: 0.3;
 }
@@ -146,8 +190,14 @@ a {
 
 /* Animations */
 @keyframes fadeIn {
-  from { opacity: 0; transform: translateY(10px); }
-  to { opacity: 1; transform: translateY(0); }
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 .animate-fade-in {

@@ -51,7 +51,6 @@ export class PrismaProductRepository implements ProductRepository {
     const records = await prisma.product.findMany({
       where: { isFeatured: true },
       include: { category: true },
-      take: 4,
     });
 
     return records.map(toProduct);
@@ -65,5 +64,49 @@ export class PrismaProductRepository implements ProductRepository {
     });
 
     return record ? toProduct(record) : null;
+  }
+
+  async create(data: Omit<Product, "id">): Promise<Product> {
+    const prisma = getPrismaClient();
+    const record = await prisma.product.create({
+      data: {
+        name: data.name,
+        slug: data.slug,
+        description: data.description,
+        price: data.price,
+        imageUrl: data.imageUrl,
+        stock: data.stock,
+        isFeatured: data.isFeatured,
+        category: { connect: { slug: data.categorySlug } }
+      },
+      include: { category: true },
+    });
+    return toProduct(record);
+  }
+
+  async update(id: string, data: Partial<Product>): Promise<Product> {
+    const prisma = getPrismaClient();
+    const record = await prisma.product.update({
+      where: { id },
+      data: {
+        name: data.name,
+        slug: data.slug,
+        description: data.description,
+        price: data.price,
+        imageUrl: data.imageUrl,
+        stock: data.stock,
+        isFeatured: data.isFeatured,
+        category: data.categorySlug ? { connect: { slug: data.categorySlug } } : undefined
+      },
+      include: { category: true },
+    });
+    return toProduct(record);
+  }
+
+  async delete(id: string): Promise<void> {
+    const prisma = getPrismaClient();
+    await prisma.product.delete({
+      where: { id },
+    });
   }
 }

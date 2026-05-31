@@ -1,18 +1,37 @@
 "use client";
 
 import { useSearchParams, useRouter } from "next/navigation";
+import Image from "next/image";
 import type { Route } from "next";
 import { useSession } from "next-auth/react";
-import { CalendarDays, CheckCircle2, Clock, Loader2, Sparkles } from "lucide-react";
+import {
+  CalendarDays,
+  CheckCircle2,
+  Clock,
+  Loader2,
+  Sparkles,
+} from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 import { toast } from "sonner";
-import type { AppointmentSlot, AppointmentStatus } from "@/domain/entities/appointment.entity";
-import type { BeautyService, ServiceCategorySlug } from "@/domain/entities/service.entity";
+import type {
+  AppointmentSlot,
+  AppointmentStatus,
+} from "@/domain/entities/appointment.entity";
+import type {
+  BeautyService,
+  ServiceCategorySlug,
+} from "@/domain/entities/service.entity";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Textarea } from "@/components/ui/textarea";
 import { formatCurrency, formatDate } from "@/lib/formatters";
@@ -51,18 +70,28 @@ const categoryLabels: Record<ServiceCategorySlug, string> = {
   "hollywood-peeling": "Hollywood Peeling",
 };
 
-export function BookingWorkspace({ services, initialSlots, initialDate }: BookingWorkspaceProps) {
+export function BookingWorkspace({
+  services,
+  initialSlots,
+  initialDate,
+}: BookingWorkspaceProps) {
   const searchParams = useSearchParams();
   const router = useRouter();
   const { data: session } = useSession();
-  const defaultServiceId = searchParams.get("serviceId") ?? services[0]?.id ?? "";
-  const defaultService = services.find((service) => service.id === defaultServiceId) ?? services[0];
-  const [selectedServiceId, setSelectedServiceId] = useState(defaultService?.id ?? "");
-  const [selectedCategory, setSelectedCategory] = useState<ServiceCategorySlug | "">(
-    defaultService?.categorySlug ?? "",
+  const defaultServiceId =
+    searchParams.get("serviceId") ?? services[0]?.id ?? "";
+  const defaultService =
+    services.find((service) => service.id === defaultServiceId) ?? services[0];
+  const [selectedServiceId, setSelectedServiceId] = useState(
+    defaultService?.id ?? "",
   );
+  const [selectedCategory, setSelectedCategory] = useState<
+    ServiceCategorySlug | ""
+  >(defaultService?.categorySlug ?? "");
   const [selectedDate, setSelectedDate] = useState(initialDate);
-  const [selectedSlot, setSelectedSlot] = useState<AppointmentSlot | null>(null);
+  const [selectedSlot, setSelectedSlot] = useState<AppointmentSlot | null>(
+    null,
+  );
   const [slots, setSlots] = useState(initialSlots);
   const [view, setView] = useState<"day" | "week">("day");
   const [notes, setNotes] = useState("");
@@ -70,10 +99,14 @@ export function BookingWorkspace({ services, initialSlots, initialDate }: Bookin
   const [submitting, setSubmitting] = useState(false);
   const [selectedPackage, setSelectedPackage] = useState<number>(1);
 
-  const selectedService = services.find((service) => service.id === selectedServiceId);
+  const selectedService = services.find(
+    (service) => service.id === selectedServiceId,
+  );
 
   const serviceCategories = useMemo(() => {
-    return Array.from(new Set(services.map((service) => service.categorySlug))).map((slug) => ({
+    return Array.from(
+      new Set(services.map((service) => service.categorySlug)),
+    ).map((slug) => ({
       slug,
       label: categoryLabels[slug],
     }));
@@ -103,7 +136,9 @@ export function BookingWorkspace({ services, initialSlots, initialDate }: Bookin
       const response = await fetch(
         `/api/appointments?date=${selectedDate}&serviceId=${selectedServiceId}`,
       );
-      const payload = (await response.json()) as { data?: { slots: AppointmentSlot[] } };
+      const payload = (await response.json()) as {
+        data?: { slots: AppointmentSlot[] };
+      };
 
       if (active && payload.data?.slots) {
         setSlots(payload.data.slots);
@@ -120,14 +155,16 @@ export function BookingWorkspace({ services, initialSlots, initialDate }: Bookin
     };
   }, [selectedDate, selectedServiceId]);
 
-  useEffect(() => {
-    // Reset package selection when changing service
+  function selectService(serviceId: string) {
+    setSelectedServiceId(serviceId);
     setSelectedPackage(1);
-  }, [selectedServiceId]);
+  }
 
   function selectCategory(category: ServiceCategorySlug) {
     setSelectedCategory(category);
-    setSelectedServiceId(services.find((service) => service.categorySlug === category)?.id ?? "");
+    selectService(
+      services.find((service) => service.categorySlug === category)?.id ?? "",
+    );
   }
 
   async function confirmBooking() {
@@ -137,7 +174,9 @@ export function BookingWorkspace({ services, initialSlots, initialDate }: Bookin
     }
 
     if (!session?.user) {
-      router.push(`/login?callbackUrl=/reservar?serviceId=${selectedService.id}` as Route);
+      router.push(
+        `/login?callbackUrl=/reservar?serviceId=${selectedService.id}` as Route,
+      );
       return;
     }
 
@@ -154,7 +193,9 @@ export function BookingWorkspace({ services, initialSlots, initialDate }: Bookin
     });
 
     if (!response.ok) {
-      const payload = (await response.json()) as { error?: { message?: string } };
+      const payload = (await response.json()) as {
+        error?: { message?: string };
+      };
       toast.error(payload.error?.message ?? "No pudimos confirmar la reserva.");
       setSubmitting(false);
       return;
@@ -168,15 +209,26 @@ export function BookingWorkspace({ services, initialSlots, initialDate }: Bookin
 
   return (
     <div className="pt-[4.5rem]">
-      <section className="marble-surface px-4 py-14 sm:px-6 lg:px-8">
-        <div className="mx-auto max-w-7xl">
+      <section className="relative overflow-hidden bg-[#f8f9fa] px-4 py-14 sm:px-6 lg:px-8 border-b-0">
+        <Image
+          src="/images/backgrounds/reception.png"
+          alt="Booking Background"
+          fill
+          priority
+          sizes="100vw"
+          className="object-cover opacity-100 pointer-events-none"
+        />
+        {/* Strong white top overlay for perfect text legibility, fading to background color */}
+        <div className="absolute inset-0 bg-gradient-to-b from-white/95 via-white/60 to-[#f8f9fa] pointer-events-none" />
+        <div className="mx-auto max-w-7xl relative z-10">
           <Badge variant="gold">Agenda profesional</Badge>
           <h1 className="mt-4 max-w-3xl font-display text-5xl font-semibold leading-tight text-[var(--ink)] sm:text-6xl">
             Reserva tu cita con disponibilidad por hora
           </h1>
           <p className="mt-5 max-w-2xl text-base leading-8 text-[var(--ink-soft)]">
-            Navega vista diaria o semanal, selecciona el servicio y confirma visualmente tu bloque.
-            Para completar la reserva necesitas una cuenta verificada.
+            Navega vista diaria o semanal, selecciona el servicio y confirma
+            visualmente tu bloque. Para completar la reserva necesitas una
+            cuenta verificada.
           </p>
         </div>
       </section>
@@ -189,7 +241,12 @@ export function BookingWorkspace({ services, initialSlots, initialDate }: Bookin
           <CardContent className="space-y-5">
             <div className="space-y-2">
               <Label>Tipo de servicio</Label>
-              <Select value={selectedCategory} onValueChange={(value) => selectCategory(value as ServiceCategorySlug)}>
+              <Select
+                value={selectedCategory}
+                onValueChange={(value) =>
+                  selectCategory(value as ServiceCategorySlug)
+                }
+              >
                 <SelectTrigger>
                   <SelectValue placeholder="Elige una categoría" />
                 </SelectTrigger>
@@ -205,7 +262,7 @@ export function BookingWorkspace({ services, initialSlots, initialDate }: Bookin
 
             <div className="space-y-2">
               <Label>Opción</Label>
-              <Select value={selectedServiceId} onValueChange={setSelectedServiceId}>
+              <Select value={selectedServiceId} onValueChange={selectService}>
                 <SelectTrigger>
                   <SelectValue placeholder="Elige una opción" />
                 </SelectTrigger>
@@ -221,62 +278,82 @@ export function BookingWorkspace({ services, initialSlots, initialDate }: Bookin
 
             {selectedService ? (
               <div className="rounded-lg bg-[var(--quartz-soft)] p-4">
-                <p className="font-display text-2xl font-semibold">{selectedService.name}</p>
+                <p className="font-display text-2xl font-semibold">
+                  {selectedService.name}
+                </p>
                 <p className="mt-2 text-sm leading-6 text-[var(--ink-soft)]">
                   {selectedService.description}
                 </p>
                 <div className="mt-4 grid gap-2 text-sm font-semibold text-[var(--ink)]">
                   <span className="flex items-center gap-2">
-                    <Clock aria-hidden="true" className="size-4 text-[var(--gold)]" />
+                    <Clock
+                      aria-hidden="true"
+                      className="size-4 text-[var(--gold)]"
+                    />
                     {selectedService.durationMinutes} minutos
                   </span>
                   <span className="flex items-center gap-2">
-                    <Sparkles aria-hidden="true" className="size-4 text-[var(--gold)]" />
+                    <Sparkles
+                      aria-hidden="true"
+                      className="size-4 text-[var(--gold)]"
+                    />
                     {formatCurrency(selectedService.price)}
                   </span>
                 </div>
               </div>
             ) : null}
 
-            {selectedService?.categorySlug === "depilacion-laser" && selectedService.sessionPackages && selectedService.sessionPackages.length > 0 && (
-              <div className="space-y-3 pt-2">
-                <Label>Tipo de reserva</Label>
-                <div className="grid gap-3">
-                  <button
-                    type="button"
-                    onClick={() => setSelectedPackage(1)}
-                    className={cn(
-                      "premium-focus flex items-center justify-between rounded-lg border p-4 text-left transition",
-                      selectedPackage === 1
-                        ? "border-[var(--gold)] bg-[#fff7df]"
-                        : "border-[var(--line)] bg-white"
-                    )}
-                  >
-                    <span className="font-semibold text-sm">Sesión única</span>
-                    <span className="font-bold text-sm text-[var(--gold)]">{formatCurrency(selectedService.price)}</span>
-                  </button>
-                  {selectedService.sessionPackages.map((pkg) => (
+            {selectedService?.categorySlug === "depilacion-laser" &&
+              selectedService.sessionPackages &&
+              selectedService.sessionPackages.length > 0 && (
+                <div className="space-y-3 pt-2">
+                  <Label>Tipo de reserva</Label>
+                  <div className="grid gap-3">
                     <button
-                      key={pkg.sessions}
                       type="button"
-                      onClick={() => setSelectedPackage(pkg.sessions)}
+                      onClick={() => setSelectedPackage(1)}
                       className={cn(
                         "premium-focus flex items-center justify-between rounded-lg border p-4 text-left transition",
-                        selectedPackage === pkg.sessions
+                        selectedPackage === 1
                           ? "border-[var(--gold)] bg-[#fff7df]"
-                          : "border-[var(--line)] bg-white"
+                          : "border-[var(--line)] bg-white",
                       )}
                     >
-                      <div>
-                        <span className="font-semibold text-sm block">Paquete {pkg.sessions} sesiones</span>
-                        <span className="text-xs text-[var(--ink-soft)]">Incluye esta primera reserva</span>
-                      </div>
-                      <span className="font-bold text-sm text-[var(--gold)]">{formatCurrency(pkg.price)}</span>
+                      <span className="font-semibold text-sm">
+                        Sesión única
+                      </span>
+                      <span className="font-bold text-sm text-[var(--gold)]">
+                        {formatCurrency(selectedService.price)}
+                      </span>
                     </button>
-                  ))}
+                    {selectedService.sessionPackages.map((pkg) => (
+                      <button
+                        key={pkg.sessions}
+                        type="button"
+                        onClick={() => setSelectedPackage(pkg.sessions)}
+                        className={cn(
+                          "premium-focus flex items-center justify-between rounded-lg border p-4 text-left transition",
+                          selectedPackage === pkg.sessions
+                            ? "border-[var(--gold)] bg-[#fff7df]"
+                            : "border-[var(--line)] bg-white",
+                        )}
+                      >
+                        <div>
+                          <span className="font-semibold text-sm block">
+                            Paquete {pkg.sessions} sesiones
+                          </span>
+                          <span className="text-xs text-[var(--ink-soft)]">
+                            Incluye esta primera reserva
+                          </span>
+                        </div>
+                        <span className="font-bold text-sm text-[var(--gold)]">
+                          {formatCurrency(pkg.price)}
+                        </span>
+                      </button>
+                    ))}
+                  </div>
                 </div>
-              </div>
-            )}
+              )}
 
             <div className="space-y-2">
               <Label htmlFor="booking-notes">Notas para la especialista</Label>
@@ -298,7 +375,10 @@ export function BookingWorkspace({ services, initialSlots, initialDate }: Bookin
                 {formatDate(`${selectedDate}T00:00:00`, "EEEE d 'de' MMMM")}
               </p>
             </div>
-            <Tabs value={view} onValueChange={(value) => setView(value as "day" | "week")}>
+            <Tabs
+              value={view}
+              onValueChange={(value) => setView(value as "day" | "week")}
+            >
               <TabsList>
                 <TabsTrigger value="day">Día</TabsTrigger>
                 <TabsTrigger value="week">Semana</TabsTrigger>
@@ -341,7 +421,10 @@ export function BookingWorkspace({ services, initialSlots, initialDate }: Bookin
               />
             ) : loadingSlots ? (
               <div className="grid min-h-96 place-items-center rounded-lg bg-white/60">
-                <Loader2 aria-hidden="true" className="size-8 animate-spin text-[var(--gold)]" />
+                <Loader2
+                  aria-hidden="true"
+                  className="size-8 animate-spin text-[var(--gold)]"
+                />
               </div>
             ) : (
               <div className="grid gap-3">
@@ -356,7 +439,8 @@ export function BookingWorkspace({ services, initialSlots, initialDate }: Bookin
                       selectedSlot?.id === slot.id
                         ? "border-[var(--gold)] bg-[#fff7df]"
                         : "border-[var(--line)] bg-white/70",
-                      slot.status !== "AVAILABLE" && "cursor-not-allowed opacity-70",
+                      slot.status !== "AVAILABLE" &&
+                        "cursor-not-allowed opacity-70",
                     )}
                   >
                     <span className="font-semibold">{slot.label}</span>
@@ -390,9 +474,13 @@ export function BookingWorkspace({ services, initialSlots, initialDate }: Bookin
                 <div className="flex justify-between gap-4">
                   <dt className="text-[var(--ink-soft)]">Servicio</dt>
                   <dd className="text-right font-semibold">
-                    <span className="block">{selectedService?.name ?? "Pendiente"}</span>
+                    <span className="block">
+                      {selectedService?.name ?? "Pendiente"}
+                    </span>
                     {selectedPackage > 1 && (
-                      <span className="block text-xs text-[var(--gold)] mt-0.5">Paquete de {selectedPackage} sesiones</span>
+                      <span className="block text-xs text-[var(--gold)] mt-0.5">
+                        Paquete de {selectedPackage} sesiones
+                      </span>
                     )}
                   </dd>
                 </div>
@@ -404,7 +492,9 @@ export function BookingWorkspace({ services, initialSlots, initialDate }: Bookin
                 </div>
                 <div className="flex justify-between gap-4">
                   <dt className="text-[var(--ink-soft)]">Hora</dt>
-                  <dd className="text-right font-semibold">{selectedSlot?.label ?? "Sin elegir"}</dd>
+                  <dd className="text-right font-semibold">
+                    {selectedSlot?.label ?? "Sin elegir"}
+                  </dd>
                 </div>
                 <div className="flex justify-between gap-4">
                   <dt className="text-[var(--ink-soft)]">Estado</dt>
@@ -425,7 +515,11 @@ export function BookingWorkspace({ services, initialSlots, initialDate }: Bookin
               disabled={!selectedSlot || submitting}
               onClick={() => void confirmBooking()}
             >
-              {submitting ? <Loader2 aria-hidden="true" className="animate-spin" /> : <CheckCircle2 aria-hidden="true" />}
+              {submitting ? (
+                <Loader2 aria-hidden="true" className="animate-spin" />
+              ) : (
+                <CheckCircle2 aria-hidden="true" />
+              )}
               Confirmar reserva
             </Button>
           </CardContent>

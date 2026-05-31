@@ -21,33 +21,49 @@ const prisma = new PrismaClient({
 });
 
 async function main() {
-  const passwordHash = await bcrypt.hash("Perfect123!", 12);
+  const seedAdminEmail = process.env.SEED_ADMIN_EMAIL?.trim();
+  const seedAdminPassword = process.env.SEED_ADMIN_PASSWORD;
+  const seedAdminName = process.env.SEED_ADMIN_NAME?.trim() || "Perfect Nails Admin";
+  const seedAdminPhone = process.env.SEED_ADMIN_PHONE?.trim() || null;
 
-  const admin = await prisma.user.upsert({
-    where: { email: "admin@perfectnails.co" },
-    update: { role: "ADMIN", passwordHash, emailVerified: new Date() },
-    create: {
-      name: "Admin Perfect",
-      email: "admin@perfectnails.co",
-      phone: "+57 310 4627014",
-      role: "ADMIN",
-      passwordHash,
-      emailVerified: new Date(),
-    },
-  });
+  if ((seedAdminEmail && !seedAdminPassword) || (!seedAdminEmail && seedAdminPassword)) {
+    throw new Error("SEED_ADMIN_EMAIL and SEED_ADMIN_PASSWORD must be provided together.");
+  }
 
-  await prisma.user.upsert({
-    where: { email: "cliente@perfectnails.co" },
-    update: { passwordHash, emailVerified: new Date() },
-    create: {
-      name: "Cliente Perfect",
-      email: "cliente@perfectnails.co",
-      phone: "+57 300 000 0000",
-      role: "USER",
-      passwordHash,
-      emailVerified: new Date(),
-    },
-  });
+  if (seedAdminPassword && seedAdminPassword.length < 12) {
+    throw new Error("SEED_ADMIN_PASSWORD must be at least 12 characters long.");
+  }
+
+  const existingAdmin = seedAdminEmail
+    ? await prisma.user.findUnique({ where: { email: seedAdminEmail } })
+    : null;
+
+  const admin =
+    seedAdminEmail && seedAdminPassword
+      ? await prisma.user.upsert({
+          where: { email: seedAdminEmail },
+          update: {
+            role: "ADMIN",
+            emailVerified: new Date(),
+            name: seedAdminName,
+            phone: seedAdminPhone,
+          },
+          create: {
+            name: seedAdminName,
+            email: seedAdminEmail,
+            phone: seedAdminPhone,
+            role: "ADMIN",
+            passwordHash: await bcrypt.hash(seedAdminPassword, 12),
+            emailVerified: new Date(),
+          },
+        })
+      : null;
+
+  if (!admin) {
+    console.warn("Skipping admin seed. Set SEED_ADMIN_EMAIL and SEED_ADMIN_PASSWORD to create the initial admin user.");
+  } else if (existingAdmin) {
+    console.info("Admin seed user already exists; password was left unchanged.");
+  }
 
   const allCategories = [...serviceCategories, ...productCategories];
 
@@ -144,7 +160,7 @@ async function main() {
       comment: review.comment,
       imageUrl: review.imageUrl,
       isFeatured: review.isFeatured,
-      userId: admin.id,
+      userId: admin?.id ?? null,
     })),
   });
 }

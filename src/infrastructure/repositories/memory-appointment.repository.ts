@@ -2,10 +2,24 @@ import type { Appointment, AppointmentSlot } from "@/domain/entities/appointment
 import type { AppointmentRepository } from "@/domain/repositories/appointment.repository";
 import { AvailabilityService } from "@/domain/services/availability.service";
 import { appointments, schedules, services } from "@/infrastructure/mock/perfect-nails-data";
-import { getDayOfWeekFromDateString } from "@/lib/business-time";
+import { formatDateTimeInputInBusinessTime, getDayOfWeekFromDateString } from "@/lib/business-time";
 
 const appointmentState = [...appointments];
 const availability = new AvailabilityService();
+
+function parseAppointmentDate(value: string) {
+  const date = new Date(value);
+
+  if (Number.isNaN(date.getTime())) {
+    throw new Error("INVALID_APPOINTMENT_DATE");
+  }
+
+  return date;
+}
+
+function getBusinessDate(value: Date) {
+  return formatDateTimeInputInBusinessTime(value).split("T")[0];
+}
 
 export class MemoryAppointmentRepository implements AppointmentRepository {
   async findById(id: string): Promise<Appointment | null> {
@@ -36,18 +50,35 @@ export class MemoryAppointmentRepository implements AppointmentRepository {
   }
 
   async findConflicts(startAt: string, endAt: string): Promise<Appointment[]> {
-    const start = new Date(startAt).getTime();
-    const end = new Date(endAt).getTime();
+    const start = parseAppointmentDate(startAt);
+    const end = parseAppointmentDate(endAt);
 
     return appointmentState.filter((apt) => {
-      if (apt.status === "CANCELLED") return false;
-      const aptStart = new Date(apt.startAt).getTime();
-      const aptEnd = new Date(apt.endAt).getTime();
-      return aptStart < end && aptEnd > start;
+      return availability.findConflict(start, end, [apt]) !== undefined;
     });
   }
 
-  async create(input: Omit<Appointment, "id" | "createdAt">): Promise<Appointment> {
+  async create(
+    input: Omit<Appointment, "id" | "createdAt"> & { packageSessions?: number },
+  ): Promise<Appointment> {
+    const service = services.find((item) => item.id === input.serviceId);
+
+    if (!service) {
+      throw new Error("SERVICE_NOT_FOUND");
+    }
+
+    const startAt = parseAppointmentDate(input.startAt);
+    const endAt = parseAppointmentDate(input.endAt);
+    const businessDate = getBusinessDate(startAt);
+    const dayOfWeek = getDayOfWeekFromDateString(businessDate);
+    const schedule = schedules.find((item) => item.dayOfWeek === dayOfWeek && item.isActive) ?? null;
+
+    availability.assertWithinBusinessHours(startAt, endAt, schedule);
+
+    if (availability.findConflict(startAt, endAt, appointmentState)) {
+      throw new Error("SLOT_ALREADY_BOOKED");
+    }
+
     const appointment: Appointment = {
       ...input,
       id: `apt-${crypto.randomUUID()}`,

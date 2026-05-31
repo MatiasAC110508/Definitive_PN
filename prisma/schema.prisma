@@ -184,3 +184,20 @@ model Review {
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 }
+
+enum SaleType {
+  SERVICE
+  PRODUCT
+  PACKAGE
+  OTHER
+}
+
+model Sale {
+  id           String   @id @default(cuid())
+  customerName String?
+  amount       Int
+  description  String   @db.Text
+  saleType     SaleType @default(OTHER)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+}

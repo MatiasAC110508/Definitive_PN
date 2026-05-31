@@ -32,7 +32,7 @@ export default async function UserPanelPage() {
     prisma.sessionPackage.findMany({ where: { userId: session.user.id }})
   ]);
 
-  const sessionPackages = sessionPackagesResponse.map((pkg: any) => ({
+  const sessionPackages = sessionPackagesResponse.map((pkg) => ({
     id: pkg.id,
     userId: pkg.userId,
     serviceId: pkg.serviceId,

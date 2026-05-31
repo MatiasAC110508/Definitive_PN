@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import Link from "next/link";
 import type { Route } from "next";
 import { CalendarDays, Search, Sparkles } from "lucide-react";
@@ -27,7 +28,10 @@ const CATEGORIES = [
 
 function getLaserDisplayName(service: BeautyService): BeautyService {
   if (service.categorySlug === "depilacion-laser") {
-    return { ...service, name: service.name.replace("Depilación Láser - ", "") };
+    return {
+      ...service,
+      name: service.name.replace("Depilación Láser - ", ""),
+    };
   }
   return service;
 }
@@ -37,23 +41,35 @@ export function ServiceCatalogClient({ services }: ServiceCatalogClientProps) {
   const [query, setQuery] = useState("");
 
   const filteredServices = useMemo(() => {
-    return services
-      .map(getLaserDisplayName)
-      .filter((service) => {
-        const matchesCategory =
-          activeCategory === "all" ? true : service.categorySlug === activeCategory;
-        const matchesQuery = query
-          ? `${service.name} ${service.description}`.toLowerCase().includes(query.toLowerCase())
-          : true;
-        return matchesCategory && matchesQuery;
-      });
+    return services.map(getLaserDisplayName).filter((service) => {
+      const matchesCategory =
+        activeCategory === "all"
+          ? true
+          : service.categorySlug === activeCategory;
+      const matchesQuery = query
+        ? `${service.name} ${service.description}`
+            .toLowerCase()
+            .includes(query.toLowerCase())
+        : true;
+      return matchesCategory && matchesQuery;
+    });
   }, [activeCategory, services, query]);
 
   return (
     <div className="pt-[4.5rem]">
       {/* ── Hero ──────────────────────────────────────────────────── */}
-      <section className="marble-surface px-4 py-20 sm:px-6 lg:px-8 border-b border-[var(--line)]">
-        <Reveal>
+      <section className="relative overflow-hidden bg-[#f8f9fa] px-4 py-20 sm:px-6 lg:px-8 border-b-0">
+        <Image
+          src="/images/backgrounds/services.png"
+          alt="Spa Background"
+          fill
+          priority
+          sizes="100vw"
+          className="object-cover opacity-100 pointer-events-none"
+        />
+        {/* Strong white top overlay for perfect text legibility, fading to background color */}
+        <div className="absolute inset-0 bg-gradient-to-b from-white/95 via-white/60 to-[#f8f9fa] pointer-events-none" />
+        <Reveal className="relative z-10">
           <SectionHeading
             eyebrow="Catálogo de servicios"
             title="Belleza, bienestar y tratamientos premium"
@@ -76,7 +92,7 @@ export function ServiceCatalogClient({ services }: ServiceCatalogClientProps) {
                     value={query}
                     onChange={(e) => setQuery(e.target.value)}
                     placeholder="Busca un servicio..."
-                    className="h-16 pl-14 pr-8 text-lg border-white/60 bg-white/40 backdrop-blur-md focus:bg-white/90 transition-all shadow-[0_8px_32px_rgba(0,0,0,0.04)] rounded-[2rem] border-2 placeholder:text-[var(--ink-soft)]/40 focus:ring-2 focus:ring-[var(--gold)]/20"
+                    className="h-16 pl-14 pr-8 text-lg bg-white border-2 border-[var(--gold)]/30 text-[var(--ink)] transition-all shadow-[0_8px_32px_rgba(0,0,0,0.06)] rounded-[2rem] placeholder:text-[var(--ink-soft)]/60 focus:ring-2 focus:ring-[var(--gold)]/30 focus:border-[var(--gold)]/60"
                   />
                 </div>
               </div>
@@ -127,7 +143,7 @@ export function ServiceCatalogClient({ services }: ServiceCatalogClientProps) {
 
         {/* Grid de servicios */}
         {filteredServices.length > 0 ? (
-          <div className="flex flex-wrap justify-center gap-8 lg:gap-10">
+          <div className="flex flex-wrap items-start justify-center gap-8 lg:gap-10">
             {filteredServices.map((service, index) => (
               <div
                 key={service.id}
@@ -150,12 +166,16 @@ export function ServiceCatalogClient({ services }: ServiceCatalogClientProps) {
                   Sin resultados
                 </h2>
                 <p className="mt-4 text-lg text-[var(--ink-soft)] max-w-md mx-auto">
-                  No encontramos servicios para "{query}". Prueba con otra palabra o cambia de categoría.
+                  No encontramos servicios para &quot;{query}&quot;. Prueba con
+                  otra palabra o cambia de categoría.
                 </p>
                 <Button
                   variant="ghost"
                   className="mt-8"
-                  onClick={() => { setQuery(""); setActiveCategory("all"); }}
+                  onClick={() => {
+                    setQuery("");
+                    setActiveCategory("all");
+                  }}
                 >
                   Limpiar filtros
                 </Button>
@@ -178,8 +198,9 @@ export function ServiceCatalogClient({ services }: ServiceCatalogClientProps) {
                 Resultados visibles desde la primera sesión
               </h2>
               <p className="text-xl text-white/70 leading-relaxed mb-10">
-                Desde depilación láser diodo hasta rituales faciales y masajes terapéuticos,
-                cada servicio está diseñado para ofrecerte una experiencia premium y resultados duraderos.
+                Desde depilación láser diodo hasta rituales faciales y masajes
+                terapéuticos, cada servicio está diseñado para ofrecerte una
+                experiencia premium y resultados duraderos.
               </p>
               <div className="grid grid-cols-2 gap-8">
                 <div>
@@ -187,7 +208,8 @@ export function ServiceCatalogClient({ services }: ServiceCatalogClientProps) {
                     Tecnología diodo
                   </h4>
                   <p className="text-sm text-white/50">
-                    Láser de última generación, indoloro y apto para todo tipo de piel.
+                    Láser de última generación, indoloro y apto para todo tipo
+                    de piel.
                   </p>
                 </div>
                 <div>
@@ -195,7 +217,8 @@ export function ServiceCatalogClient({ services }: ServiceCatalogClientProps) {
                     Agenda en línea
                   </h4>
                   <p className="text-sm text-white/50">
-                    Reserva tu cita en segundos con disponibilidad en tiempo real.
+                    Reserva tu cita en segundos con disponibilidad en tiempo
+                    real.
                   </p>
                 </div>
               </div>
@@ -208,14 +231,16 @@ export function ServiceCatalogClient({ services }: ServiceCatalogClientProps) {
             </div>
             <div className="relative aspect-square lg:aspect-auto lg:h-[420px] rounded-2xl overflow-hidden border border-white/10">
               <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent z-10" />
-              <img
+              <Image
                 src="https://images.unsplash.com/photo-1570172619644-dfd03ed5d881?auto=format&fit=crop&w=1200&q=80"
                 alt="Tratamiento estético premium"
-                className="w-full h-full object-cover grayscale-[0.1] contrast-[1.05]"
+                fill
+                sizes="(min-width: 1024px) 50vw, 100vw"
+                className="object-cover grayscale-[0.1] contrast-[1.05]"
               />
               <div className="absolute bottom-8 left-8 z-20">
                 <p className="font-display text-2xl font-semibold italic text-[var(--gold-soft)]">
-                  "Cuídate como la prioridad que eres"
+                  &ldquo;Cuídate como la prioridad que eres&rdquo;
                 </p>
                 <p className="mt-2 text-white/60 font-bold uppercase tracking-widest text-[10px]">
                   — Perfect Nails & Beauty

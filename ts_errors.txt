@@ -1,0 +1,29 @@
+.next/dev/types/validator.ts(207,31): error TS2344: Type 'typeof import("/home/prestamo/Documentos/mat/PN/Definitive_PN/src/app/api/admin/services/[id]/route")' does not satisfy the constraint 'RouteHandlerConfig<"/api/admin/services/[id]">'.
+  Types of property 'PATCH' are incompatible.
+    Type '(request: NextRequest, { params }: { params: { id: string; }; }) => Promise<NextResponse<{ error: { message: string; details: unknown; }; }> | NextResponse<{ data: { service: BeautyService; }; }>>' is not assignable to type '(request: NextRequest, context: { params: Promise<{ id: string; }>; }) => void | Response | Promise<void | Response>'.
+      Types of parameters '__1' and 'context' are incompatible.
+        Type '{ params: Promise<{ id: string; }>; }' is not assignable to type '{ params: { id: string; }; }'.
+          Types of property 'params' are incompatible.
+            Property 'id' is missing in type 'Promise<{ id: string; }>' but required in type '{ id: string; }'.
+src/infrastructure/repositories/prisma-service.repository.ts(76,35): error TS2339: Property 'serviceCategory' does not exist on type 'PrismaClient<PrismaClientOptions, never, DefaultArgs>'.
+src/infrastructure/repositories/prisma-service.repository.ts(88,9): error TS2322: Type 'string | undefined' is not assignable to type 'SessionPackageUncheckedCreateNestedManyWithoutServiceInput | SessionPackageCreateNestedManyWithoutServiceInput | undefined'.
+  Type 'string' is not assignable to type 'SessionPackageUncheckedCreateNestedManyWithoutServiceInput | SessionPackageCreateNestedManyWithoutServiceInput | undefined'.
+src/infrastructure/repositories/prisma-service.repository.ts(100,37): error TS2339: Property 'serviceCategory' does not exist on type 'PrismaClient<PrismaClientOptions, never, DefaultArgs>'.
+src/infrastructure/repositories/prisma-service.repository.ts(107,7): error TS2322: Type '{ categoryId?: string | undefined; sessionPackages?: string | undefined; isFeatured?: boolean | undefined; imageUrl?: string | undefined; durationMinutes?: number | undefined; price?: number | undefined; description?: string | undefined; slug?: string | undefined; name?: string | undefined; }' is not assignable to type '(Without<ServiceUpdateInput, ServiceUncheckedUpdateInput> & ServiceUncheckedUpdateInput) | (Without<...> & ServiceUpdateInput)'.
+  Type '{ categoryId?: string | undefined; sessionPackages?: string | undefined; isFeatured?: boolean | undefined; imageUrl?: string | undefined; durationMinutes?: number | undefined; price?: number | undefined; description?: string | undefined; slug?: string | undefined; name?: string | undefined; }' is not assignable to type 'Without<ServiceUncheckedUpdateInput, ServiceUpdateInput> & ServiceUpdateInput'.
+    Type '{ categoryId?: string | undefined; sessionPackages?: string | undefined; isFeatured?: boolean | undefined; imageUrl?: string | undefined; durationMinutes?: number | undefined; price?: number | undefined; description?: string | undefined; slug?: string | undefined; name?: string | undefined; }' is not assignable to type 'Without<ServiceUncheckedUpdateInput, ServiceUpdateInput>'.
+      Types of property 'categoryId' are incompatible.
+        Type 'string | undefined' is not assignable to type 'undefined'.
+          Type 'string' is not assignable to type 'undefined'.
+src/modules/admin/presentation/components/admin-appointments-tab.tsx(70,7): error TS2741: Property 'AVAILABLE' is missing in type '{ RESERVED: string; PENDING: string; CANCELLED: string; }' but required in type 'Record<AppointmentStatus, string>'.
+src/modules/admin/presentation/components/admin-overview-tab.tsx(112,13): error TS2322: Type '"outline"' is not assignable to type '"default" | "luxury" | "gold" | "ghost" | "destructive" | null | undefined'.
+src/modules/admin/presentation/components/admin-overview-tab.tsx(428,22): error TS2304: Cannot find name 'Sparkles'.
+src/modules/admin/presentation/components/admin-overview-tab.tsx(475,19): error TS2322: Type '"outline"' is not assignable to type '"default" | "luxury" | "gold" | "ghost" | "destructive" | null | undefined'.
+src/modules/admin/presentation/components/admin-products-tab.tsx(66,10): error TS2305: Module '"@/lib/utils"' has no exported member 'generateSlug'.
+src/modules/admin/presentation/components/admin-products-tab.tsx(69,3): error TS2322: Type '"esmaltes"' is not assignable to type 'ProductCategorySlug'.
+src/modules/admin/presentation/components/admin-products-tab.tsx(70,3): error TS2322: Type '"tratamientos"' is not assignable to type 'ProductCategorySlug'.
+src/modules/admin/presentation/components/admin-products-tab.tsx(71,3): error TS2322: Type '"herramientas"' is not assignable to type 'ProductCategorySlug'.
+src/modules/admin/presentation/components/admin-products-tab.tsx(72,3): error TS2322: Type '"kits"' is not assignable to type 'ProductCategorySlug'.
+src/modules/admin/presentation/components/admin-products-tab.tsx(73,3): error TS2322: Type '"spa"' is not assignable to type 'ProductCategorySlug'.
+src/modules/admin/presentation/components/admin-products-tab.tsx(77,3): error TS2353: Object literal may only specify known properties, and 'esmaltes' does not exist in type 'Record<ProductCategorySlug, string>'.
+src/modules/admin/presentation/components/admin-services-tab.tsx(66,10): error TS2305: Module '"@/lib/utils"' has no exported member 'generateSlug'.

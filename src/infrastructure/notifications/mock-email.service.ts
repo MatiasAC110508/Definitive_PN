@@ -9,4 +9,7 @@ export const mockEmailService: EmailService = {
   async sendAppointmentConfirmation(email: string, appointmentId: string) {
     console.info(`[email] Appointment ${appointmentId} confirmation sent to ${email}`);
   },
+  async sendPasswordResetEmail(email: string, token: string) {
+    console.info(`[email] Password reset for ${email}: /restablecer?token=${token}`);
+  },
 };

@@ -14,12 +14,19 @@ export async function PATCH(request: NextRequest) {
     const body = await request.json();
     const repository = getUserRepository();
 
-    // Only allow updating specific fields
-    const allowedFields = {
+    const allowedFields: any = {
       name: body.name,
       phone: body.phone,
       image: body.image,
     };
+
+    if (body.email && body.email !== session.user.email) {
+      const existingUser = await repository.findByEmail(body.email);
+      if (existingUser) {
+        return apiError("El correo ingresado ya está en uso por otra cuenta.", 400);
+      }
+      allowedFields.email = body.email;
+    }
 
     const updatedUser = await repository.update(session.user.id, allowedFields);
 
@@ -28,7 +35,7 @@ export async function PATCH(request: NextRequest) {
     }
 
     return ok({ user: updatedUser });
-  } catch (error: any) {
+  } catch (error) {
     console.error("Error updating own profile:", error);
     return apiError("Error interno al actualizar perfil.", 500);
   }

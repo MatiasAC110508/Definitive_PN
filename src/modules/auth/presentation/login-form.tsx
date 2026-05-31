@@ -8,7 +8,10 @@ import { signIn } from "next-auth/react";
 import { Loader2 } from "lucide-react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
-import { loginSchema, type LoginSchema } from "@/application/validations/auth.schema";
+import {
+  loginSchema,
+  type LoginSchema,
+} from "@/application/validations/auth.schema";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -61,13 +64,28 @@ export function LoginForm() {
       <form className="grid gap-5" onSubmit={form.handleSubmit(onSubmit)}>
         <div className="grid gap-2">
           <Label htmlFor="email">Correo electrónico</Label>
-          <Input id="email" type="email" autoComplete="email" {...form.register("email")} />
+          <Input
+            id="email"
+            type="email"
+            autoComplete="email"
+            {...form.register("email")}
+          />
           {form.formState.errors.email ? (
-            <p className="text-xs text-rose-700">{form.formState.errors.email.message}</p>
+            <p className="text-xs text-rose-700">
+              {form.formState.errors.email.message}
+            </p>
           ) : null}
         </div>
         <div className="grid gap-2">
-          <Label htmlFor="password">Contraseña</Label>
+          <div className="flex items-center justify-between">
+            <Label htmlFor="password">Contraseña</Label>
+            <Link
+              href={"/recuperar" as Route}
+              className="text-xs font-semibold text-[var(--gold)]"
+            >
+              ¿Olvidaste tu contraseña?
+            </Link>
+          </div>
           <Input
             id="password"
             type="password"
@@ -75,11 +93,15 @@ export function LoginForm() {
             {...form.register("password")}
           />
           {form.formState.errors.password ? (
-            <p className="text-xs text-rose-700">{form.formState.errors.password.message}</p>
+            <p className="text-xs text-rose-700">
+              {form.formState.errors.password.message}
+            </p>
           ) : null}
         </div>
         <Button type="submit" disabled={submitting}>
-          {submitting ? <Loader2 aria-hidden="true" className="animate-spin" /> : null}
+          {submitting ? (
+            <Loader2 aria-hidden="true" className="animate-spin" />
+          ) : null}
           Entrar
         </Button>
       </form>
