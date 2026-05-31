@@ -1,6 +1,6 @@
 import { z } from "zod";
 
-const appointmentStatusSchema = z.enum(["RESERVED", "PENDING", "CANCELLED"]);
+const appointmentStatusSchema = z.enum(["PENDING", "PAID", "COMPLETED", "CANCELLED", "NO_SHOW"]);
 const appointmentDateSchema = z.string().datetime("Selecciona un horario válido.");
 const durationSchema = z.coerce.number().int().min(15).max(480);
 
@@ -47,7 +47,7 @@ function addAppointmentWindowIssues(
 export const createAppointmentSchema = z.object({
   serviceId: z.string().min(1, "Selecciona un servicio."),
   startAt: appointmentDateSchema,
-  packageSessions: z.number().int().min(1).max(24).optional(),
+  sessionNumber: z.number().int().min(1).max(24).optional(),
   notes: z.string().max(400, "Las notas no pueden superar 400 caracteres.").optional(),
 });
 
@@ -65,7 +65,7 @@ export const adminCreateAppointmentSchema = z
     durationMinutes: durationSchema,
     status: appointmentStatusSchema,
     notes: z.string().max(400, "Las notas no pueden superar 400 caracteres.").nullable().optional(),
-    packageSessions: z.coerce.number().int().min(2).max(24).optional(),
+    sessionNumber: z.coerce.number().int().min(1).max(24).optional(),
   })
   .strict()
   .superRefine(addAppointmentWindowIssues);

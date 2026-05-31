@@ -311,15 +311,15 @@ export async function LandingPage() {
                   <Separator className="my-5" />
                   <div className="flex items-center gap-3">
                     <Image
-                      src={review.imageUrl}
-                      alt={review.authorName}
+                      src={review.user?.image || review.imageUrl} // Fallback to review image if no user avatar
+                      alt={review.user?.name || "Clienta"}
                       width={44}
                       height={44}
                       className="rounded-full object-cover"
                     />
                     <div>
                       <p className="font-semibold text-[var(--ink)]">
-                        {review.authorName}
+                        {review.user?.name || "Clienta Anónima"}
                       </p>
                       <p className="text-xs text-[var(--ink-soft)]">
                         Clienta verificada

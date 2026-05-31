@@ -48,61 +48,23 @@ export function ServiceCard({ service }: { service: BeautyService }) {
           </div>
         </div>
 
-        {service.sessionPackages && service.sessionPackages.length > 0 ? (
-          <div className="rounded-lg border border-[var(--gold)]/20 bg-[var(--quartz-soft)] p-3 pointer-events-auto">
-            <button
-              onClick={(e) => {
-                e.preventDefault();
-                setShowPackages(!showPackages);
-              }}
-              className="flex w-full items-center justify-between text-xs font-semibold uppercase tracking-wider text-[var(--gold)] hover:opacity-80 transition-opacity"
-            >
-              <div className="flex items-center gap-2">
-                <Package aria-hidden="true" className="size-3.5" />
-                {service.sessionPackages[service.sessionPackages.length - 1].sessions} sesiones
-              </div>
-              <div className="flex items-center gap-1 text-[10px]">
-                {showPackages ? (
-                  <>
-                    Ver menos <ChevronUp className="size-3" />
-                  </>
-                ) : (
-                  <>
-                    Ver más <ChevronDown className="size-3" />
-                  </>
-                )}
-              </div>
-            </button>
-            {showPackages && (
-              <div className="space-y-1 mt-3 pt-3 border-t border-[var(--gold)]/10">
-                {service.sessionPackages.map((pkg) => (
-                  <div
-                    key={pkg.sessions}
-                    className="flex items-center justify-between text-xs text-[var(--ink-soft)]"
-                  >
-                    <span>{pkg.sessions} sesiones</span>
-                    <span className="font-semibold text-[var(--ink)]">
-                      {formatCurrency(pkg.price)}
-                    </span>
-                  </div>
-                ))}
-              </div>
-            )}
-          </div>
-        ) : null}
-
         <div className="mt-auto flex flex-wrap items-center gap-3 text-xs font-semibold text-[var(--ink-soft)]">
           <span className="inline-flex items-center gap-2 rounded-full bg-[var(--quartz-soft)] px-3 py-2">
             <Clock aria-hidden="true" className="size-4 text-[var(--gold)]" />
             {service.durationMinutes} min
           </span>
           <span className="inline-flex items-center gap-2 rounded-full bg-[var(--quartz-soft)] px-3 py-2">
-            <Sparkles aria-hidden="true" className="size-4 text-[var(--gold)]" />
+            <Sparkles
+              aria-hidden="true"
+              className="size-4 text-[var(--gold)]"
+            />
             Acabado premium
           </span>
         </div>
         <Button asChild className="w-full">
-          <Link href={`/reservar?serviceId=${service.id}` as Route}>Reservar servicio</Link>
+          <Link href={`/reservar?serviceId=${service.id}` as Route}>
+            Reservar servicio
+          </Link>
         </Button>
       </CardContent>
     </Card>

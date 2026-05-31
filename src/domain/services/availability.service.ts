@@ -107,9 +107,15 @@ export class AvailabilityService {
 
     const now = new Date();
 
-    // We generate potential starting slots every hour
-    for (let hour = startHour; hour < endHour; hour++) {
-      const timeLabel = `${hour.toString().padStart(2, "0")}:00`;
+    // We generate potential starting slots every 30 minutes
+    const stepMinutes = 30;
+    const startMinutes = startHour * 60;
+    const endMinutes = endHour * 60;
+
+    for (let minutes = startMinutes; minutes < endMinutes; minutes += stepMinutes) {
+      const h = Math.floor(minutes / 60);
+      const m = minutes % 60;
+      const timeLabel = `${h.toString().padStart(2, "0")}:${m.toString().padStart(2, "0")}`;
       const startAt = zonedDateTimeToUtc(date, timeLabel);
       const endAt = new Date(startAt.getTime() + serviceDurationMinutes * 60000);
 

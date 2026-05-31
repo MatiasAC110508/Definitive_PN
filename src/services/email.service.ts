@@ -2,6 +2,6 @@ import type { User } from "@/domain/entities/user.entity";
 
 export interface EmailService {
   sendVerificationEmail(user: User, token: string): Promise<void>;
-  sendAppointmentConfirmation(email: string, appointmentId: string): Promise<void>;
+  sendAppointmentConfirmation(email: string, appointmentId: string, details?: { startAt: string; durationMinutes: number; serviceName: string; userName: string; notes?: string; }): Promise<void>;
   sendPasswordResetEmail(email: string, token: string): Promise<void>;
 }

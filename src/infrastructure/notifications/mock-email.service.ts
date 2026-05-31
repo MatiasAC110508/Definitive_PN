@@ -6,7 +6,7 @@ export const mockEmailService: EmailService = {
     // Production can replace this with Resend, Postmark, SendGrid, or SMTP.
     console.info(`[email] Verification for ${user.email}: /api/auth/verify?token=${token}`);
   },
-  async sendAppointmentConfirmation(email: string, appointmentId: string) {
+  async sendAppointmentConfirmation(email: string, appointmentId: string, details?: any) {
     console.info(`[email] Appointment ${appointmentId} confirmation sent to ${email}`);
   },
   async sendPasswordResetEmail(email: string, token: string) {

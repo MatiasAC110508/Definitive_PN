@@ -20,7 +20,6 @@ import { toast } from "sonner";
 import type { Appointment } from "@/domain/entities/appointment.entity";
 import type { BeautyService } from "@/domain/entities/service.entity";
 import type { User } from "@/domain/entities/user.entity";
-import type { SessionPackage } from "@/domain/entities/session-package.entity";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -42,11 +41,12 @@ type UserDashboardProps = {
   appointments: Appointment[];
   services: BeautyService[];
   user: User;
-  sessionPackages?: SessionPackage[];
 };
 
 const statusLabels = {
-  RESERVED: "Reservada",
+  PAID: "Pagada",
+  COMPLETED: "Completada",
+  NO_SHOW: "No Asistió",
   PENDING: "Pendiente",
   CANCELLED: "Cancelada",
 };
@@ -54,11 +54,6 @@ const statusLabels = {
 type ApiEnvelope<T> = {
   data?: T;
   error?: { message?: string };
-};
-
-type SessionPackagePayload = Omit<SessionPackage, "createdAt" | "updatedAt"> & {
-  createdAt: string | Date;
-  updatedAt: string | Date;
 };
 
 function getErrorMessage(error: unknown, fallback: string) {
@@ -73,11 +68,9 @@ export function UserDashboard({
   appointments: initialAppointments,
   services,
   user: initialUser,
-  sessionPackages = [],
 }: UserDashboardProps) {
   const [appointments, setAppointments] = useState(initialAppointments);
   const [user, setUser] = useState(initialUser);
-  const [packages, setPackages] = useState(sessionPackages);
   const [isLoading, setIsLoading] = useState(false);
   const [isActionLoading, setIsActionLoading] = useState<string | null>(null);
 
@@ -91,20 +84,6 @@ export function UserDashboard({
           appointments: Appointment[];
         }>;
         setAppointments(data.data?.appointments ?? []);
-      }
-
-      const pkgRes = await fetch("/api/session-packages");
-      if (pkgRes.ok) {
-        const data = (await pkgRes.json()) as ApiEnvelope<{
-          packages: SessionPackagePayload[];
-        }>;
-        const mappedPkgs =
-          data.data?.packages.map((pkg) => ({
-            ...pkg,
-            createdAt: toIsoString(pkg.createdAt),
-            updatedAt: toIsoString(pkg.updatedAt),
-          })) ?? [];
-        setPackages(mappedPkgs);
       }
     } catch (error) {
       console.error("Error refreshing data:", error);
@@ -580,13 +559,13 @@ export function UserDashboard({
                           <Badge
                             className={cn(
                               "mb-2 font-bold rounded-full",
-                              appointment.status === "RESERVED"
+                              appointment.status === "PENDING"
                                 ? "bg-emerald-50 text-emerald-700 border-emerald-100"
                                 : "bg-amber-50 text-amber-700 border-amber-100",
                             )}
                             variant="default"
                           >
-                            {appointment.status === "RESERVED" ? (
+                            {appointment.status === "PENDING" ? (
                               <CheckCircle2 className="mr-1 size-3" />
                             ) : null}
                             {
@@ -641,85 +620,6 @@ export function UserDashboard({
               )}
             </CardContent>
           </Card>
-
-          {/* Pending Session Packages */}
-          {packages.length > 0 &&
-            packages.some((p) => p.usedSessions < p.totalSessions) && (
-              <Card className="glass-card overflow-hidden rounded-3xl border-none shadow-xl">
-                <CardHeader className="border-b border-[var(--line)]/50 pb-4 bg-[var(--gold)]/10">
-                  <CardTitle className="flex items-center gap-2 text-2xl font-display">
-                    <Sparkles
-                      aria-hidden="true"
-                      className="size-5 text-[var(--gold)]"
-                    />
-                    Paquetes Pendientes
-                  </CardTitle>
-                </CardHeader>
-                <CardContent className="p-0">
-                  <div className="divide-y divide-[var(--line)]/50">
-                    {packages
-                      .filter((p) => p.usedSessions < p.totalSessions)
-                      .map((pkg) => {
-                        const remaining = pkg.totalSessions - pkg.usedSessions;
-                        return (
-                          <div
-                            key={pkg.id}
-                            className="group flex flex-col gap-6 p-6 transition-colors hover:bg-white/40 md:flex-row md:items-center md:justify-between"
-                          >
-                            <div className="flex items-start gap-5">
-                              <div className="flex flex-col items-center justify-center rounded-2xl border border-[var(--line)] bg-[var(--quartz-soft)] p-3 min-w-[70px] shadow-sm">
-                                <span className="text-[10px] font-bold uppercase tracking-tighter text-[var(--gold)]">
-                                  Restante
-                                </span>
-                                <span className="text-3xl font-display font-bold text-[var(--ink)]">
-                                  {remaining}
-                                </span>
-                              </div>
-                              <div>
-                                <Badge
-                                  className="mb-2 font-bold rounded-full bg-[var(--gold)] text-white border-transparent"
-                                  variant="default"
-                                >
-                                  Paquete Activo
-                                </Badge>
-                                <h2 className="font-display text-2xl font-semibold text-[var(--ink)]">
-                                  {serviceName(pkg.serviceId)}
-                                </h2>
-                                <div className="flex items-center gap-2 mt-1 text-sm text-[var(--ink-soft)]">
-                                  <span>
-                                    Comprado el{" "}
-                                    {formatDate(pkg.createdAt, "d MMM, yyyy")}
-                                  </span>
-                                  <span>·</span>
-                                  <span>
-                                    {pkg.usedSessions} de {pkg.totalSessions}{" "}
-                                    usadas
-                                  </span>
-                                </div>
-                              </div>
-                            </div>
-                            <div className="flex flex-wrap items-center gap-3">
-                              <Button
-                                asChild
-                                variant="gold"
-                                size="sm"
-                                className="rounded-xl shadow-lg"
-                              >
-                                <Link
-                                  href={`/reservar?serviceId=${pkg.serviceId}`}
-                                >
-                                  <Calendar className="mr-2 size-4" />
-                                  Agendar sesión {pkg.usedSessions + 1}
-                                </Link>
-                              </Button>
-                            </div>
-                          </div>
-                        );
-                      })}
-                  </div>
-                </CardContent>
-              </Card>
-            )}
 
           <Card className="border-[var(--line)] rounded-3xl shadow-lg">
             <CardHeader className="bg-[var(--quartz-soft)]/10">

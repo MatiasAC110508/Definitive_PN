@@ -2,6 +2,10 @@ import { NextRequest } from "next/server";
 import { forgotPasswordSchema, resetPasswordSchema } from "@/application/validations/auth.schema";
 import { ForgotPasswordUseCase } from "@/application/use-cases/users/forgot-password.use-case";
 import { ResetPasswordUseCase } from "@/application/use-cases/users/reset-password.use-case";
+import { getUserRepository } from "@/infrastructure/repositories/repository-factory";
+import { getEmailService } from "@/infrastructure/notifications/email-factory";
+import { getTokenStore } from "@/infrastructure/security/token-store";
+import { bcryptPasswordHasher } from "@/infrastructure/security/password";
 import { checkRateLimit } from "@/infrastructure/security/rate-limit";
 import { apiError, ok, validationError } from "@/presentation/http/api-response";
 
@@ -26,7 +30,11 @@ export async function forgotPasswordController(request: NextRequest) {
   }
 
   try {
-    const useCase = new ForgotPasswordUseCase();
+    const useCase = new ForgotPasswordUseCase(
+      getUserRepository(),
+      getEmailService(),
+      getTokenStore(),
+    );
     await useCase.execute(parsed.data.email);
     
     // Always return success even if the email doesn't exist to prevent enumeration.
@@ -57,7 +65,11 @@ export async function resetPasswordController(request: NextRequest) {
   }
 
   try {
-    const useCase = new ResetPasswordUseCase();
+    const useCase = new ResetPasswordUseCase(
+      getUserRepository(),
+      bcryptPasswordHasher,
+      getTokenStore(),
+    );
     await useCase.execute(parsed.data.token, parsed.data.password);
     
     return ok({ message: "Contraseña actualizada correctamente. Ya puedes iniciar sesión." });

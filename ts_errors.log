@@ -1,0 +1,6 @@
+
+> perfect-nails@0.1.0 typecheck
+> tsc --noEmit
+
+.next/types/validator.ts(368,39): error TS2307: Cannot find module '../../src/app/api/session-packages/route.js' or its corresponding type declarations.
+src/infrastructure/repositories/prisma-appointment.repository.ts(59,27): error TS2339: Property 'sessionNumber' does not exist on type '{ id: string; userId: string; serviceId: string; startAt: Date; endAt: Date; durationMinutes: number; status: string; notes: string | null; sessionPackageId?: string | null | undefined; createdAt: Date; }'.

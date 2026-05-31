@@ -1,4 +1,4 @@
-import { Prisma } from "@prisma/client";
+import { Prisma, AppointmentStatus as PrismaAppointmentStatus } from "@prisma/client";
 import type { Appointment, AppointmentSlot } from "@/domain/entities/appointment.entity";
 import type { AppointmentRepository } from "@/domain/repositories/appointment.repository";
 import { AvailabilityService } from "@/domain/services/availability.service";
@@ -45,7 +45,7 @@ function toAppointment(record: {
   durationMinutes: number;
   status: string;
   notes: string | null;
-  sessionPackageId?: string | null;
+  sessionNumber: number | null;
   createdAt: Date;
 }): Appointment {
   return {
@@ -56,7 +56,7 @@ function toAppointment(record: {
     endAt: record.endAt.toISOString(),
     durationMinutes: record.durationMinutes,
     status: record.status as Appointment["status"],
-    sessionPackageId: record.sessionPackageId,
+    sessionNumber: record.sessionNumber,
     notes: record.notes,
     createdAt: record.createdAt.toISOString(),
   };
@@ -99,7 +99,7 @@ export class PrismaAppointmentRepository implements AppointmentRepository {
 
   async findAll(): Promise<Appointment[]> {
     const prisma = getPrismaClient();
-    const records = await prisma.appointment.findMany({ orderBy: { startAt: "desc" } });
+    const records = await prisma.appointment.findMany({ take: 200, orderBy: { startAt: "desc" } });
     return records.map(toAppointment);
   }
 
@@ -147,7 +147,7 @@ export class PrismaAppointmentRepository implements AppointmentRepository {
     return records.map(toAppointment);
   }
 
-  async create(input: Omit<Appointment, "id" | "createdAt"> & { packageSessions?: number }): Promise<Appointment> {
+  async create(input: Omit<Appointment, "id" | "createdAt">): Promise<Appointment> {
     const prisma = getPrismaClient();
     const startAt = parseAppointmentDate(input.startAt);
     const endAt = parseAppointmentDate(input.endAt);
@@ -182,33 +182,6 @@ export class PrismaAppointmentRepository implements AppointmentRepository {
             throw new Error("SLOT_ALREADY_BOOKED");
           }
 
-          const packageSessions = input.packageSessions;
-
-          if (packageSessions && packageSessions > 1) {
-            const sessionPackage = await tx.sessionPackage.create({
-              data: {
-                userId: input.userId,
-                serviceId: input.serviceId,
-                totalSessions: packageSessions,
-                usedSessions: 1,
-                pricePerPackage: service.price,
-              },
-            });
-
-            return tx.appointment.create({
-              data: {
-                userId: input.userId,
-                serviceId: input.serviceId,
-                sessionPackageId: sessionPackage.id,
-                startAt,
-                endAt,
-                durationMinutes: input.durationMinutes,
-                status: input.status,
-                notes: input.notes,
-              },
-            });
-          }
-
           return tx.appointment.create({
             data: {
               userId: input.userId,
@@ -216,8 +189,9 @@ export class PrismaAppointmentRepository implements AppointmentRepository {
               startAt,
               endAt,
               durationMinutes: input.durationMinutes,
-              status: input.status,
+              status: input.status as unknown as PrismaAppointmentStatus,
               notes: input.notes,
+              sessionNumber: input.sessionNumber,
             },
           });
         },
@@ -236,9 +210,10 @@ export class PrismaAppointmentRepository implements AppointmentRepository {
 
   async updateStatus(id: string, status: Appointment["status"]): Promise<Appointment | null> {
     const prisma = getPrismaClient();
+
     const record = await prisma.appointment.update({
       where: { id },
-      data: { status },
+      data: { status: status as unknown as PrismaAppointmentStatus },
     });
 
     return toAppointment(record);
@@ -246,6 +221,7 @@ export class PrismaAppointmentRepository implements AppointmentRepository {
 
   async update(id: string, input: Partial<Omit<Appointment, "id" | "createdAt">>): Promise<Appointment | null> {
     const prisma = getPrismaClient();
+
     const record = await prisma.appointment.update({
       where: { id },
       data: {
@@ -254,7 +230,7 @@ export class PrismaAppointmentRepository implements AppointmentRepository {
         startAt: input.startAt ? new Date(input.startAt) : undefined,
         endAt: input.endAt ? new Date(input.endAt) : undefined,
         durationMinutes: input.durationMinutes,
-        status: input.status,
+        status: input.status as unknown as PrismaAppointmentStatus,
         notes: input.notes,
       },
     });
@@ -264,8 +240,6 @@ export class PrismaAppointmentRepository implements AppointmentRepository {
 
   async delete(id: string): Promise<void> {
     const prisma = getPrismaClient();
-    await prisma.appointment.delete({
-      where: { id },
-    });
+    await prisma.appointment.delete({ where: { id } });
   }
 }

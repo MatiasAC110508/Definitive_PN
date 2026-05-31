@@ -1,6 +1,6 @@
 import type { ISODateString } from "@/types/common";
 
-export type AppointmentStatus = "AVAILABLE" | "RESERVED" | "PENDING" | "CANCELLED";
+export type AppointmentStatus = "PENDING" | "PAID" | "COMPLETED" | "CANCELLED" | "NO_SHOW";
 
 export interface Appointment {
   id: string;
@@ -10,7 +10,7 @@ export interface Appointment {
   endAt: ISODateString;
   durationMinutes: number;
   status: Exclude<AppointmentStatus, "AVAILABLE">;
-  sessionPackageId?: string | null;
+  sessionNumber?: number | null;
   notes?: string | null;
   createdAt: ISODateString;
 }
@@ -20,6 +20,6 @@ export interface AppointmentSlot {
   startAt: ISODateString;
   endAt: ISODateString;
   label: string;
-  status: AppointmentStatus;
+  status: "AVAILABLE" | "RESERVED";
   serviceId?: string;
 }

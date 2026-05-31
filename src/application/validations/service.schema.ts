@@ -12,11 +12,6 @@ export const serviceCategorySchema = z.enum([
   "masajes",
 ]);
 
-const sessionPackageSchema = z.object({
-  sessions: z.coerce.number().int().positive(),
-  price: z.coerce.number().int().positive(),
-});
-
 const serviceBaseSchema = z.object({
   name: z.string().min(2).max(150).trim(),
   slug: z
@@ -31,7 +26,6 @@ const serviceBaseSchema = z.object({
   durationMinutes: z.coerce.number().int().positive(),
   imageUrl: z.string().url(),
   isFeatured: z.boolean().optional(),
-  sessionPackages: z.array(sessionPackageSchema).optional(),
 });
 
 export const createServiceSchema = serviceBaseSchema.strict();

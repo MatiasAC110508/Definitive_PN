@@ -28,7 +28,6 @@ export class CreateAppointmentUseCase {
 
     // 2. Create appointment. The repository revalidates business hours and
     // conflicts inside the write path so concurrent requests cannot double-book.
-    const isPackage = input.packageSessions && input.packageSessions > 1;
     const appointmentStatus = "PENDING" as const;
     return this.appointments.create({
       userId,
@@ -38,7 +37,7 @@ export class CreateAppointmentUseCase {
       durationMinutes: service.durationMinutes,
       status: appointmentStatus,
       notes: input.notes,
-      ...(isPackage ? { packageSessions: input.packageSessions } : {})
+      sessionNumber: input.sessionNumber,
     });
   }
 }

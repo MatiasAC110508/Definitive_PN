@@ -3,11 +3,11 @@ import type { AppointmentStatus } from "@/domain/entities/appointment.entity";
 export type CreateAppointmentDto = {
   serviceId: string;
   startAt: string;
-  packageSessions?: number;
+  sessionNumber?: number;
   notes?: string;
 };
 
 export type UpdateAppointmentDto = {
-  status?: Exclude<AppointmentStatus, "AVAILABLE">;
+  status?: AppointmentStatus;
   startAt?: string;
 };

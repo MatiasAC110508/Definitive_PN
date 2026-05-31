@@ -88,11 +88,6 @@ export const services: BeautyService[] = [
     durationMinutes: 20,
     imageUrl: "https://images.unsplash.com/photo-1559599101-f09722fb4948?auto=format&fit=crop&w=1000&q=85",
     isFeatured: true,
-    sessionPackages: [
-      { sessions: 5, price: 225000 },
-      { sessions: 7, price: 315000 },
-      { sessions: 10, price: 450000 },
-    ],
   },
   {
     id: "svc-laser-abdomen-espalda",
@@ -104,11 +99,6 @@ export const services: BeautyService[] = [
     durationMinutes: 40,
     imageUrl: "https://images.unsplash.com/photo-1559599101-f09722fb4948?auto=format&fit=crop&w=1000&q=85",
     isFeatured: true,
-    sessionPackages: [
-      { sessions: 5, price: 275000 },
-      { sessions: 7, price: 385000 },
-      { sessions: 10, price: 550000 },
-    ],
   },
   {
     id: "svc-laser-brazos",
@@ -120,11 +110,6 @@ export const services: BeautyService[] = [
     durationMinutes: 30,
     imageUrl: "https://images.unsplash.com/photo-1559599101-f09722fb4948?auto=format&fit=crop&w=1000&q=85",
     isFeatured: false,
-    sessionPackages: [
-      { sessions: 5, price: 225000 },
-      { sessions: 7, price: 315000 },
-      { sessions: 10, price: 450000 },
-    ],
   },
   {
     id: "svc-laser-bikini",
@@ -136,11 +121,6 @@ export const services: BeautyService[] = [
     durationMinutes: 20,
     imageUrl: "https://images.unsplash.com/photo-1559599101-f09722fb4948?auto=format&fit=crop&w=1000&q=85",
     isFeatured: false,
-    sessionPackages: [
-      { sessions: 5, price: 200000 },
-      { sessions: 7, price: 280000 },
-      { sessions: 10, price: 400000 },
-    ],
   },
   {
     id: "svc-laser-zona-intima",
@@ -152,11 +132,6 @@ export const services: BeautyService[] = [
     durationMinutes: 30,
     imageUrl: "https://images.unsplash.com/photo-1559599101-f09722fb4948?auto=format&fit=crop&w=1000&q=85",
     isFeatured: true,
-    sessionPackages: [
-      { sessions: 5, price: 250000 },
-      { sessions: 7, price: 350000 },
-      { sessions: 10, price: 500000 },
-    ],
   },
   {
     id: "svc-laser-pierna-completa",
@@ -168,11 +143,6 @@ export const services: BeautyService[] = [
     durationMinutes: 45,
     imageUrl: "https://images.unsplash.com/photo-1559599101-f09722fb4948?auto=format&fit=crop&w=1000&q=85",
     isFeatured: false,
-    sessionPackages: [
-      { sessions: 5, price: 275000 },
-      { sessions: 7, price: 385000 },
-      { sessions: 10, price: 550000 },
-    ],
   },
   {
     id: "svc-laser-media-pierna",
@@ -184,11 +154,6 @@ export const services: BeautyService[] = [
     durationMinutes: 25,
     imageUrl: "https://images.unsplash.com/photo-1559599101-f09722fb4948?auto=format&fit=crop&w=1000&q=85",
     isFeatured: false,
-    sessionPackages: [
-      { sessions: 5, price: 200000 },
-      { sessions: 7, price: 280000 },
-      { sessions: 10, price: 400000 },
-    ],
   },
   // ── Hollywood Peeling ──────────────────────────────────────────
   {
@@ -377,7 +342,12 @@ export const products: Product[] = [
 export const reviews: Review[] = [
   {
     id: "rev-1",
-    authorName: "Mariana P.",
+    userId: "usr-demo",
+    user: { name: "Mariana P.", image: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&w=300&q=85" },
+    serviceId: null,
+    productId: null,
+    createdAt: new Date(),
+    updatedAt: new Date(),
     rating: 5,
     comment: "La experiencia se siente privada y delicada. Mis uñas quedaron impecables por semanas.",
     imageUrl:
@@ -386,7 +356,12 @@ export const reviews: Review[] = [
   },
   {
     id: "rev-2",
-    authorName: "Valentina R.",
+    userId: "usr-demo",
+    user: { name: "Valentina R.", image: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=300&q=85" },
+    serviceId: null,
+    productId: null,
+    createdAt: new Date(),
+    updatedAt: new Date(),
     rating: 5,
     comment: "Reservé online, compré un vestido y salí con manicure perfecta. Todo se ve de lujo.",
     imageUrl:
@@ -395,7 +370,12 @@ export const reviews: Review[] = [
   },
   {
     id: "rev-3",
-    authorName: "Camila S.",
+    userId: "usr-demo",
+    user: { name: "Camila S.", image: "https://images.unsplash.com/photo-1524504388940-b1c1722653e1?auto=format&fit=crop&w=300&q=85" },
+    serviceId: null,
+    productId: null,
+    createdAt: new Date(),
+    updatedAt: new Date(),
     rating: 5,
     comment: "El nail art fue exactamente como lo imaginé: elegante, fino y cero recargado.",
     imageUrl:
@@ -445,7 +425,7 @@ export const appointments: Appointment[] = [
     startAt: new Date("2026-05-09T15:00:00.000").toISOString(),
     endAt: new Date("2026-05-09T16:15:00.000").toISOString(),
     durationMinutes: 75,
-    status: "RESERVED",
+    status: "PENDING",
     notes: "Preferencia por tono nude rosado.",
     createdAt: "2026-05-01T10:00:00.000Z",
   },

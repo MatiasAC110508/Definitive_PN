@@ -3,6 +3,7 @@ import type { AppointmentRepository } from "@/domain/repositories/appointment.re
 import type { ProductRepository } from "@/domain/repositories/product.repository";
 import type { ServiceRepository } from "@/domain/repositories/service.repository";
 import type { UserRepository } from "@/domain/repositories/user.repository";
+import type { ISaleRepository } from "@/domain/repositories/sale.repository";
 
 export type AdminDashboardData = {
   metrics: {
@@ -28,6 +29,7 @@ export class GetAdminDashboardUseCase {
     private serviceRepository: ServiceRepository,
     private productRepository: ProductRepository,
     private userRepository: UserRepository,
+    private saleRepository: ISaleRepository,
   ) {}
 
   /**
@@ -38,29 +40,38 @@ export class GetAdminDashboardUseCase {
     const now = new Date();
     const firstDayOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
 
-    const [appointments, services, products, users] = await Promise.all([
+    const [appointments, services, products, users, sales] = await Promise.all([
       this.appointmentRepository.findAll(),
       this.serviceRepository.findAll(),
       this.productRepository.findAll(),
       this.userRepository.findAll(),
+      this.saleRepository.findAll(),
     ]);
 
     // Calculate real monthly metrics
+    const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
+
     const monthlyAppointments = appointments.filter(apt => 
-      new Date(apt.startAt) >= firstDayOfMonth && apt.status !== "CANCELLED"
+      new Date(apt.startAt) >= startOfMonth && apt.status !== "CANCELLED"
     );
 
-    const monthlyRevenue = monthlyAppointments.reduce((sum, apt) => {
-      const service = services.find(s => s.id === apt.serviceId);
-      return sum + (service?.price || 0);
-    }, 0);
+    const monthlySales = sales.filter(sale => new Date(sale.createdAt) >= startOfMonth);
+    const monthlyRevenue = monthlySales.reduce((sum, sale) => sum + sale.amount, 0);
+    const productOrders = sales.filter(s => s.saleType === "PRODUCT" && new Date(s.createdAt) >= startOfMonth).length;
+
+    // We don't have a ReviewRepository yet, so we'll approximate satisfaction 
+    // from cancellation rates (as it's better than hardcoding 98) 
+    // or keep a static baseline if there are no appointments.
+    const totalApts = appointments.length;
+    const cancelledApts = appointments.filter(a => a.status === "CANCELLED").length;
+    const satisfactionRate = totalApts > 0 ? Math.round(((totalApts - cancelledApts) / totalApts) * 100) : 100;
 
     return {
       metrics: {
         monthlyRevenue,
         bookedAppointments: monthlyAppointments.length,
-        productOrders: products.length, // Placeholder for actual orders
-        satisfactionRate: 98,
+        productOrders,
+        satisfactionRate,
       },
       recentAppointments: appointments
         .sort((a, b) => new Date(b.startAt).getTime() - new Date(a.startAt).getTime()),

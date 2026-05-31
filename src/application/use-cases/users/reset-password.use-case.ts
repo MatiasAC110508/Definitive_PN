@@ -1,46 +1,32 @@
-import { getUserRepository } from "@/infrastructure/repositories/repository-factory";
-import { getPrismaClient, hasDatabaseConnectionString } from "@/infrastructure/database/prisma";
-import { memoryTokens } from "./forgot-password.use-case";
-import { bcryptPasswordHasher } from "@/infrastructure/security/password";
+import type { UserRepository } from "@/domain/repositories/user.repository";
+import type { PasswordHasher } from "@/services/password-hasher.service";
+import type { TokenStore } from "./forgot-password.use-case";
 
 export class ResetPasswordUseCase {
+  constructor(
+    private readonly users: UserRepository,
+    private readonly passwordHasher: PasswordHasher,
+    private readonly tokenStore: TokenStore,
+  ) {}
+
   async execute(token: string, newPasswordRaw: string): Promise<void> {
-    let identifier = "";
-
     // Verify token
-    if (hasDatabaseConnectionString()) {
-      const prisma = getPrismaClient();
-      const dbToken = await prisma.verificationToken.findUnique({
-        where: { token },
-      });
+    const storedToken = await this.tokenStore.find(token);
 
-      if (!dbToken || dbToken.expires < new Date()) {
-        throw new Error("INVALID_OR_EXPIRED_TOKEN");
-      }
-      
-      identifier = dbToken.identifier;
-      
-      // Delete token so it can't be reused
-      await prisma.verificationToken.delete({
-        where: { token },
-      });
-    } else {
-      const mem = memoryTokens.get(token);
-      if (!mem || mem.expires < new Date()) {
-        throw new Error("INVALID_OR_EXPIRED_TOKEN");
-      }
-      identifier = mem.identifier;
-      memoryTokens.delete(token);
+    if (!storedToken || storedToken.expires < new Date()) {
+      throw new Error("INVALID_OR_EXPIRED_TOKEN");
     }
 
-    const userRepository = getUserRepository();
-    const user = await userRepository.findByEmail(identifier);
+    // Delete token so it can't be reused
+    await this.tokenStore.delete(token);
+
+    const user = await this.users.findByEmail(storedToken.identifier);
 
     if (!user) {
       throw new Error("USER_NOT_FOUND");
     }
 
-    const passwordHash = await bcryptPasswordHasher.hash(newPasswordRaw);
-    await userRepository.update(user.id, { passwordHash });
+    const passwordHash = await this.passwordHasher.hash(newPasswordRaw);
+    await this.users.update(user.id, { passwordHash });
   }
 }

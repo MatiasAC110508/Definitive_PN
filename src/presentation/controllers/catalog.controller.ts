@@ -4,7 +4,7 @@ import { ListServicesUseCase } from "@/application/use-cases/services/list-servi
 import { productQuerySchema } from "@/application/validations/product.schema";
 import { getProductRepository, getServiceRepository } from "@/infrastructure/repositories/repository-factory";
 import { apiError, ok, validationError } from "@/presentation/http/api-response";
-import { getCurrentSession } from "@/lib/auth";
+
 
 export async function listServicesController() {
   const useCase = new ListServicesUseCase(getServiceRepository());
@@ -26,16 +26,4 @@ export async function listProductsController(request: NextRequest) {
   return ok({ products: await useCase.execute(parsed.data) });
 }
 
-export async function createAdminEntityGuard() {
-  const session = await getCurrentSession();
 
-  if (!session?.user?.id) {
-    return apiError("Debes iniciar sesión para continuar.", 401);
-  }
-
-  if (session.user.role !== "ADMIN") {
-    return apiError("No tienes permisos administrativos.", 403);
-  }
-
-  return null;
-}

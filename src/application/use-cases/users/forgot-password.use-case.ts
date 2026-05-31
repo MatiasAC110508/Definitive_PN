@@ -1,15 +1,26 @@
 import { randomBytes } from "crypto";
-import { getEmailService } from "@/infrastructure/notifications/email-factory";
-import { getUserRepository } from "@/infrastructure/repositories/repository-factory";
-import { getPrismaClient, hasDatabaseConnectionString } from "@/infrastructure/database/prisma";
+import type { UserRepository } from "@/domain/repositories/user.repository";
+import type { EmailService } from "@/services/email.service";
 
-// Fallback in-memory store for verification tokens if no DB is available
-const memoryTokens = new Map<string, { identifier: string; token: string; expires: Date }>();
+/**
+ * Token storage abstraction for verification tokens.
+ * Keeps the use case free of infrastructure imports.
+ */
+export interface TokenStore {
+  save(identifier: string, token: string, expires: Date): Promise<void>;
+  find(token: string): Promise<{ identifier: string; expires: Date } | null>;
+  delete(token: string): Promise<void>;
+}
 
 export class ForgotPasswordUseCase {
+  constructor(
+    private readonly users: UserRepository,
+    private readonly emailService: EmailService,
+    private readonly tokenStore: TokenStore,
+  ) {}
+
   async execute(email: string): Promise<void> {
-    const userRepository = getUserRepository();
-    const user = await userRepository.findByEmail(email);
+    const user = await this.users.findByEmail(email);
 
     // To prevent email enumeration attacks, do not throw if user not found.
     // Just return silently.
@@ -20,22 +31,8 @@ export class ForgotPasswordUseCase {
     const expires = new Date(Date.now() + 1000 * 60 * 60); // 1 hour
 
     // Store token
-    if (hasDatabaseConnectionString()) {
-      const prisma = getPrismaClient();
-      await prisma.verificationToken.create({
-        data: {
-          identifier: email,
-          token,
-          expires,
-        },
-      });
-    } else {
-      memoryTokens.set(token, { identifier: email, token, expires });
-    }
+    await this.tokenStore.save(email, token, expires);
 
-    const emailService = getEmailService();
-    await emailService.sendPasswordResetEmail(email, token);
+    await this.emailService.sendPasswordResetEmail(email, token);
   }
 }
-
-export { memoryTokens };

@@ -24,7 +24,7 @@ export default async function AdminPage() {
     redirect("/login?callbackUrl=/admin");
   }
 
-  if (session.user.role !== "ADMIN") {
+  if (!["ADMIN", "STAFF"].includes(session.user.role)) {
     redirect("/panel");
   }
 
@@ -35,6 +35,7 @@ export default async function AdminPage() {
       getServiceRepository(),
       getProductRepository(),
       getUserRepository(),
+      getSaleRepository(),
     ).execute(),
   ]);
 
@@ -54,6 +55,7 @@ export default async function AdminPage() {
       services={allServices}
       users={allUsers}
       sales={allSales}
+      userRole={session.user.role}
     />
   );
 }

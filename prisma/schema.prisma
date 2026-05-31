@@ -18,9 +18,11 @@ enum CategoryType {
 }
 
 enum AppointmentStatus {
-  RESERVED
   PENDING
+  PAID
+  COMPLETED
   CANCELLED
+  NO_SHOW
 }
 
 model User {
@@ -35,7 +37,6 @@ model User {
   accounts        Account[]
   sessions        Session[]
   appointments    Appointment[]
-  sessionPackages SessionPackage[]
   reviews         Review[]
   createdAt       DateTime         @default(now())
   updatedAt       DateTime         @updatedAt
@@ -58,6 +59,7 @@ model Account {
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@unique([provider, providerAccountId])
+  @@index([userId])
 }
 
 model Session {
@@ -66,6 +68,8 @@ model Session {
   userId       String
   expires      DateTime
   user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
 }
 
 model VerificationToken {
@@ -101,10 +105,11 @@ model Service {
   categoryId      String
   category        Category         @relation(fields: [categoryId], references: [id])
   appointments    Appointment[]
-  sessionPackages SessionPackage[]
   reviews         Review[]
   createdAt       DateTime         @default(now())
   updatedAt       DateTime         @updatedAt
+
+  @@index([categoryId])
 }
 
 model Product {
@@ -121,13 +126,15 @@ model Product {
   reviews     Review[]
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
+
+  @@index([categoryId])
 }
 
 model Appointment {
   id               String            @id @default(cuid())
   userId           String
   serviceId        String
-  sessionPackageId String?
+  sessionNumber    Int?
   startAt          DateTime
   endAt            DateTime
   durationMinutes  Int
@@ -136,28 +143,15 @@ model Appointment {
   
   user           User            @relation(fields: [userId], references: [id], onDelete: Cascade)
   service        Service         @relation(fields: [serviceId], references: [id])
-  sessionPackage SessionPackage? @relation(fields: [sessionPackageId], references: [id], onDelete: SetNull)
   
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
   @@index([startAt, status])
   @@index([userId])
+  @@index([serviceId])
 }
 
-model SessionPackage {
-  id              String        @id @default(cuid())
-  userId          String
-  serviceId       String
-  totalSessions   Int
-  usedSessions    Int           @default(1)
-  pricePerPackage Int
-  appointments    Appointment[]
-  user            User          @relation(fields: [userId], references: [id], onDelete: Cascade)
-  service         Service       @relation(fields: [serviceId], references: [id])
-  createdAt       DateTime      @default(now())
-  updatedAt       DateTime      @updatedAt
-}
 
 model Schedule {
   id        String   @id @default(cuid())
@@ -183,6 +177,10 @@ model Review {
   product     Product? @relation(fields: [productId], references: [id], onDelete: SetNull)
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
+
+  @@index([userId])
+  @@index([serviceId])
+  @@index([productId])
 }
 
 enum SaleType {

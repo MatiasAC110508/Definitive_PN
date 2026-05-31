@@ -67,11 +67,12 @@ import {
 } from "@/lib/business-time";
 import { cn } from "@/lib/utils";
 
-const statusLabels: Record<AppointmentStatus, string> = {
-  AVAILABLE: "Disponible",
-  RESERVED: "Reservado",
+const statusLabels: Record<string, string> = {
   PENDING: "Pendiente",
-  CANCELLED: "Cancelado",
+  PAID: "Pagada",
+  COMPLETED: "Completada",
+  CANCELLED: "Cancelada",
+  NO_SHOW: "No Asistió",
 };
 
 interface AdminAppointmentsTabProps {
@@ -107,7 +108,7 @@ export function AdminAppointmentsTab({
     serviceId: "",
     startAt: "",
     notes: "",
-    status: "RESERVED",
+    status: "PENDING",
   });
 
   const filteredAppointments = useMemo(() => {
@@ -166,7 +167,7 @@ export function AdminAppointmentsTab({
       serviceId: services[0]?.id || "",
       startAt: formatDateTimeInputInBusinessTime(new Date()),
       notes: "",
-      status: "RESERVED",
+      status: "PENDING",
     });
     setIsAptModalOpen(true);
   }
@@ -369,7 +370,7 @@ export function AdminAppointmentsTab({
                         <Badge
                           className={cn(
                             "font-bold",
-                            apt.status === "RESERVED" &&
+                            apt.status === "PENDING" &&
                               "bg-emerald-50 text-emerald-700 border-emerald-100",
                             apt.status === "PENDING" &&
                               "bg-amber-50 text-amber-700 border-amber-100",
@@ -549,8 +550,10 @@ export function AdminAppointmentsTab({
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="RESERVED">Reservada Conf.</SelectItem>
-                    <SelectItem value="PENDING">Pendiente de Pago</SelectItem>
+                    <SelectItem value="PENDING">Pendiente</SelectItem>
+                    <SelectItem value="PAID">Pagada</SelectItem>
+                    <SelectItem value="COMPLETED">Completada</SelectItem>
+                    <SelectItem value="NO_SHOW">No Asistió</SelectItem>
                     <SelectItem value="CANCELLED">Cancelada</SelectItem>
                   </SelectContent>
                 </Select>

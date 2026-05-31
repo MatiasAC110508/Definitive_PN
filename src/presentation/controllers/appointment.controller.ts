@@ -2,11 +2,14 @@ import { NextRequest } from "next/server";
 import { CreateAppointmentUseCase } from "@/application/use-cases/appointments/create-appointment.use-case";
 import { GetAvailabilityUseCase } from "@/application/use-cases/appointments/get-availability.use-case";
 import { createAppointmentSchema, updateAppointmentSchema } from "@/application/validations/appointment.schema";
-import { getAppointmentRepository, getServiceRepository } from "@/infrastructure/repositories/repository-factory";
+import { getAppointmentRepository, getServiceRepository, getScheduleRepository } from "@/infrastructure/repositories/repository-factory";
+import { AvailabilityService } from "@/domain/services/availability.service";
+import { getDayOfWeekFromDateString, formatDateTimeInputInBusinessTime } from "@/lib/business-time";
 import { checkRateLimit } from "@/infrastructure/security/rate-limit";
 import { sanitizeText } from "@/infrastructure/security/sanitize";
 import { getCurrentSession } from "@/lib/auth";
 import { apiError, created, ok, validationError } from "@/presentation/http/api-response";
+import { getEmailService } from "@/infrastructure/notifications/email-factory";
 
 function getErrorMessage(error: unknown, fallback: string) {
   return error instanceof Error && error.message ? error.message : fallback;
@@ -42,7 +45,7 @@ export async function listAppointmentsController() {
 
   const repository = getAppointmentRepository();
   const appointments =
-    session.user.role === "ADMIN"
+    ["ADMIN", "STAFF"].includes(session.user.role)
       ? await repository.findAll()
       : await repository.findByUser(session.user.id);
 
@@ -91,9 +94,30 @@ export async function createAppointmentController(request: NextRequest) {
     const appointment = await useCase.execute(session.user.id, {
       serviceId: parsed.data.serviceId,
       startAt: parsed.data.startAt,
-      packageSessions: parsed.data.packageSessions,
+      sessionNumber: parsed.data.sessionNumber,
       notes: parsed.data.notes ? sanitizeText(parsed.data.notes) : undefined,
     });
+
+    try {
+      if (session.user.email) {
+        const serviceRepo = getServiceRepository();
+        const serviceData = await serviceRepo.findById(parsed.data.serviceId);
+        
+        if (serviceData) {
+          const emailService = getEmailService();
+          // Dispatch async email completely independent of request response
+          void emailService.sendAppointmentConfirmation(session.user.email, appointment.id, {
+            startAt: appointment.startAt,
+            durationMinutes: appointment.durationMinutes,
+            serviceName: serviceData.name,
+            userName: session.user.name || "Clienta",
+            notes: appointment.notes || undefined,
+          }).catch(err => console.error("Error background sending email", err));
+        }
+      }
+    } catch (e) {
+      console.error("Error setting up email dispatch:", e);
+    }
 
     return created({ appointment });
   } catch (error) {
@@ -130,7 +154,7 @@ export async function updateAppointmentController(request: NextRequest, id: stri
       return apiError("No encontramos la cita solicitada.", 404);
     }
 
-    if (session.user.role !== "ADMIN" && existing.userId !== session.user.id) {
+    if (!["ADMIN", "STAFF"].includes(session.user.role) && existing.userId !== session.user.id) {
       return apiError("No tienes permisos para modificar esta cita.", 403);
     }
 
@@ -138,7 +162,36 @@ export async function updateAppointmentController(request: NextRequest, id: stri
     if (parsed.data.startAt) {
       const startAt = new Date(parsed.data.startAt);
       const endAt = new Date(startAt.getTime() + existing.durationMinutes * 60000);
-      
+
+      // Cannot reschedule to the past
+      if (startAt.getTime() < Date.now()) {
+        return apiError("No puedes reagendar a una fecha pasada.", 400);
+      }
+
+      // Validate business hours
+      const businessDate = formatDateTimeInputInBusinessTime(startAt).split("T")[0];
+      const dayOfWeek = getDayOfWeekFromDateString(businessDate);
+      const scheduleRepo = getScheduleRepository();
+      const schedule = await scheduleRepo.findByDay(dayOfWeek);
+
+      const availabilityService = new AvailabilityService();
+      try {
+        availabilityService.assertWithinBusinessHours(startAt, endAt, schedule);
+      } catch (err) {
+        const msg = err instanceof Error ? err.message : "";
+        if (msg === "BUSINESS_CLOSED") {
+          return apiError("El negocio no está abierto en ese día.", 400);
+        }
+        return apiError("La reserva debe estar dentro del horario de atención.", 400);
+      }
+
+      // Check for conflicts (excluding the current appointment)
+      const conflicts = await repository.findConflicts(startAt.toISOString(), endAt.toISOString());
+      const realConflict = conflicts.find((c) => c.id !== id);
+      if (realConflict) {
+        return apiError("Ese horario ya no está disponible.", 409);
+      }
+
       const appointment = await repository.update(id, {
         startAt: startAt.toISOString(),
         endAt: endAt.toISOString(),
@@ -174,7 +227,7 @@ export async function deleteAppointmentController(request: NextRequest, id: stri
       return apiError("No encontramos el registro.", 404);
     }
 
-    if (session.user.role !== "ADMIN") {
+    if (!["ADMIN", "STAFF"].includes(session.user.role)) {
       if (existing.userId !== session.user.id) {
         return apiError("No tienes permisos.", 403);
       }

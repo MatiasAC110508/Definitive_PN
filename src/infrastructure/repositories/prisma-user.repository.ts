@@ -29,7 +29,7 @@ function toUser(record: {
 export class PrismaUserRepository implements UserRepository {
   async findAll(): Promise<User[]> {
     const prisma = getPrismaClient();
-    const records = await prisma.user.findMany({ orderBy: { createdAt: "desc" } });
+    const records = await prisma.user.findMany({ take: 200, orderBy: { createdAt: "desc" } });
     return records.map(toUser);
   }
 

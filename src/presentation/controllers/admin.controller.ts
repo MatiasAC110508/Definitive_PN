@@ -11,14 +11,18 @@ import {
 } from "@/application/validations/auth.schema";
 import { createProductSchema, updateProductSchema } from "@/application/validations/product.schema";
 import { createServiceSchema, updateServiceSchema } from "@/application/validations/service.schema";
+import { GetAdminDashboardUseCase } from "@/application/use-cases/admin/get-admin-dashboard.use-case";
 import {
   getUserRepository,
   getAppointmentRepository,
   getScheduleRepository,
   getProductRepository,
   getServiceRepository,
+  getSaleRepository,
 } from "@/infrastructure/repositories/repository-factory";
 import { getCurrentSession } from "@/lib/auth";
+import { bcryptPasswordHasher } from "@/infrastructure/security/password";
+import { randomBytes } from "crypto";
 import { apiError, ok, validationError } from "@/presentation/http/api-response";
 
 const scheduleTimeSchema = z
@@ -56,11 +60,28 @@ function isValidScheduleWindow(startTime: string, endTime: string) {
 }
 
 // En admin.controller.ts
-export const adminMetricsController = async () => {
-  return new Response(JSON.stringify({ message: "Próximamente" }), {
-    status: 200,
-  });
-};
+export async function adminMetricsController() {
+  try {
+    const session = await getCurrentSession();
+    if (!session || session.user.role !== "ADMIN") {
+      return apiError("Unauthorized", 401);
+    }
+
+    const useCase = new GetAdminDashboardUseCase(
+      getAppointmentRepository(),
+      getServiceRepository(),
+      getProductRepository(),
+      getUserRepository(),
+      getSaleRepository(),
+    );
+
+    const data = await useCase.execute();
+    return ok(data);
+  } catch (error) {
+    console.error("Error fetching admin metrics:", error);
+    return apiError("Error al obtener las métricas.", 500);
+  }
+}
 
 export async function updateUserRoleController(request: NextRequest, id: string) {
   const session = await getCurrentSession();
@@ -129,11 +150,15 @@ export async function createUserController(request: NextRequest) {
       return apiError("El email ya está registrado.", 400);
     }
 
+    const randomPassword = randomBytes(16).toString("hex");
+    const passwordHash = await bcryptPasswordHasher.hash(randomPassword);
+
     const user = await repository.create({
       name: parsed.data.name,
       email: parsed.data.email,
       phone: parsed.data.phone,
       role: parsed.data.role ?? "USER",
+      passwordHash,
     });
 
     return ok({ user });
@@ -171,7 +196,7 @@ export async function updateUserController(request: NextRequest, id: string) {
 export async function createAppointmentController(request: NextRequest) {
   try {
     const session = await getCurrentSession();
-    if (!session || session.user.role !== "ADMIN") return apiError("Unauthorized", 401);
+    if (!session || !["ADMIN", "STAFF"].includes(session.user.role)) return apiError("Unauthorized", 401);
 
     const body = await request.json();
     const parsed = adminCreateAppointmentSchema.safeParse(body);
@@ -192,7 +217,7 @@ export async function createAppointmentController(request: NextRequest) {
 export async function updateAppointmentController(request: NextRequest, id: string) {
   try {
     const session = await getCurrentSession();
-    if (!session || session.user.role !== "ADMIN") return apiError("Unauthorized", 401);
+    if (!session || !["ADMIN", "STAFF"].includes(session.user.role)) return apiError("Unauthorized", 401);
 
     const body = await request.json();
     const parsed = adminUpdateAppointmentSchema.safeParse(body);
@@ -213,7 +238,7 @@ export async function updateAppointmentController(request: NextRequest, id: stri
 export async function deleteAppointmentController(request: NextRequest, id: string) {
   try {
     const session = await getCurrentSession();
-    if (!session || session.user.role !== "ADMIN") return apiError("Unauthorized", 401);
+    if (!session || !["ADMIN", "STAFF"].includes(session.user.role)) return apiError("Unauthorized", 401);
 
     const repository = getAppointmentRepository();
     await repository.delete(id);

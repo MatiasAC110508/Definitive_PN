@@ -44,6 +44,7 @@ interface AdminDashboardProps {
   users: User[];
   schedules: Schedule[];
   sales: Sale[];
+  userRole: string;
 }
 
 export function AdminDashboard({
@@ -54,8 +55,9 @@ export function AdminDashboard({
   users: initialUsers,
   schedules: initialSchedules,
   sales: initialSales,
+  userRole,
 }: AdminDashboardProps) {
-  const [activeTab, setActiveTab] = useState("overview");
+  const [activeTab, setActiveTab] = useState(userRole === "STAFF" ? "appointments" : "overview");
 
   // Shared Data State
   const [appointmentsList, setAppointmentsList] = useState(initialAppointments);
@@ -196,13 +198,15 @@ export function AdminDashboard({
           onValueChange={setActiveTab}
           className="space-y-8"
         >
-          <TabsList className="flex w-full overflow-x-auto md:grid md:grid-cols-4 lg:grid-cols-7 lg:w-full lg:max-w-5xl h-auto p-1 bg-[var(--quartz-soft)] rounded-xl border border-[var(--line)] gap-0.5">
-            <TabsTrigger
+          <TabsList className={`flex w-full overflow-x-auto md:grid h-auto p-1 bg-[var(--quartz-soft)] rounded-xl border border-[var(--line)] gap-0.5 ${userRole === 'ADMIN' ? 'md:grid-cols-4 lg:grid-cols-7 lg:w-full lg:max-w-5xl' : 'grid-cols-3'}`}>
+            {userRole === "ADMIN" && (
+<TabsTrigger
               value="overview"
               className="rounded-lg data-[state=active]:bg-white data-[state=active]:shadow-sm py-2.5 px-3 text-xs font-bold uppercase tracking-widest text-[var(--ink-soft)] data-[state=active]:text-[var(--gold)] flex items-center justify-center gap-2 shrink-0 md:shrink flex-1"
             >
               <Store className="size-4 hidden sm:block" /> General
             </TabsTrigger>
+)}
             <TabsTrigger
               value="appointments"
               className="rounded-lg data-[state=active]:bg-white data-[state=active]:shadow-sm py-2.5 px-3 text-xs font-bold uppercase tracking-widest text-[var(--ink-soft)] data-[state=active]:text-[var(--gold)] flex items-center justify-center gap-2 relative shrink-0 md:shrink flex-1"
@@ -213,12 +217,14 @@ export function AdminDashboard({
                 <span className="absolute top-2 left-2 size-2 bg-rose-500 rounded-full animate-pulse" />
               )}
             </TabsTrigger>
-            <TabsTrigger
+            {userRole === "ADMIN" && (
+<TabsTrigger
               value="users"
               className="rounded-lg data-[state=active]:bg-white data-[state=active]:shadow-sm py-2.5 px-3 text-xs font-bold uppercase tracking-widest text-[var(--ink-soft)] data-[state=active]:text-[var(--gold)] flex items-center justify-center gap-2 shrink-0 md:shrink flex-1"
             >
               <Users2 className="size-4 hidden sm:block" /> Usuarios
             </TabsTrigger>
+)}
             <TabsTrigger
               value="products"
               className="rounded-lg data-[state=active]:bg-white data-[state=active]:shadow-sm py-2.5 px-3 text-xs font-bold uppercase tracking-widest text-[var(--ink-soft)] data-[state=active]:text-[var(--gold)] flex items-center justify-center gap-2 shrink-0 md:shrink flex-1"
@@ -231,18 +237,22 @@ export function AdminDashboard({
             >
               <Store className="size-4 hidden sm:block" /> Servicios
             </TabsTrigger>
-            <TabsTrigger
+            {userRole === "ADMIN" && (
+<TabsTrigger
               value="sales"
               className="rounded-lg data-[state=active]:bg-white data-[state=active]:shadow-sm py-2.5 px-3 text-xs font-bold uppercase tracking-widest text-[var(--ink-soft)] data-[state=active]:text-[var(--gold)] flex items-center justify-center gap-2 shrink-0 md:shrink flex-1"
             >
               <DollarSign className="size-4 hidden sm:block" /> Ventas
             </TabsTrigger>
-            <TabsTrigger
+)}
+            {userRole === "ADMIN" && (
+<TabsTrigger
               value="schedules"
               className="rounded-lg data-[state=active]:bg-white data-[state=active]:shadow-sm py-2.5 px-3 text-xs font-bold uppercase tracking-widest text-[var(--ink-soft)] data-[state=active]:text-[var(--gold)] flex items-center justify-center gap-2 shrink-0 md:shrink flex-1"
             >
               <Cog className="size-4 hidden sm:block" /> Ajustes
             </TabsTrigger>
+)}
           </TabsList>
 
           <TabsContent

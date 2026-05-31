@@ -1,6 +1,16 @@
 import { z } from "zod";
 
-export const productCategorySchema = z.enum(["ropa-femenina", "cosmeticos", "belleza", "accesorios"]);
+export const productCategorySchema = z.enum([
+  "ropa-femenina",
+  "cosmeticos",
+  "belleza",
+  "accesorios",
+  "esmaltes",
+  "tratamientos",
+  "herramientas",
+  "kits",
+  "spa",
+]);
 
 const productBaseSchema = z.object({
   name: z.string().min(2).max(120).trim(),

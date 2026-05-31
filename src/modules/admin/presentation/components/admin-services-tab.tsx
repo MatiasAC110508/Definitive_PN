@@ -110,7 +110,6 @@ export function AdminServicesTab({
     durationMinutes: number | "";
     imageUrl: string;
     isFeatured: boolean;
-    sessionPackages: { sessions: number | ""; price: number | "" }[];
   }>({
     name: "",
     slug: "",
@@ -120,7 +119,6 @@ export function AdminServicesTab({
     durationMinutes: "",
     imageUrl: "",
     isFeatured: false,
-    sessionPackages: [],
   });
 
   const filteredServices = useMemo(() => {
@@ -141,7 +139,6 @@ export function AdminServicesTab({
       durationMinutes: "",
       imageUrl: "",
       isFeatured: false,
-      sessionPackages: [],
     });
     setIsServiceModalOpen(true);
   }
@@ -157,10 +154,6 @@ export function AdminServicesTab({
       durationMinutes: service.durationMinutes,
       imageUrl: service.imageUrl,
       isFeatured: service.isFeatured,
-      sessionPackages: (service.sessionPackages ?? []).map((pkg) => ({
-        sessions: pkg.sessions,
-        price: pkg.price,
-      })),
     });
     setIsServiceModalOpen(true);
   }
@@ -174,19 +167,11 @@ export function AdminServicesTab({
         : "/api/admin/services";
       const method = editingService ? "PATCH" : "POST";
 
-      const cleanPackages = serviceFormData.sessionPackages
-        .filter((pkg) => pkg.sessions !== "" && pkg.price !== "")
-        .map((pkg) => ({
-          sessions: Number(pkg.sessions),
-          price: Number(pkg.price),
-        }));
-
       const payload = {
         ...serviceFormData,
         slug: serviceFormData.slug || generateSlug(serviceFormData.name),
         price: Number(serviceFormData.price),
         durationMinutes: Number(serviceFormData.durationMinutes),
-        sessionPackages: cleanPackages.length > 0 ? cleanPackages : undefined,
       };
 
       const res = await fetch(url, {
@@ -278,7 +263,6 @@ export function AdminServicesTab({
                   <th className="px-6 py-4">Categoría</th>
                   <th className="px-6 py-4">Precio</th>
                   <th className="px-6 py-4 text-center">Duración</th>
-                  <th className="px-6 py-4 text-center">Paquetes</th>
                   <th className="px-6 py-4 text-center">Visibilidad</th>
                   <th className="px-6 py-4 text-right">Acciones</th>
                 </tr>
@@ -329,18 +313,7 @@ export function AdminServicesTab({
                         {service.durationMinutes} min
                       </span>
                     </td>
-                    <td className="px-6 py-4 text-center">
-                      {service.sessionPackages &&
-                      service.sessionPackages.length > 0 ? (
-                        <Badge className="bg-indigo-50 text-indigo-700 border-none">
-                          {service.sessionPackages.length} paq.
-                        </Badge>
-                      ) : (
-                        <span className="text-[var(--ink-soft)] text-[10px]">
-                          —
-                        </span>
-                      )}
-                    </td>
+
                     <td className="px-6 py-4 text-center">
                       {service.isFeatured ? (
                         <Badge className="bg-amber-50 text-amber-600 hover:bg-amber-100 border-none">
@@ -594,121 +567,6 @@ export function AdminServicesTab({
                   Destacado
                 </Label>
               </div>
-            </div>
-
-            <div className="space-y-4 border-t border-[var(--line)] pt-6">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-xs font-bold uppercase tracking-widest text-[var(--ink-soft)]">
-                    Paquetes de Sesiones
-                  </p>
-                  <p className="text-[10px] text-[var(--ink-soft)]/60 mt-0.5">
-                    Opcional — ej. paquetes de 5, 7 o 10 sesiones con precio
-                    especial
-                  </p>
-                </div>
-                <Button
-                  type="button"
-                  variant="ghost"
-                  size="sm"
-                  className="border border-[var(--gold)]/30 text-[var(--gold)] hover:bg-[var(--gold-soft)]/10"
-                  onClick={() =>
-                    setServiceFormData({
-                      ...serviceFormData,
-                      sessionPackages: [
-                        ...serviceFormData.sessionPackages,
-                        { sessions: "", price: "" },
-                      ],
-                    })
-                  }
-                >
-                  <Plus className="size-4 mr-1" /> Agregar
-                </Button>
-              </div>
-              {serviceFormData.sessionPackages.length > 0 && (
-                <div className="space-y-3">
-                  {serviceFormData.sessionPackages.map((pkg, idx) => (
-                    <div
-                      key={idx}
-                      className="flex items-center gap-3 p-3 bg-white rounded-xl border border-[var(--line)]"
-                    >
-                      <div className="flex-1 space-y-1">
-                        <Label className="text-[10px] uppercase tracking-widest text-[var(--ink-soft)] font-bold">
-                          Sesiones
-                        </Label>
-                        <Input
-                          type="number"
-                          min="1"
-                          value={pkg.sessions}
-                          placeholder="Ej. 5"
-                          onChange={(e) => {
-                            const pkgs = [...serviceFormData.sessionPackages];
-                            pkgs[idx] = {
-                              ...pkg,
-                              sessions:
-                                e.target.value === ""
-                                  ? ""
-                                  : Number(e.target.value),
-                            };
-                            setServiceFormData({
-                              ...serviceFormData,
-                              sessionPackages: pkgs,
-                            });
-                          }}
-                          className="h-9 border-[var(--line)] rounded-lg [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
-                          style={{ MozAppearance: "textfield" }}
-                        />
-                      </div>
-                      <div className="flex-1 space-y-1">
-                        <Label className="text-[10px] uppercase tracking-widest text-[var(--ink-soft)] font-bold">
-                          Precio (COP)
-                        </Label>
-                        <div className="relative">
-                          <DollarSign className="absolute left-2 top-1/2 -translate-y-1/2 size-3.5 text-[var(--ink-soft)]" />
-                          <Input
-                            type="number"
-                            min="0"
-                            value={pkg.price}
-                            placeholder="Ej. 225000"
-                            onChange={(e) => {
-                              const pkgs = [...serviceFormData.sessionPackages];
-                              pkgs[idx] = {
-                                ...pkg,
-                                price:
-                                  e.target.value === ""
-                                    ? ""
-                                    : Number(e.target.value),
-                              };
-                              setServiceFormData({
-                                ...serviceFormData,
-                                sessionPackages: pkgs,
-                              });
-                            }}
-                            className="h-9 pl-7 border-[var(--line)] rounded-lg [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
-                            style={{ MozAppearance: "textfield" }}
-                          />
-                        </div>
-                      </div>
-                      <Button
-                        type="button"
-                        variant="ghost"
-                        size="icon"
-                        className="mt-5 size-8 shrink-0 text-rose-500 hover:bg-rose-50 hover:text-rose-600"
-                        onClick={() => {
-                          const pkgs = [...serviceFormData.sessionPackages];
-                          pkgs.splice(idx, 1);
-                          setServiceFormData({
-                            ...serviceFormData,
-                            sessionPackages: pkgs,
-                          });
-                        }}
-                      >
-                        <Trash2 className="size-4" />
-                      </Button>
-                    </div>
-                  ))}
-                </div>
-              )}
             </div>
 
             <DialogFooter className="border-t border-[var(--line)] pt-6 pb-8 flex gap-3">

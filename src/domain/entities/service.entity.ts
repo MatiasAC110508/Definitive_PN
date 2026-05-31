@@ -19,5 +19,4 @@ export interface BeautyService {
   durationMinutes: number;
   imageUrl: string;
   isFeatured: boolean;
-  sessionPackages?: { sessions: number; price: number }[];
 }

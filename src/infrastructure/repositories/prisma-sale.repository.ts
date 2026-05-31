@@ -21,6 +21,7 @@ export class PrismaSaleRepository implements ISaleRepository {
   async findAll(): Promise<Sale[]> {
     const prisma = getPrismaClient();
     const sales = await prisma.sale.findMany({
+      take: 200,
       orderBy: {
         createdAt: 'desc'
       }

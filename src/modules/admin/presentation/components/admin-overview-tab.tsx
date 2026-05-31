@@ -193,14 +193,14 @@ export function AdminOverviewTab({
                       </div>
                       <Badge
                         className={
-                          apt.status === "RESERVED"
+                          apt.status === "PENDING"
                             ? "bg-amber-100 text-amber-700 hover:bg-amber-100 border-none"
                             : apt.status === "CANCELLED"
                               ? "bg-rose-100 text-rose-700 hover:bg-rose-100 border-none"
                               : "bg-emerald-100 text-emerald-700 hover:bg-emerald-100 border-none"
                         }
                       >
-                        {apt.status === "RESERVED"
+                        {apt.status === "PENDING"
                           ? "Reservado"
                           : apt.status === "CANCELLED"
                             ? "Cancelada"
@@ -236,7 +236,7 @@ export function AdminOverviewTab({
                           (a) =>
                             a.startAt.startsWith(
                               new Date().toISOString().slice(0, 10),
-                            ) && a.status === "RESERVED",
+                            ) && a.status === "PENDING",
                         ).length
                       }
                     </span>
@@ -245,7 +245,7 @@ export function AdminOverviewTab({
                     <div
                       className="h-full bg-[var(--gold)] rounded-full w-[65%]"
                       style={{
-                        width: `${Math.min(100, appointments.filter((a) => a.startAt.startsWith(new Date().toISOString().slice(0, 10)) && a.status === "RESERVED").length * 10)}%`,
+                        width: `${Math.min(100, appointments.filter((a) => a.startAt.startsWith(new Date().toISOString().slice(0, 10)) && a.status === "PENDING").length * 10)}%`,
                       }}
                     />
                   </div>
@@ -327,7 +327,7 @@ export function AdminOverviewTab({
                 </h1>
                 <p className="text-sm tracking-widest text-[#555] uppercase">
                   Reporte Confidencial •{" "}
-                  {new Date().toLocaleDateString("es-CO")}
+                  {new Date().toLocaleString("es-CO", { dateStyle: "short", timeStyle: "short" })}
                 </p>
               </div>
               <p className="text-[var(--ink)] text-sm max-w-2xl leading-relaxed">
@@ -383,7 +383,7 @@ export function AdminOverviewTab({
                         {
                           label: "Reservadas",
                           count: appointments.filter(
-                            (a) => a.status === "RESERVED",
+                            (a) => a.status === "PENDING",
                           ).length,
                           color: "bg-blue-500",
                         },
