@@ -12,13 +12,7 @@ function toService(record: {
   durationMinutes: number;
   imageUrl: string;
   isFeatured: boolean;
-  sessionPackages?: unknown;
 }): BeautyService {
-  let sessionPackages: { sessions: number; price: number }[] | undefined;
-  if (Array.isArray(record.sessionPackages)) {
-    sessionPackages = record.sessionPackages as { sessions: number; price: number }[];
-  }
-
   return {
     id: record.id,
     name: record.name,
@@ -29,7 +23,6 @@ function toService(record: {
     durationMinutes: record.durationMinutes,
     imageUrl: record.imageUrl,
     isFeatured: record.isFeatured,
-    sessionPackages,
   };
 }
 
@@ -73,7 +66,7 @@ export class PrismaServiceRepository implements ServiceRepository {
 
   async create(data: Omit<BeautyService, "id">): Promise<BeautyService> {
     const prisma = getPrismaClient();
-    const category = await prisma.serviceCategory.findUniqueOrThrow({
+    const category = await prisma.category.findUniqueOrThrow({
       where: { slug: data.categorySlug },
     });
     const record = await prisma.service.create({
@@ -85,7 +78,6 @@ export class PrismaServiceRepository implements ServiceRepository {
         durationMinutes: data.durationMinutes,
         imageUrl: data.imageUrl,
         isFeatured: data.isFeatured ?? false,
-        sessionPackages: data.sessionPackages ? JSON.stringify(data.sessionPackages) : undefined,
         categoryId: category.id,
       },
       include: { category: true },
@@ -97,7 +89,7 @@ export class PrismaServiceRepository implements ServiceRepository {
     const prisma = getPrismaClient();
     let categoryId: string | undefined;
     if (data.categorySlug) {
-      const category = await prisma.serviceCategory.findUniqueOrThrow({
+      const category = await prisma.category.findUniqueOrThrow({
         where: { slug: data.categorySlug },
       });
       categoryId = category.id;
@@ -112,11 +104,8 @@ export class PrismaServiceRepository implements ServiceRepository {
         ...(data.durationMinutes !== undefined ? { durationMinutes: data.durationMinutes } : {}),
         ...(data.imageUrl ? { imageUrl: data.imageUrl } : {}),
         ...(data.isFeatured !== undefined ? { isFeatured: data.isFeatured } : {}),
-        ...(data.sessionPackages !== undefined
-          ? { sessionPackages: JSON.stringify(data.sessionPackages) }
-          : {}),
         ...(categoryId ? { categoryId } : {}),
-      },
+      } as any,
       include: { category: true },
     });
     return toService(record as unknown as Parameters<typeof toService>[0]);

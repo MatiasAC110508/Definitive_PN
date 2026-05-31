@@ -6,14 +6,15 @@ import { DeleteSaleUseCase } from "@/application/use-cases/sale/delete-sale.use-
 
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const { id } = await params;
     const session = await getCurrentSession();
     if (!session || !["ADMIN", "STAFF"].includes(session.user.role)) return apiError("Unauthorized", 401);
 
     const useCase = new DeleteSaleUseCase(getSaleRepository());
-    await useCase.execute(params.id);
+    await useCase.execute(id);
 
     return ok({ message: "Venta eliminada correctamente." });
   } catch (error: any) {

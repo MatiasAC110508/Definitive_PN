@@ -128,19 +128,19 @@ export function SiteFooter() {
           </p>
           <div className="flex flex-wrap gap-4 sm:gap-6 justify-center mt-4 md:mt-0">
             <Link
-              href="/politica-de-privacidad"
+              href={"/politica-de-privacidad" as any}
               className="hover:text-white transition-colors cursor-pointer"
             >
               Política de Privacidad
             </Link>
             <Link
-              href="/terminos-y-condiciones"
+              href={"/terminos-y-condiciones" as any}
               className="hover:text-white transition-colors cursor-pointer"
             >
               Términos de Servicio
             </Link>
             <Link
-              href="/aviso-legal"
+              href={"/aviso-legal" as any}
               className="hover:text-white transition-colors cursor-pointer"
             >
               Aviso Legal

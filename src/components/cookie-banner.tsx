@@ -54,7 +54,7 @@ export function CookieBanner() {
               mediante el análisis de tus hábitos de navegación. Puedes obtener
               más información consultando nuestra{" "}
               <Link
-                href="/politica-de-privacidad"
+                href={"/politica-de-privacidad" as any}
                 className="text-[var(--gold)] hover:underline whitespace-nowrap"
               >
                 Política de Privacidad

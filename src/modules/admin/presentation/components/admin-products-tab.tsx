@@ -73,7 +73,7 @@ const productCategorySlugs: ProductCategorySlug[] = [
   "spa",
 ];
 
-const productCategoryLabels: Record<ProductCategorySlug, string> = {
+const productCategoryLabels: Partial<Record<ProductCategorySlug, string>> = {
   esmaltes: "Esmaltes",
   tratamientos: "Tratamientos",
   herramientas: "Herramientas",

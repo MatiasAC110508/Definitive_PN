@@ -6,14 +6,16 @@ import {
 
 export async function PATCH(
   request: NextRequest,
-  { params }: { params: { id: string } },
+  { params }: { params: Promise<{ id: string }> },
 ) {
-  return updateServiceController(request, params.id);
+  const { id } = await params;
+  return updateServiceController(request, id);
 }
 
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: { id: string } },
+  { params }: { params: Promise<{ id: string }> },
 ) {
-  return deleteServiceController(request, params.id);
+  const { id } = await params;
+  return deleteServiceController(request, id);
 }
