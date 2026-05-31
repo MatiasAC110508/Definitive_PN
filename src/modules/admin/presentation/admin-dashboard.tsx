@@ -196,7 +196,7 @@ export function AdminDashboard({
           onValueChange={setActiveTab}
           className="space-y-8"
         >
-          <TabsList className="flex w-full overflow-x-auto md:grid md:grid-cols-6 lg:w-[850px] h-auto p-1 bg-[var(--quartz-soft)] rounded-xl border border-[var(--line)] gap-0.5">
+          <TabsList className="flex w-full overflow-x-auto md:grid md:grid-cols-4 lg:grid-cols-7 lg:w-full lg:max-w-5xl h-auto p-1 bg-[var(--quartz-soft)] rounded-xl border border-[var(--line)] gap-0.5">
             <TabsTrigger
               value="overview"
               className="rounded-lg data-[state=active]:bg-white data-[state=active]:shadow-sm py-2.5 px-3 text-xs font-bold uppercase tracking-widest text-[var(--ink-soft)] data-[state=active]:text-[var(--gold)] flex items-center justify-center gap-2 shrink-0 md:shrink flex-1"
