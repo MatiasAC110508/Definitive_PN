@@ -40,9 +40,16 @@ export function getScheduleRepository() {
 
 import { PrismaSaleRepository } from "@/infrastructure/repositories/prisma-sale.repository";
 import { MemorySaleRepository } from "@/infrastructure/repositories/memory-sale.repository";
+import { PrismaReviewRepository } from "@/infrastructure/repositories/prisma-review.repository";
+import { MemoryReviewRepository } from "@/infrastructure/repositories/memory-review.repository";
 
 const memorySales = new MemorySaleRepository();
+const memoryReviews = new MemoryReviewRepository();
 
 export function getSaleRepository() {
   return hasDatabase ? new PrismaSaleRepository() : memorySales;
+}
+
+export function getReviewRepository() {
+  return hasDatabase ? new PrismaReviewRepository() : memoryReviews;
 }

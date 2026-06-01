@@ -23,8 +23,11 @@ import {
 import {
   getProductRepository,
   getServiceRepository,
+  getReviewRepository,
 } from "@/infrastructure/repositories/repository-factory";
 import { Reveal } from "@/presentation/components/motion/reveal";
+import { GetFeaturedReviewsUseCase } from "@/application/use-cases/reviews/get-featured-reviews.use-case";
+import { LeaveReviewModal } from "./components/leave-review-modal";
 
 const benefits = [
   {
@@ -57,6 +60,11 @@ export async function LandingPage() {
     getProductRepository(),
   );
   const { featuredServices, featuredProducts } = await catalog.getHomeCatalog();
+  const getFeaturedReviews = new GetFeaturedReviewsUseCase(
+    getReviewRepository(),
+  );
+  const dbReviews = await getFeaturedReviews.execute();
+  const displayReviews = dbReviews.length > 0 ? dbReviews : reviews;
 
   return (
     <>
@@ -293,7 +301,7 @@ export async function LandingPage() {
           />
         </Reveal>
         <div className="mx-auto mt-10 grid max-w-7xl gap-6 md:grid-cols-3">
-          {reviews.map((review, index) => (
+          {displayReviews.map((review, index) => (
             <Reveal key={review.id} delay={index * 0.06}>
               <Card>
                 <CardContent className="p-6">
@@ -314,7 +322,11 @@ export async function LandingPage() {
                   <Separator className="my-5" />
                   <div className="flex items-center gap-3">
                     <Image
-                      src={review.user?.image || review.imageUrl} // Fallback to review image if no user avatar
+                      src={
+                        review.user?.image ||
+                        review.imageUrl ||
+                        "https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&w=150&q=80"
+                      } // Fallback to a placeholder if no avatar
                       alt={review.user?.name || "Clienta"}
                       width={44}
                       height={44}
@@ -334,6 +346,7 @@ export async function LandingPage() {
             </Reveal>
           ))}
         </div>
+        <LeaveReviewModal />
       </section>
     </>
   );
