@@ -13,7 +13,7 @@ import {
 
 export function LeaveReviewModal() {
   const googleMapsUrl =
-    "https://www.google.com/maps/place/Perfect+Nails+VM/@6.319433,-75.560526,17z";
+    "https://www.google.com/maps/search/?api=1&query=Perfect%20Nails%20VM%2C%20Cl.%2031%20%2355-13%2C%20La%20Florida%2C%20Bello%2C%20Antioquia";
 
   return (
     <Dialog>
