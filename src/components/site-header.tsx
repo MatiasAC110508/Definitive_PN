@@ -38,15 +38,10 @@ export function SiteHeader() {
             href="/"
             className="premium-focus flex items-center gap-3 rounded-full"
           >
-            <span className="flex size-10 items-center justify-center rounded-full border border-[var(--line)] bg-white shadow-sm overflow-hidden">
-              <Image
-                src="/logo.jpg"
-                alt="Perfect Nails Logo"
-                width={40}
-                height={40}
-                className="size-10 rounded-full object-cover"
-                priority
-              />
+            <span className="flex size-10 items-center justify-center rounded-full bg-gradient-to-br from-[var(--gold-soft)] to-[var(--gold)] text-white shadow-md overflow-hidden ring-1 ring-black/5 ring-offset-1">
+              <span className="font-display font-bold text-[17px] tracking-wider ml-[1px]">
+                PN
+              </span>
             </span>
             <span className="font-display text-2xl font-semibold tracking-wide text-[var(--ink)]">
               Perfect Nails
