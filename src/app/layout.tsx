@@ -22,7 +22,7 @@ const cormorant = Cormorant_Garamond({
 
 export const metadata: Metadata = {
   metadataBase: new URL(
-    process.env.NEXT_PUBLIC_APP_URL ?? "https://perfect-nails.vercel.app",
+    process.env.NEXT_PUBLIC_APP_URL ?? "https://perfectnails.art",
   ),
   title: {
     default: "Uñas, Masajes y Depilación Láser en Bello | Perfect Nails",
@@ -82,8 +82,8 @@ export default function RootLayout({
     name: "Perfect Nails",
     image:
       "https://images.unsplash.com/photo-1604654894610-df63bc536371?auto=format&fit=crop&w=1200&q=85",
-    "@id": "https://perfect-nails.vercel.app",
-    url: "https://perfect-nails.vercel.app",
+    "@id": "https://perfectnails.art",
+    url: "https://perfectnails.art",
     address: {
       "@type": "PostalAddress",
       addressLocality: "Bello",
