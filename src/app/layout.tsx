@@ -25,27 +25,28 @@ export const metadata: Metadata = {
     process.env.NEXT_PUBLIC_APP_URL ?? "https://perfect-nails.vercel.app",
   ),
   title: {
-    default: "Perfect Nails | Depilación Láser, Uñas y Masajes en Bello",
+    default: "Uñas, Masajes y Depilación Láser en Bello | Perfect Nails",
     template: "%s | Perfect Nails",
   },
   description:
-    "Un espacio creado para consentirte. Depilación láser, uñas premium y masajes relajantes en una experiencia boutique exclusiva.",
+    "Descubre Perfect Nails en Bello, Antioquia. Tu spa boutique especializado en uñas premium, masajes relajantes y depilación láser con resultados efectivos.",
   keywords: [
+    "Uñas en Bello",
+    "Spa de uñas Bello",
+    "Masajes relajantes Bello",
+    "Depilación láser Bello",
+    "Depilación láser Antioquia",
+    "Manicure premium",
+    "Pedicure",
+    "Spa boutique",
     "Perfect Nails",
-    "uñas premium",
-    "depilación láser",
-    "masajes",
-    "relax",
-    "belleza Bello",
-    "Bello Antioquia",
-    "reservas online",
   ],
   applicationName: "Perfect Nails",
   authors: [{ name: "Perfect Nails" }],
   openGraph: {
-    title: "Perfect Nails",
+    title: "Perfect Nails | Uñas, Masajes y Depilación Láser en Bello",
     description:
-      "Un espacio creado para consentirte. Depilación láser, uñas premium y masajes relajantes en Bello, Antioquia.",
+      "Descubre Perfect Nails en Bello, Antioquia. Tu spa boutique especializado en uñas premium, masajes relajantes y depilación láser.",
     url: "/",
     siteName: "Perfect Nails",
     locale: "es_CO",
@@ -55,14 +56,18 @@ export const metadata: Metadata = {
         url: "https://images.unsplash.com/photo-1604654894610-df63bc536371?auto=format&fit=crop&w=1200&q=85",
         width: 1200,
         height: 630,
-        alt: "Manicure premium Perfect Nails",
+        alt: "Servicios de Uñas y Masajes en Perfect Nails Bello",
       },
     ],
   },
   twitter: {
     card: "summary_large_image",
-    title: "Perfect Nails",
-    description: "Belleza premium, uñas y boutique femenina.",
+    title: "Perfect Nails | Uñas, Masajes y Depilación en Bello",
+    description:
+      "Spa boutique especializado en uñas premium, masajes relajantes y depilación láser.",
+    images: [
+      "https://images.unsplash.com/photo-1604654894610-df63bc536371?auto=format&fit=crop&w=1200&q=85",
+    ],
   },
 };
 
@@ -71,12 +76,42 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const jsonLd = {
+    "@context": "https://schema.org",
+    "@type": "BeautySalon",
+    name: "Perfect Nails",
+    image:
+      "https://images.unsplash.com/photo-1604654894610-df63bc536371?auto=format&fit=crop&w=1200&q=85",
+    "@id": "https://perfect-nails.vercel.app",
+    url: "https://perfect-nails.vercel.app",
+    address: {
+      "@type": "PostalAddress",
+      addressLocality: "Bello",
+      addressRegion: "Antioquia",
+      addressCountry: "CO",
+    },
+    geo: {
+      "@type": "GeoCoordinates",
+      latitude: 6.3373,
+      longitude: -75.558,
+    },
+    description:
+      "Spa boutique en Bello, Antioquia, especializado en uñas premium, masajes relajantes y depilación láser de alta calidad.",
+    priceRange: "$$",
+  };
+
   return (
     <html
       lang="es"
       className={`${inter.variable} ${cormorant.variable}`}
       suppressHydrationWarning
     >
+      <head>
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+        />
+      </head>
       <body
         className="min-h-screen bg-[var(--quartz)] text-[var(--ink)] antialiased"
         suppressHydrationWarning

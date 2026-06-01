@@ -63,7 +63,7 @@ export async function LandingPage() {
       <section className="relative min-h-[88vh] overflow-hidden pt-[4.5rem] text-white">
         <Image
           src="https://images.unsplash.com/photo-1604654894610-df63bc536371?auto=format&fit=crop&w=1800&q=90"
-          alt="Manicure de lujo Perfect Nails"
+          alt="Uñas y Manicure de Lujo en Perfect Nails Bello"
           fill
           priority
           sizes="100vw"
@@ -77,14 +77,17 @@ export async function LandingPage() {
             <Badge className="border-white/25 bg-white/[0.14] text-white backdrop-blur">
               Belleza premium y boutique femenina
             </Badge>
-            <h1 className="mt-6 font-display text-6xl font-semibold leading-[0.95] text-white sm:text-7xl lg:text-8xl">
+            <h1 className="mt-6 font-display text-6xl font-semibold leading-[0.95] text-white sm:text-7xl lg:text-8xl flex flex-col">
+              <span className="sr-only">
+                Uñas Premium, Masajes y Depilación Láser en Bello -{" "}
+              </span>
               Perfect Nails
             </h1>
-            <p className="mt-6 max-w-2xl text-lg leading-8 text-white/82 sm:text-xl">
+            <h2 className="mt-6 max-w-2xl text-lg leading-8 text-white/82 sm:text-xl font-normal">
               Un espacio creado para consentirte. Descubre la excelencia en
               depilación láser, uñas impecables y masajes relajantes en Bello,
               Antioquia.
-            </p>
+            </h2>
             <div className="mt-9 flex flex-col gap-3 sm:flex-row">
               <Button asChild size="lg" variant="gold">
                 <Link href="/reservar">
@@ -180,7 +183,7 @@ export async function LandingPage() {
             <div className="relative min-h-[520px] overflow-hidden rounded-lg shadow-[var(--shadow-soft)]">
               <Image
                 src="https://images.unsplash.com/photo-1522337660859-02fbefca4702?auto=format&fit=crop&w=1200&q=90"
-                alt="Experiencia boutique de belleza"
+                alt="Experiencia en estética boutique: masajes, depilación láser y uñas en Bello"
                 fill
                 sizes="(min-width: 1024px) 50vw, 100vw"
                 className="object-cover"
@@ -271,7 +274,7 @@ export async function LandingPage() {
               <div className="relative aspect-[3/4] overflow-hidden rounded-lg shadow-[var(--shadow-soft)]">
                 <Image
                   src={image}
-                  alt={`Galería Perfect Nails ${index + 1}`}
+                  alt={`Galería de servicios de uñas, depilación y masajes Perfect Nails Bello ${index + 1}`}
                   fill
                   sizes="(min-width: 1024px) 25vw, 50vw"
                   className="object-cover"
