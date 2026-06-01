@@ -1,12 +1,14 @@
-import { PrismaClient } from "@prisma/client";
+import { getPrismaClient } from "@/infrastructure/database/prisma";
 import type { ReviewRepository } from "@/domain/repositories/review.repository";
 import type { Review } from "@/domain/entities/review.entity";
 
-const prisma = new PrismaClient();
-
 export class PrismaReviewRepository implements ReviewRepository {
+  private get prisma() {
+    return getPrismaClient();
+  }
+
   async create(review: Omit<Review, "id" | "createdAt" | "updatedAt">): Promise<Review> {
-    const created = await prisma.review.create({
+    const created = await this.prisma.review.create({
       data: {
         rating: review.rating,
         comment: review.comment,
@@ -25,7 +27,7 @@ export class PrismaReviewRepository implements ReviewRepository {
   }
 
   async update(id: string, review: Partial<Review>): Promise<Review> {
-    const updated = await prisma.review.update({
+    const updated = await this.prisma.review.update({
       where: { id },
       data: {
         rating: review.rating,
@@ -41,11 +43,11 @@ export class PrismaReviewRepository implements ReviewRepository {
   }
 
   async delete(id: string): Promise<void> {
-    await prisma.review.delete({ where: { id } });
+    await this.prisma.review.delete({ where: { id } });
   }
 
   async findById(id: string): Promise<Review | null> {
-    const review = await prisma.review.findUnique({
+    const review = await this.prisma.review.findUnique({
       where: { id },
       include: {
         user: { select: { id: true, name: true, image: true } }
@@ -55,7 +57,7 @@ export class PrismaReviewRepository implements ReviewRepository {
   }
 
   async findFeatured(): Promise<Review[]> {
-    const reviews = await prisma.review.findMany({
+    const reviews = await this.prisma.review.findMany({
       where: { isFeatured: true },
       include: {
         user: { select: { id: true, name: true, image: true } }
@@ -67,7 +69,7 @@ export class PrismaReviewRepository implements ReviewRepository {
   }
 
   async findByUserId(userId: string): Promise<Review[]> {
-    const reviews = await prisma.review.findMany({
+    const reviews = await this.prisma.review.findMany({
       where: { userId },
       include: {
         user: { select: { id: true, name: true, image: true } }

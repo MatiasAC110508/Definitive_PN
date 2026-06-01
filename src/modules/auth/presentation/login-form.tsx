@@ -39,6 +39,12 @@ export function LoginForm() {
     });
 
     if (result?.error) {
+      if (result.error === "EMAIL_NOT_VERIFIED") {
+        toast.error(
+          "Debes revisar tu bandeja de entrada y confirmar tu correo para poder entrar.",
+        );
+        return;
+      }
       toast.error("Correo o contraseña incorrectos.");
       return;
     }
