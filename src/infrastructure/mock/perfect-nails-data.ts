@@ -94,7 +94,7 @@ export const services: BeautyService[] = [
     description: "Técnica premium que combina acrílico y gel para uñas ultra resistentes con acabado natural. Ideal para quienes buscan máxima duración y un diseño impecable que dura semanas sin retoques.",
     price: 120000,
     durationMinutes: 120,
-    imageUrl: "https://images.unsplash.com/photo-1604654894610-df63bc536371?auto=format&fit=crop&w=1000&q=85",
+    imageUrl: "/images/services/system-dual.png",
     isFeatured: true,
   },
   {
@@ -105,7 +105,7 @@ export const services: BeautyService[] = [
     description: "Recubrimiento con poligel que aporta fuerza y elegancia sin peso extra. Perfecto para fortalecer la uña natural con un acabado liso, brillante y de larga duración.",
     price: 70000,
     durationMinutes: 90,
-    imageUrl: "https://images.unsplash.com/photo-1610992015779-46fe7398e72f?auto=format&fit=crop&w=1000&q=85",
+    imageUrl: "/images/services/forrado-poligel.png",
     isFeatured: true,
   },
   {
@@ -116,7 +116,7 @@ export const services: BeautyService[] = [
     description: "Refuerzo profesional con acrílico de alta calidad que protege y embellece tus uñas naturales. Obtén un acabado sólido, duradero y listo para cualquier diseño que imagines.",
     price: 70000,
     durationMinutes: 90,
-    imageUrl: "https://images.unsplash.com/photo-1607779097040-26e80aa78e63?auto=format&fit=crop&w=1000&q=85",
+    imageUrl: "/images/services/forrado-acrilico.png",
     isFeatured: false,
   },
   {
@@ -127,7 +127,7 @@ export const services: BeautyService[] = [
     description: "Esmaltado semipermanente con técnica dipping que brinda un color vibrante y súper resistente. Se seca al instante y mantiene un brillo espectacular hasta por 4 semanas.",
     price: 50000,
     durationMinutes: 90,
-    imageUrl: "https://images.unsplash.com/photo-1519014816548-bf5fe059798b?auto=format&fit=crop&w=1000&q=85",
+    imageUrl: "/images/services/semi-dipping.png",
     isFeatured: false,
   },
   {
@@ -138,7 +138,7 @@ export const services: BeautyService[] = [
     description: "Esmaltado semipermanente con base rubber que aporta flexibilidad y protección extra a tu uña natural. Color intenso con acabado espejo que dura semanas sin descascararse.",
     price: 50000,
     durationMinutes: 90,
-    imageUrl: "https://images.unsplash.com/photo-1604654894610-df63bc536371?auto=format&fit=crop&w=1000&q=85",
+    imageUrl: "/images/services/semi-rubber.png",
     isFeatured: false,
   },
   {
@@ -149,7 +149,7 @@ export const services: BeautyService[] = [
     description: "Manicure clásica con limado, cutícula, hidratación y esmaltado tradicional. La opción perfecta para manos cuidadas y elegantes con un precio accesible.",
     price: 30000,
     durationMinutes: 90,
-    imageUrl: "https://images.unsplash.com/photo-1562322140-8baeececf08b?auto=format&fit=crop&w=1000&q=85",
+    imageUrl: "/images/services/tradicional-manicure.png",
     isFeatured: false,
   },
   {
@@ -160,7 +160,7 @@ export const services: BeautyService[] = [
     description: "Pedispa relajante con exfoliación, masaje de pies, hidratación profunda y esmaltado tradicional. Consiente tus pies con un tratamiento que combina cuidado y relajación.",
     price: 30000,
     durationMinutes: 90,
-    imageUrl: "https://images.unsplash.com/photo-1578874691223-64558a3ca096?auto=format&fit=crop&w=1000&q=85",
+    imageUrl: "/images/services/tradicional-pedispa.png",
     isFeatured: false,
   },
   {
@@ -171,7 +171,7 @@ export const services: BeautyService[] = [
     description: "Pedispa completa con exfoliación, masaje y esmaltado semipermanente de alta duración. El tratamiento ideal para pies perfectos que lucen impecables por semanas.",
     price: 50000,
     durationMinutes: 90,
-    imageUrl: "https://images.unsplash.com/photo-1519014816548-bf5fe059798b?auto=format&fit=crop&w=1000&q=85",
+    imageUrl: "/images/services/pedispa-semi.png",
     isFeatured: false,
   },
   {
@@ -182,7 +182,7 @@ export const services: BeautyService[] = [
     description: "Uñas esculpidas desde cero con técnica acrílica y poligel para un largo y forma perfectos. Máxima resistencia con un acabado natural que se adapta a tu estilo personal.",
     price: 120000,
     durationMinutes: 120,
-    imageUrl: "https://images.unsplash.com/photo-1632345031435-8727f6897d53?auto=format&fit=crop&w=1000&q=85",
+    imageUrl: "/images/services/acrilicas-esculpidas.png",
     isFeatured: true,
   },
   {
@@ -193,7 +193,7 @@ export const services: BeautyService[] = [
     description: "Extensiones esculpidas con poligel de última generación: liviano, flexible y ultra resistente. Consigue el largo soñado con un peso mínimo y una durabilidad excepcional.",
     price: 120000,
     durationMinutes: 120,
-    imageUrl: "https://images.unsplash.com/photo-1610992015779-46fe7398e72f?auto=format&fit=crop&w=1000&q=85",
+    imageUrl: "/images/services/esculpidas-poligel.png",
     isFeatured: true,
   },
   {
@@ -204,7 +204,7 @@ export const services: BeautyService[] = [
     description: "Mantenimiento profesional para tus uñas: relleno, reparación y retoque de diseño. Mantén tu manicure perfecta entre sesiones a un precio especial.",
     price: 80000,
     durationMinutes: 100,
-    imageUrl: "https://images.unsplash.com/photo-1607779097040-26e80aa78e63?auto=format&fit=crop&w=1000&q=85",
+    imageUrl: "/images/services/retoques-unas.png",
     isFeatured: false,
   },
 
@@ -217,7 +217,7 @@ export const services: BeautyService[] = [
     description: "Sesión de 60 minutos de masaje terapéutico con aceites esenciales para liberar tensión y renovar tu energía. Desconecta del estrés y regálate un momento de paz absoluta.",
     price: 100000,
     durationMinutes: 60,
-    imageUrl: "https://images.unsplash.com/photo-1544161515-4ab6ce6db874?auto=format&fit=crop&w=1000&q=85",
+    imageUrl: "/images/services/masaje-relajante.png",
     isFeatured: true,
   },
   {
@@ -228,7 +228,7 @@ export const services: BeautyService[] = [
     description: "Combinación exclusiva de masaje relajante con sueroterapia intravenosa de vitaminas. Recarga cuerpo y mente con un tratamiento que hidrata, nutre y revitaliza desde dentro.",
     price: 150000,
     durationMinutes: 90,
-    imageUrl: "https://images.unsplash.com/photo-1600334089648-b0d9d3028eb2?auto=format&fit=crop&w=1000&q=85",
+    imageUrl: "/images/services/masaje-sueroterapia.png",
     isFeatured: true,
   },
   {
@@ -239,7 +239,7 @@ export const services: BeautyService[] = [
     description: "Terapia intravenosa con suero personalizado de vitaminas y minerales. Recupera energía, fortalece tu sistema inmune y luce una piel radiante en solo 30 minutos.",
     price: 100000,
     durationMinutes: 30,
-    imageUrl: "https://images.unsplash.com/photo-1612349317150-e413f6a5b16d?auto=format&fit=crop&w=1000&q=85",
+    imageUrl: "/images/services/sueroterapia.png",
     isFeatured: false,
   },
 
@@ -252,7 +252,7 @@ export const services: BeautyService[] = [
     description: "Tratamiento facial completo con extracción profesional, vapor de ozono y mascarilla purificante. Elimina impurezas, controla el sebo y devuelve la luminosidad a tu rostro.",
     price: 80000,
     durationMinutes: 60,
-    imageUrl: "https://images.unsplash.com/photo-1570172619644-dfd03ed5d881?auto=format&fit=crop&w=1000&q=85",
+    imageUrl: "/images/services/limpieza-facial.png",
     isFeatured: true,
   },
   {
@@ -263,7 +263,7 @@ export const services: BeautyService[] = [
     description: "Limpieza facial profunda potenciada con dermapen para estimular la regeneración de colágeno. Reduce poros, líneas finas y manchas con resultados visibles desde la primera sesión.",
     price: 130000,
     durationMinutes: 90,
-    imageUrl: "https://images.unsplash.com/photo-1616394584738-fc6e612e71b9?auto=format&fit=crop&w=1000&q=85",
+    imageUrl: "/images/services/limpieza-facial-dermapen.png",
     isFeatured: true,
   },
   {
@@ -274,7 +274,7 @@ export const services: BeautyService[] = [
     description: "Tratamiento de plasma rico en plaquetas combinado con limpieza facial profesional. Estimula la regeneración celular y logra una piel firme, luminosa y rejuvenecida.",
     price: 110000,
     durationMinutes: 60,
-    imageUrl: "https://images.unsplash.com/photo-1598524374912-6b0b0bae1b79?auto=format&fit=crop&w=1000&q=85",
+    imageUrl: "/images/services/plasma-limpieza.png",
     isFeatured: false,
   },
   {
@@ -285,7 +285,7 @@ export const services: BeautyService[] = [
     description: "Eliminación progresiva de tatuajes con tecnología láser de precisión. Sesiones seguras y controladas que fragmentan la tinta sin dañar la piel circundante.",
     price: 80000,
     durationMinutes: 60,
-    imageUrl: "https://images.unsplash.com/photo-1559599101-f09722fb4948?auto=format&fit=crop&w=1000&q=85",
+    imageUrl: "/images/services/retiro-tattoo.png",
     isFeatured: false,
   },
   {
@@ -296,7 +296,7 @@ export const services: BeautyService[] = [
     description: "Tratamiento láser especializado para eliminar manchas solares, melasma y pigmentación irregular. Recupera un tono de piel uniforme, claro y juvenil.",
     price: 80000,
     durationMinutes: 60,
-    imageUrl: "https://images.unsplash.com/photo-1559599101-f09722fb4948?auto=format&fit=crop&w=1000&q=85",
+    imageUrl: "/images/services/retiro-manchas.png",
     isFeatured: false,
   },
 
@@ -309,7 +309,7 @@ export const services: BeautyService[] = [
     description: "Ultrasonido de baja frecuencia que destruye las células de grasa localizada sin cirugía. Reduce medidas, combate la celulitis y moldea tu silueta de forma no invasiva.",
     price: 50000,
     durationMinutes: 40,
-    imageUrl: "https://images.unsplash.com/photo-1519823551278-64ac92734314?auto=format&fit=crop&w=1000&q=85",
+    imageUrl: "/images/services/sesion-cavitacion.png",
     isFeatured: true,
   },
   {
@@ -320,7 +320,7 @@ export const services: BeautyService[] = [
     description: "Tecnología de radiofrecuencia avanzada que tensa y reafirma la piel flácida. Estimula la producción de colágeno y elastina para una piel visiblemente más joven y firme.",
     price: 50000,
     durationMinutes: 40,
-    imageUrl: "https://images.unsplash.com/photo-1519823551278-64ac92734314?auto=format&fit=crop&w=1000&q=85",
+    imageUrl: "/images/services/sesion-tensamax.png",
     isFeatured: false,
   },
   {
@@ -331,7 +331,7 @@ export const services: BeautyService[] = [
     description: "Estimulación muscular profunda con corrientes de mediana frecuencia que tonifican y definen tu cuerpo. Ideal para complementar tu rutina de ejercicio y acelerar resultados.",
     price: 50000,
     durationMinutes: 40,
-    imageUrl: "https://images.unsplash.com/photo-1519823551278-64ac92734314?auto=format&fit=crop&w=1000&q=85",
+    imageUrl: "/images/services/sesion-corriente-rusa.png",
     isFeatured: false,
   },
   {
@@ -342,7 +342,7 @@ export const services: BeautyService[] = [
     description: "Inyección controlada de CO₂ que activa la circulación, reduce la celulitis y rejuvenece la piel. Tratamiento rápido e indoloro con resultados progresivos y naturales.",
     price: 50000,
     durationMinutes: 40,
-    imageUrl: "https://images.unsplash.com/photo-1519823551278-64ac92734314?auto=format&fit=crop&w=1000&q=85",
+    imageUrl: "/images/services/sesion-carboxiterapia.png",
     isFeatured: false,
   },
 
@@ -355,7 +355,7 @@ export const services: BeautyService[] = [
     description: "Diseño y depilación profesional de cejas con cera premium que define tu mirada. Incluye perfilado personalizado según la forma de tu rostro para un resultado armónico.",
     price: 15000,
     durationMinutes: 20,
-    imageUrl: "https://images.unsplash.com/photo-1560750588-73207b1ef5b8?auto=format&fit=crop&w=1000&q=85",
+    imageUrl: "/images/services/cera-cejas.png",
     isFeatured: false,
   },
   {
@@ -366,7 +366,7 @@ export const services: BeautyService[] = [
     description: "Depilación rápida y precisa del vello labial con cera especial para rostro. Piel suave y libre de irritación al instante, con resultados limpios que duran semanas.",
     price: 10000,
     durationMinutes: 20,
-    imageUrl: "https://images.unsplash.com/photo-1560750588-73207b1ef5b8?auto=format&fit=crop&w=1000&q=85",
+    imageUrl: "/images/services/cera-bozo.png",
     isFeatured: false,
   },
   {
@@ -377,7 +377,7 @@ export const services: BeautyService[] = [
     description: "Depilación completa de piernas con cera caliente de alta adherencia. Elimina el vello desde la raíz para una piel ultra suave que dura hasta 4 semanas.",
     price: 25000,
     durationMinutes: 30,
-    imageUrl: "https://images.unsplash.com/photo-1560750588-73207b1ef5b8?auto=format&fit=crop&w=1000&q=85",
+    imageUrl: "/images/services/cera-piernas.png",
     isFeatured: false,
   },
   {
@@ -388,7 +388,7 @@ export const services: BeautyService[] = [
     description: "Depilación de zona bikini con cera premium de baja temperatura para mayor comodidad. Resultados limpios, piel suave y libre de irritación con un acabado profesional.",
     price: 30000,
     durationMinutes: 30,
-    imageUrl: "https://images.unsplash.com/photo-1560750588-73207b1ef5b8?auto=format&fit=crop&w=1000&q=85",
+    imageUrl: "/images/services/cera-bikini.png",
     isFeatured: false,
   },
 ];
