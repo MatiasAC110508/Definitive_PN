@@ -10,6 +10,9 @@ export const serviceCategorySchema = z.enum([
   "hollywood-peeling",
   "unas-premium",
   "masajes",
+  "facial-laser",
+  "corporal-aparatologia",
+  "depilacion-cera",
 ]);
 
 const serviceBaseSchema = z.object({

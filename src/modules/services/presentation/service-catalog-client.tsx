@@ -20,10 +20,11 @@ type ServiceCatalogClientProps = {
 };
 
 const CATEGORIES = [
-  { slug: "depilacion-laser", label: "Depilación Láser" },
-  { slug: "hollywood-peeling", label: "Hollywood Peeling" },
-  { slug: "unas-premium", label: "Uñas Premium" },
-  { slug: "masajes", label: "Masajes" },
+  { slug: "unas-premium", label: "Cuidado de Uñas" },
+  { slug: "masajes", label: "Masajes y Relajación" },
+  { slug: "facial-laser", label: "Facial y Láser" },
+  { slug: "corporal-aparatologia", label: "Corporal y Aparatología" },
+  { slug: "depilacion-cera", label: "Depilación con Cera" },
 ];
 
 function getLaserDisplayName(service: BeautyService): BeautyService {

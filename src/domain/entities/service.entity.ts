@@ -7,7 +7,10 @@ export type ServiceCategorySlug =
   | "depilacion-laser"
   | "hollywood-peeling"
   | "unas-premium"
-  | "masajes";
+  | "masajes"
+  | "facial-laser"
+  | "corporal-aparatologia"
+  | "depilacion-cera";
 
 export interface BeautyService {
   id: string;

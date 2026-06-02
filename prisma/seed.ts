@@ -88,9 +88,18 @@ async function main() {
 
   // Remove services from DB that are no longer in the mock data
   const validSlugs = services.map((s) => s.slug);
-  await prisma.service.deleteMany({
+  const staleServices = await prisma.service.findMany({
     where: { slug: { notIn: validSlugs } },
+    select: { id: true },
   });
+  const staleIds = staleServices.map((s) => s.id);
+
+  if (staleIds.length > 0) {
+    // Delete dependent records first to avoid FK violations
+    await prisma.appointment.deleteMany({ where: { serviceId: { in: staleIds } } });
+    await prisma.review.deleteMany({ where: { serviceId: { in: staleIds } } });
+    await prisma.service.deleteMany({ where: { id: { in: staleIds } } });
+  }
 
   for (const service of services) {
     const category = await prisma.category.findUniqueOrThrow({

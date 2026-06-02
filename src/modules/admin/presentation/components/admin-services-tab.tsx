@@ -66,7 +66,13 @@ import { toast } from "sonner";
 import { generateSlug } from "@/lib/utils";
 
 const serviceCategorySlugs: ServiceCategorySlug[] = [
+  "unas-premium",
+  "masajes",
+  "facial-laser",
+  "corporal-aparatologia",
+  "depilacion-cera",
   "depilacion-laser",
+  "hollywood-peeling",
   "unas-acrilicas",
   "manicure",
   "pedicure",
@@ -75,7 +81,13 @@ const serviceCategorySlugs: ServiceCategorySlug[] = [
 ];
 
 const serviceCategoryLabels: Record<string, string> = {
+  "unas-premium": "Cuidado de Uñas",
+  masajes: "Masajes y Relajación",
+  "facial-laser": "Facial y Láser",
+  "corporal-aparatologia": "Corporal y Aparatología",
+  "depilacion-cera": "Depilación con Cera",
   "depilacion-laser": "Depilación Láser",
+  "hollywood-peeling": "Hollywood Peeling",
   "unas-acrilicas": "Uñas Acrílicas",
   manicure: "Manicure",
   pedicure: "Pedicure",

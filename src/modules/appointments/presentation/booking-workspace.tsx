@@ -70,10 +70,13 @@ const categoryLabels: Record<ServiceCategorySlug, string> = {
   pedicure: "Uñas",
   "nail-art": "Uñas",
   "spa-de-unas": "Uñas",
-  "unas-premium": "Uñas Premium",
+  "unas-premium": "Cuidado de Uñas",
   masajes: "Masajes y Relajación",
   "depilacion-laser": "Depilación Láser",
   "hollywood-peeling": "Hollywood Peeling",
+  "facial-laser": "Facial y Láser",
+  "corporal-aparatologia": "Corporal y Aparatología",
+  "depilacion-cera": "Depilación con Cera",
 };
 
 export function BookingWorkspace({
