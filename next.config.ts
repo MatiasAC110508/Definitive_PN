@@ -6,7 +6,7 @@ const contentSecurityPolicy = [
   "default-src 'self'",
   `script-src 'self' 'unsafe-inline'${isDevelopment ? " 'unsafe-eval'" : ""}`,
   "style-src 'self' 'unsafe-inline'",
-  "img-src 'self' data: blob: https://images.unsplash.com https://plus.unsplash.com https://*.public.blob.vercel-storage.com",
+  "img-src 'self' data: blob: https://images.unsplash.com https://plus.unsplash.com https://i.postimg.cc https://j.postimg.cc",
   "font-src 'self' data:",
   `connect-src 'self'${isDevelopment ? " http: https: ws:" : ""}`,
   "media-src 'self' data: blob:",
@@ -67,7 +67,11 @@ const nextConfig: NextConfig = {
       },
       {
         protocol: "https",
-        hostname: "*.public.blob.vercel-storage.com",
+        hostname: "i.postimg.cc",
+      },
+      {
+        protocol: "https",
+        hostname: "j.postimg.cc",
       },
     ],
   },

@@ -66,6 +66,7 @@ import {
 import { formatCurrency } from "@/lib/formatters";
 import { toast } from "sonner";
 import { generateSlug } from "@/lib/utils";
+import { compressImage } from "@/lib/compress-image";
 
 const productCategorySlugs: ProductCategorySlug[] = [
   "esmaltes",
@@ -205,24 +206,18 @@ export function AdminProductsTab({
     try {
       let finalImageUrl = productFormData.imageUrl;
 
-      // Upload new image if selected
+      // Compress and convert to base64 if a new file was selected
       if (imageFile) {
         setIsUploading(true);
-        const formData = new FormData();
-        formData.append("file", imageFile);
-        const uploadRes = await fetch("/api/upload", {
-          method: "POST",
-          body: formData,
-        });
-        const uploadData = await uploadRes.json();
-        setIsUploading(false);
-
-        if (!uploadRes.ok) {
-          toast.error(uploadData.error?.message || "Error al subir la imagen.");
+        try {
+          finalImageUrl = await compressImage(imageFile);
+        } catch {
+          toast.error("Error al procesar la imagen.");
           setIsSubmitting(false);
+          setIsUploading(false);
           return;
         }
-        finalImageUrl = uploadData.url;
+        setIsUploading(false);
       }
 
       // For new products, image is required
