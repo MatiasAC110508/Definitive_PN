@@ -23,7 +23,7 @@ const productBaseSchema = z.object({
   categorySlug: productCategorySchema,
   description: z.string().min(10).max(500).trim(),
   price: z.coerce.number().int().positive(),
-  imageUrl: z.string().url(),
+  imageUrl: z.string().min(1, "La URL o ruta de la imagen es obligatoria"),
   stock: z.coerce.number().int().min(0),
   isFeatured: z.boolean().optional(),
 });

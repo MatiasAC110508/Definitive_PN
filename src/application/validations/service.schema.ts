@@ -27,7 +27,7 @@ const serviceBaseSchema = z.object({
   description: z.string().min(5).max(600).trim(),
   price: z.coerce.number().int().positive(),
   durationMinutes: z.coerce.number().int().positive(),
-  imageUrl: z.string().url(),
+  imageUrl: z.string().min(1, "La URL o ruta de la imagen es obligatoria"),
   isFeatured: z.boolean().optional(),
 });
 

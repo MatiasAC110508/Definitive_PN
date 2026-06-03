@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useMemo } from "react";
+import { useState, useMemo, useRef } from "react";
 import Image from "next/image";
 import type {
   BeautyService,
@@ -60,6 +60,8 @@ import {
   Tag,
   DollarSign,
   ImageIcon,
+  Upload,
+  X,
 } from "lucide-react";
 import { formatCurrency, formatTime } from "@/lib/formatters";
 import { toast } from "sonner";
@@ -112,6 +114,10 @@ export function AdminServicesTab({
   const [serviceToDelete, setServiceToDelete] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
+  const [imageFile, setImageFile] = useState<File | null>(null);
+  const [imagePreview, setImagePreview] = useState<string | null>(null);
+  const [isUploading, setIsUploading] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   const [serviceFormData, setServiceFormData] = useState<{
     name: string;
@@ -152,6 +158,8 @@ export function AdminServicesTab({
       imageUrl: "",
       isFeatured: false,
     });
+    setImageFile(null);
+    setImagePreview(null);
     setIsServiceModalOpen(true);
   }
 
@@ -167,13 +175,73 @@ export function AdminServicesTab({
       imageUrl: service.imageUrl,
       isFeatured: service.isFeatured,
     });
+    setImageFile(null);
+    setImagePreview(null);
     setIsServiceModalOpen(true);
+  }
+
+  function handleFileSelect(file: File | null) {
+    if (!file) return;
+    const allowedTypes = [
+      "image/jpeg",
+      "image/png",
+      "image/webp",
+      "image/avif",
+      "image/gif",
+    ];
+    if (!allowedTypes.includes(file.type)) {
+      toast.error("Formato no válido. Solo JPG, PNG, WebP, AVIF o GIF.");
+      return;
+    }
+    if (file.size > 5 * 1024 * 1024) {
+      toast.error("El archivo supera el límite de 5 MB.");
+      return;
+    }
+    setImageFile(file);
+    const reader = new FileReader();
+    reader.onload = (e) => setImagePreview(e.target?.result as string);
+    reader.readAsDataURL(file);
+  }
+
+  function clearImageFile() {
+    setImageFile(null);
+    setImagePreview(null);
+    if (fileInputRef.current) fileInputRef.current.value = "";
   }
 
   async function handleServiceSubmit(e: React.FormEvent) {
     e.preventDefault();
     setIsSubmitting(true);
     try {
+      let finalImageUrl = serviceFormData.imageUrl;
+
+      // Upload new image if selected
+      if (imageFile) {
+        setIsUploading(true);
+        const formData = new FormData();
+        formData.append("file", imageFile);
+        const uploadRes = await fetch("/api/upload", {
+          method: "POST",
+          body: formData,
+        });
+        const uploadData = await uploadRes.json();
+        setIsUploading(false);
+
+        if (!uploadRes.ok) {
+          toast.error(uploadData.error?.message || "Error al subir la imagen.");
+          setIsSubmitting(false);
+          return;
+        }
+        finalImageUrl = uploadData.url;
+      }
+
+      // For new services, image is required
+      if (!editingService && !finalImageUrl) {
+        toast.error("Debes seleccionar una imagen para el servicio.");
+        setIsSubmitting(false);
+        return;
+      }
+
       const url = editingService
         ? `/api/admin/services/${editingService.id}`
         : "/api/admin/services";
@@ -184,6 +252,7 @@ export function AdminServicesTab({
         slug: serviceFormData.slug || generateSlug(serviceFormData.name),
         price: Number(serviceFormData.price),
         durationMinutes: Number(serviceFormData.durationMinutes),
+        imageUrl: finalImageUrl,
       };
 
       const res = await fetch(url, {
@@ -205,6 +274,8 @@ export function AdminServicesTab({
           toast.success("Servicio creado con éxito.");
         }
         setIsServiceModalOpen(false);
+        setImageFile(null);
+        setImagePreview(null);
       } else {
         toast.error(data.error?.message || "Error al procesar el servicio.");
       }
@@ -212,6 +283,7 @@ export function AdminServicesTab({
       toast.error("Error de conexión al servidor.");
     } finally {
       setIsSubmitting(false);
+      setIsUploading(false);
     }
   }
 
@@ -520,24 +592,59 @@ export function AdminServicesTab({
 
               <div className="space-y-2 md:col-span-2">
                 <Label className="text-xs font-bold uppercase tracking-widest text-[var(--ink-soft)]">
-                  URL de Imagen
+                  Imagen del Servicio
                 </Label>
-                <div className="relative">
-                  <ImageIcon className="absolute left-3 top-1/2 -translate-y-1/2 size-4 text-[var(--ink-soft)]" />
-                  <Input
-                    type="url"
-                    value={serviceFormData.imageUrl}
-                    onChange={(e) =>
-                      setServiceFormData({
-                        ...serviceFormData,
-                        imageUrl: e.target.value,
-                      })
-                    }
-                    required
-                    placeholder="https://ejemplo.com/imagen.jpg"
-                    className="h-12 pl-10 border-[var(--line)] rounded-xl"
-                  />
-                </div>
+
+                {/* Preview */}
+                {(imagePreview || serviceFormData.imageUrl) && (
+                  <div className="relative w-full h-40 rounded-xl overflow-hidden border border-[var(--line)] bg-[var(--quartz-soft)]">
+                    <Image
+                      src={imagePreview || serviceFormData.imageUrl}
+                      alt="Vista previa"
+                      fill
+                      sizes="600px"
+                      unoptimized
+                      className="object-cover"
+                    />
+                    {imageFile && (
+                      <button
+                        type="button"
+                        onClick={clearImageFile}
+                        className="absolute top-2 right-2 bg-black/60 hover:bg-black/80 text-white rounded-full p-1 transition-colors"
+                      >
+                        <X className="size-4" />
+                      </button>
+                    )}
+                  </div>
+                )}
+
+                {/* File input */}
+                <input
+                  ref={fileInputRef}
+                  type="file"
+                  accept="image/jpeg,image/png,image/webp,image/avif,image/gif"
+                  onChange={(e) =>
+                    handleFileSelect(e.target.files?.[0] || null)
+                  }
+                  className="hidden"
+                />
+                <button
+                  type="button"
+                  onClick={() => fileInputRef.current?.click()}
+                  className="w-full flex items-center justify-center gap-2 h-12 rounded-xl border-2 border-dashed border-[var(--gold)]/40 bg-[var(--gold)]/5 hover:bg-[var(--gold)]/10 text-sm font-semibold text-[var(--ink-soft)] hover:text-[var(--ink)] transition-all cursor-pointer"
+                >
+                  <Upload className="size-4" />
+                  {imageFile
+                    ? imageFile.name
+                    : editingService
+                      ? "Cambiar imagen (opcional)"
+                      : "Seleccionar imagen"}
+                </button>
+                {isUploading && (
+                  <p className="text-xs text-[var(--gold)] animate-pulse">
+                    Subiendo imagen...
+                  </p>
+                )}
               </div>
 
               <div className="space-y-2 md:col-span-2">
