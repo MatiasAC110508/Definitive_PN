@@ -88,8 +88,10 @@ export default function RootLayout({
       "https://images.unsplash.com/photo-1604654894610-df63bc536371?auto=format&fit=crop&w=1200&q=85",
     "@id": "https://perfectnails.art",
     url: "https://perfectnails.art",
+    telephone: "+573215886470", // Using the mock phone or you can update it
     address: {
       "@type": "PostalAddress",
+      streetAddress: "Bello",
       addressLocality: "Bello",
       addressRegion: "Antioquia",
       addressCountry: "CO",
@@ -99,6 +101,22 @@ export default function RootLayout({
       latitude: 6.3373,
       longitude: -75.558,
     },
+    openingHoursSpecification: [
+      {
+        "@type": "OpeningHoursSpecification",
+        dayOfWeek: [
+          "Monday",
+          "Tuesday",
+          "Wednesday",
+          "Thursday",
+          "Friday",
+          "Saturday",
+        ],
+        opens: "08:00",
+        closes: "19:00",
+      },
+    ],
+    sameAs: ["https://www.instagram.com/perfectnailsbykatygil"],
     description:
       "Spa boutique en Bello, Antioquia, especializado en uñas premium, masajes relajantes y depilación láser de alta calidad.",
     priceRange: "$$",
