@@ -69,6 +69,10 @@ export const metadata: Metadata = {
       "https://images.unsplash.com/photo-1604654894610-df63bc536371?auto=format&fit=crop&w=1200&q=85",
     ],
   },
+  icons: {
+    icon: [{ url: "/icon.png", sizes: "256x256", type: "image/png" }],
+    apple: [{ url: "/apple-icon.png", sizes: "256x256", type: "image/png" }],
+  },
 };
 
 export default function RootLayout({
